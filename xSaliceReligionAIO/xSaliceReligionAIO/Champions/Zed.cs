@@ -930,15 +930,7 @@ namespace xSaliceReligionAIO.Champions
             }
 
             if(E.IsReady() && menu.Item("AutoE", true).GetValue<bool>())
-                AutoE();
-        }
-
-        private void AutoE()
-        {
-            var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Physical);
-
-            if(target != null)
-                Cast_E(target);
+                Cast_E();
         }
 
         private float _qCooldown;

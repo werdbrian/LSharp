@@ -240,7 +240,7 @@ namespace xSaliceReligionAIO.Champions
 
         private void Farm()
         {
-            var rangedMinionsE = MinionManager.GetMinions(Player.ServerPosition, E.Range + E.Width, MinionTypes.All, MinionTeam.NotAlly);
+            var rangedMinionsE = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.NotAlly);
 
             var useQ = menu.Item("UseQFarm", true).GetValue<bool>();
             var useE = menu.Item("UseEFarm", true).GetValue<bool>();
@@ -250,9 +250,9 @@ namespace xSaliceReligionAIO.Champions
 
             if (useE && E.IsReady())
             {
-                var ePos = E.GetCircularFarmLocation(rangedMinionsE);
-                if (ePos.MinionsHit >= 2)
-                    E.Cast(ePos.Position, packets());
+                if (rangedMinionsE.Count > 1)
+                    E.Cast(packets());
+
             }
         }
 

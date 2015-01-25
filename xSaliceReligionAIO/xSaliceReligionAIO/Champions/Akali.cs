@@ -238,16 +238,9 @@ namespace xSaliceReligionAIO.Champions
                     ActiveItems.UseTargetted = true;
                 }
             }
-
-            if (source == "Harass")
-            {
-                if (menu.Item("UseQFarmH", true).GetValue<bool>() && Q.IsReady())
-                    Cast_Q(false);
-            }
-
         }
 
-        public void Farm()
+        private void Farm()
         {
             if (menu.Item("UseQFarm", true).GetValue<bool>())
                 Cast_Q(false);
