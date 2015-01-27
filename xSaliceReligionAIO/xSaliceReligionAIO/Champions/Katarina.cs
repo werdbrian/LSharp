@@ -376,7 +376,7 @@ namespace xSaliceReligionAIO.Champions
 
             if (useW && W.IsReady())
             {
-                if (allMinionsW.Count > 1)
+                if (allMinionsW.Count > 0)
                     W.Cast();
             }
         }
