@@ -376,8 +376,7 @@ namespace xSaliceReligionAIO.Champions
 
             if (useW && W.IsReady())
             {
-                MinionManager.FarmLocation wPos = E.GetCircularFarmLocation(allMinionsW);
-                if (wPos.MinionsHit >= 2)
+                if (allMinionsW.Count > 1)
                     W.Cast();
             }
         }
