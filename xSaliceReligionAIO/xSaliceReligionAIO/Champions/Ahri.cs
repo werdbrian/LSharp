@@ -177,9 +177,6 @@ namespace xSaliceReligionAIO.Champions
             else if (R.IsReady())
                 damage += Player.GetSpellDamage(enemy, SpellSlot.R) * 3;
 
-            if (enemy.HasBuffOfType(BuffType.Charm) || enemy.HasBuffOfType(BuffType.Taunt))
-                damage = damage * 1.2;
-
             damage = ActiveItems.CalcDamage(enemy, damage);
 
             if (E.IsReady())

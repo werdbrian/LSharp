@@ -270,7 +270,7 @@ namespace xSaliceReligionAIO.Champions
                 if (!(menu.Item("killR", true).GetValue<KeyBind>().Active)) //check if multi
                 {
                     if (menu.Item("overK", true).GetValue<bool>() &&
-                        (Player.GetSpellDamage(target, SpellSlot.Q) + Player.GetAutoAttackDamage(target)) >= target.Health)
+                        (Player.GetSpellDamage(target, SpellSlot.Q) + Player.GetSpellDamage(target, SpellSlot.W)) >= target.Health)
                     {
                         return;
                     }

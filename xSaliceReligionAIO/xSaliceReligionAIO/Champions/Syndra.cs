@@ -32,7 +32,7 @@ namespace xSaliceReligionAIO.Champions
             R = new Spell(SpellSlot.R, 750);
 
             _qe = new Spell(SpellSlot.Q, 1250);
-            _qe.SetSkillshot(.900f, 50f, 2100f, false, SkillshotType.SkillshotLine);
+            _qe.SetSkillshot(.900f, 70f, 2100f, false, SkillshotType.SkillshotLine);
 
         }
 
