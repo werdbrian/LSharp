@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
@@ -409,7 +410,24 @@ namespace xSaliceReligionAIO.Champions
 
         private void Farm()
         {
-            
+            List<Obj_AI_Base> allMinionsQ = MinionManager.GetMinions(Player.ServerPosition, Q.Range,MinionTypes.All, MinionTeam.NotAlly);
+            List<Obj_AI_Base> allMinionsW = MinionManager.GetMinions(Player.ServerPosition, W.Range,MinionTypes.All, MinionTeam.NotAlly);
+
+            var useQ = menu.Item("UseQFarm", true).GetValue<bool>();
+            var useW = menu.Item("UseWFarm", true).GetValue<bool>();
+
+            if (useQ && Q.IsReady())
+            {
+                Q.Cast(allMinionsQ[0]);
+            }
+
+            if (useW && W.IsReady())
+            {
+                var pred = W.GetCircularFarmLocation(allMinionsW);
+
+                if(pred.MinionsHit > 1)
+                    W.Cast(pred.Position);
+            }
         }
 
         private void LastHit()
