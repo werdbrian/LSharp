@@ -384,7 +384,7 @@ namespace xSaliceReligionAIO.Champions
                 {
                     if (Q.IsKillable(target) && Q.IsReady())
                     {
-                        Q.Cast(target, packets());
+                        Q.CastOnUnit(target, packets());
                         return;
                     }
 
@@ -418,7 +418,7 @@ namespace xSaliceReligionAIO.Champions
 
             if (useQ && Q.IsReady())
             {
-                Q.Cast(allMinionsQ[0]);
+                Q.CastOnUnit(allMinionsQ[0]);
             }
 
             if (useW && W.IsReady())
@@ -441,7 +441,7 @@ namespace xSaliceReligionAIO.Champions
             foreach (var minion in MinionManager.GetMinions(Player.Position, Q.Range).Where(minion => HealthPrediction.GetHealthPrediction(minion,
                        (int)(Q.Delay + (minion.Distance(Player) / Q.Speed))) < Player.GetSpellDamage(minion, SpellSlot.Q)
                        && HealthPrediction.GetHealthPrediction(minion, (int)(Q.Delay + (minion.Distance(Player) / Q.Speed))) > 0))
-                Q.Cast(minion);
+                Q.CastOnUnit(minion);
         }
 
         protected override void Game_OnGameUpdate(EventArgs args)
@@ -529,7 +529,7 @@ namespace xSaliceReligionAIO.Champions
                 if (HasStun())
                 {
                     if (Q.IsReady())
-                        Q.Cast(unit);
+                        Q.CastOnUnit(unit);
 
                     if (W.IsReady())
                         W.Cast(unit);
@@ -552,7 +552,7 @@ namespace xSaliceReligionAIO.Champions
             }
             if (Q.IsReady())
             {
-                Q.Cast(gapcloser.Sender);
+                Q.CastOnUnit(gapcloser.Sender);
             }
         }
 
