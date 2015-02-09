@@ -38,6 +38,7 @@ namespace xSaliceReligionAIO.Champions
                 key.AddItem(new MenuItem("HarassActiveT", "Harass (toggle)!", true).SetValue(new KeyBind("N".ToCharArray()[0], KeyBindType.Toggle)));
                 key.AddItem(new MenuItem("LaneClearActive", "Farm!", true).SetValue(new KeyBind("V".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("LastHitQ", "Last hit with Q!", true).SetValue(new KeyBind("A".ToCharArray()[0], KeyBindType.Press)));
+                key.AddItem(new MenuItem("LastHitQToggle", "Last hit with Q Toggle!", true).SetValue(new KeyBind("J".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("FlashKILL", "Flash KILL", true).SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("ChargeStun", "Charge Stun (toggle)!", true).SetValue(new KeyBind("I".ToCharArray()[0], KeyBindType.Toggle)));
                 //add to menu
@@ -449,7 +450,7 @@ namespace xSaliceReligionAIO.Champions
             }
             else
             {
-                if (menu.Item("LastHitQ", true).GetValue<KeyBind>().Active)
+                if (menu.Item("LastHitQ", true).GetValue<KeyBind>().Active || menu.Item("LastHitQToggle", true).GetValue<KeyBind>().Active)
                     LastHit();
 
                 if (menu.Item("LaneClearActive", true).GetValue<KeyBind>().Active)
