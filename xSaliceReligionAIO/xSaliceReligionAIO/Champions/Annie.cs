@@ -113,7 +113,6 @@ namespace xSaliceReligionAIO.Champions
 
             var misc = new Menu("Misc", "Misc");
             {
-                misc.AddItem(new MenuItem("Auto_Stun_Tower", "Auto Stun Under Your Tower", true).SetValue(true));
                 misc.AddItem(new MenuItem("Interrupt", "Interrupt spells with Stun", true).SetValue(true));
                 misc.AddItem(new MenuItem("W_Gap", "W Stun GapCloser", true).SetValue(true));
                 misc.AddItem(new MenuItem("chargeMana", "Charge Stun only if Mana >=", true).SetValue(new Slider(30)));
@@ -498,5 +497,46 @@ namespace xSaliceReligionAIO.Champions
             }
 
         }
+      
+        protected override void Interrupter_OnPosibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+        {
+            if (spell.DangerLevel < InterruptableDangerLevel.Medium || unit.IsAlly)
+                return;
+
+            if (menu.Item("Interrupt", true).GetValue<bool>() && unit.IsValidTarget(Q.Range))
+            {
+                if (StunCount() == 3 && E.IsReady())
+                    E.Cast();
+
+                if (HasStun())
+                {
+                    if (Q.IsReady())
+                        Q.Cast(unit);
+
+                    if (W.IsReady())
+                        W.Cast(unit);
+                }
+            }
+        }
+
+        protected override void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
+        {
+            if (!menu.Item("W_Gap", true).GetValue<bool>())
+                return;
+
+            if (!HasStun() || !gapcloser.Sender.IsValidTarget(Q.Range))
+                return;
+
+            if (W.IsReady())
+            {
+                W.Cast(gapcloser.Sender);
+                return;
+            }
+            if (Q.IsReady())
+            {
+                Q.Cast(gapcloser.Sender);
+            }
+        }
+
     }
 }
