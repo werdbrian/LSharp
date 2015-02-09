@@ -115,7 +115,7 @@ namespace xSaliceReligionAIO.Champions
             var misc = new Menu("Misc", "Misc");
             {
                 misc.AddItem(new MenuItem("Interrupt", "Interrupt spells with Stun", true).SetValue(true));
-                misc.AddItem(new MenuItem("W_Gap", "W Stun GapCloser", true).SetValue(true));
+                misc.AddItem(new MenuItem("W_Gap", "Use Spell to stun GapCloser", true).SetValue(true));
                 misc.AddItem(new MenuItem("chargeMana", "Charge Stun only if Mana >=", true).SetValue(new Slider(30)));
                 misc.AddItem(new MenuItem("chargeInFountain", "Charge In Fountain", true).SetValue(true));
                 misc.AddItem(new MenuItem("smartKS", "Smart KS", true).SetValue(true));
