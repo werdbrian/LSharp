@@ -85,6 +85,7 @@ namespace xSaliceReligionAIO.Champions
                 combo.AddItem(new MenuItem("UseWCombo", "Use W", true).SetValue(true));
                 combo.AddItem(new MenuItem("UseECombo", "Use E", true).SetValue(true));
                 combo.AddItem(new MenuItem("UseRCombo", "Use R", true).SetValue(true));
+                combo.AddItem(new MenuItem("R_Killable", "Only R When Killable", true).SetValue(new KeyBind("H".ToCharArray()[0], KeyBindType.Toggle)));
                 combo.AddItem(new MenuItem("useR_enemyCount_Combo", "R If Stun >=", true).SetValue(new Slider(3, 1, 5)));
                 combo.AddItem(new MenuItem("FlashStun", "Use Flash->R->Stun On Killable", true).SetValue(true));
                 //add to menu
@@ -205,7 +206,7 @@ namespace xSaliceReligionAIO.Champions
 
             if (useR && R.IsReady())
             {   
-                if (dmg > target.Health && R.GetPrediction(target, true).Hitchance >= HitChance.High)
+                if (dmg > target.Health || !menu.Item("R_Killable", true).GetValue<KeyBind>().Active)
                 {
                     if(OverKillCheck(target))
                     {
