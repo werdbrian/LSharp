@@ -423,7 +423,7 @@ namespace xSaliceReligionAIO.Champions
 
             if (useW && W.IsReady())
             {
-                var pred = W.GetCircularFarmLocation(allMinionsW);
+                var pred = W.GetLineFarmLocation(allMinionsW);
 
                 if(pred.MinionsHit > 1)
                     W.Cast(pred.Position);
