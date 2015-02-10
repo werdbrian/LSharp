@@ -425,7 +425,7 @@ namespace xSaliceReligionAIO.Champions
             {
                 var pred = W.GetLineFarmLocation(allMinionsW);
 
-                if(pred.MinionsHit > 1)
+                if (pred.MinionsHit >= menu.Item("LaneClear_useW_minHit", true).GetValue<Slider>().Value)
                     W.Cast(pred.Position);
             }
         }
