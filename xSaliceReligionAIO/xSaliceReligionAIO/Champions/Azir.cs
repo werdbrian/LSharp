@@ -24,7 +24,7 @@ namespace xSaliceReligionAIO.Champions
             Q = new Spell(SpellSlot.Q, 875);
             QExtend = new Spell(SpellSlot.Q, 1150);
             Q2 = new Spell(SpellSlot.Q, 2000);
-            W = new Spell(SpellSlot.W, 450);
+            W = new Spell(SpellSlot.W, 350);
             E = new Spell(SpellSlot.E, 2000);
             R = new Spell(SpellSlot.R, 450);
 
@@ -313,7 +313,7 @@ namespace xSaliceReligionAIO.Champions
 
         private void Escape()
         {
-            Vector3 wVec = Player.ServerPosition + Vector3.Normalize(Game.CursorPos - Player.ServerPosition) * 450;
+            Vector3 wVec = Player.ServerPosition + Vector3.Normalize(Game.CursorPos - Player.ServerPosition) * W.Range;
 
             if (menu.Item("fastEscape", true).GetValue<bool>())
             {
@@ -436,7 +436,7 @@ namespace xSaliceReligionAIO.Champions
             }
             else if (W.IsReady())
             {
-                Vector3 wVec = Player.ServerPosition + Vector3.Normalize(target.ServerPosition - Player.ServerPosition) * 450;
+                Vector3 wVec = Player.ServerPosition + Vector3.Normalize(target.ServerPosition - Player.ServerPosition) * W.Range;
 
                 var qPred = GetP(wVec, QExtend, target, true);
 
@@ -495,7 +495,7 @@ namespace xSaliceReligionAIO.Champions
             }
             else if (W.IsReady())
             {
-                Vector3 wVec = Player.ServerPosition + Vector3.Normalize(target.ServerPosition - Player.ServerPosition) * 450;
+                Vector3 wVec = Player.ServerPosition + Vector3.Normalize(target.ServerPosition - Player.ServerPosition) * W.Range;
 
                 var qPred = GetP(wVec, QExtend, target, true);
 
@@ -526,11 +526,11 @@ namespace xSaliceReligionAIO.Champions
             if (soilderCount() < 1 && menu.Item("qMulti", true).GetValue<KeyBind>().Active)
                 return;
 
-            if (Player.Distance(target) < 1150 && Player.Distance(target) > 450)
+            if (Player.Distance(target) < 1150 && Player.Distance(target) > W.Range)
             {
                 if (W.IsReady() && (Q.IsReady() || QSpell.State == SpellState.Surpressed))
                 {
-                    Vector3 wVec = Player.ServerPosition + Vector3.Normalize(target.ServerPosition - Player.ServerPosition) * 450;
+                    Vector3 wVec = Player.ServerPosition + Vector3.Normalize(target.ServerPosition - Player.ServerPosition) * W.Range;
 
                     var qPred = GetP(wVec, QExtend, target, true);
 
@@ -549,7 +549,7 @@ namespace xSaliceReligionAIO.Champions
             {
                 if (Player.Distance(target) < 600)
                 {
-                    Vector3 wVec = Player.ServerPosition + Vector3.Normalize(target.ServerPosition - Player.ServerPosition) * 450;
+                    Vector3 wVec = Player.ServerPosition + Vector3.Normalize(target.ServerPosition - Player.ServerPosition) * W.Range;
 
                     //Game.PrintChat("W Cast2");
                     if (W.IsReady())
@@ -561,7 +561,7 @@ namespace xSaliceReligionAIO.Champions
                 }
                 else if (Player.Distance(target) < 950)
                 {
-                    Vector3 wVec = Player.ServerPosition + Vector3.Normalize(target.ServerPosition - Player.ServerPosition) * 450;
+                    Vector3 wVec = Player.ServerPosition + Vector3.Normalize(target.ServerPosition - Player.ServerPosition) * W.Range;
                     if (Player.Level > 10)
                     {
                         if (W.IsReady())
@@ -935,7 +935,7 @@ namespace xSaliceReligionAIO.Champions
 
             if (_point != Vector3.Zero && !menu.Item("fastEscape", true).GetValue<bool>())
             {
-                var vec = Player.ServerPosition + Vector3.Normalize(Game.CursorPos - Player.ServerPosition)*450;
+                var vec = Player.ServerPosition + Vector3.Normalize(Game.CursorPos - Player.ServerPosition) * W.Range;
                 var vecPoint = vec + Vector3.Normalize(_point - vec) * Q.Range;
                 if (soilderCount() > 0 && GetNearestSoilderToMouse() != null)
                 {

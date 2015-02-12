@@ -34,7 +34,7 @@ namespace xSaliceReligionAIO.Champions
         {
             //intalize spell
             Q = new Spell(SpellSlot.Q, 900);
-            W = new Spell(SpellSlot.W, 800);
+            W = new Spell(SpellSlot.W, 650);
             E = new Spell(SpellSlot.E, 875);
             R = new Spell(SpellSlot.R, 850);
 
