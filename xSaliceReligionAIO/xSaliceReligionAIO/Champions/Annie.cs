@@ -64,7 +64,7 @@ namespace xSaliceReligionAIO.Champions
                 var eMenu = new Menu("EMenu", "EMenu");
                 {
                     eMenu.AddItem(new MenuItem("E_Charge", "Use E to Charge Stun", true).SetValue(true));
-                    eMenu.AddItem(new MenuItem("E_Block", "Use E for incoming Spells/AA", true).SetValue(true));
+                    eMenu.AddItem(new MenuItem("E_Block", "Use E for incoming AutoAttack", true).SetValue(true));
                     eMenu.AddItem(new MenuItem("E_Stun", "Use E To Charge stun before Spells", true).SetValue(true));
                     spellMenu.AddSubMenu(eMenu);
                 }
@@ -116,9 +116,10 @@ namespace xSaliceReligionAIO.Champions
             {
                 misc.AddItem(new MenuItem("Interrupt", "Interrupt spells with Stun", true).SetValue(true));
                 misc.AddItem(new MenuItem("W_Gap", "Use Spell to stun GapCloser", true).SetValue(true));
+                misc.AddItem(new MenuItem("smartKS", "Smart KS", true).SetValue(true));
                 misc.AddItem(new MenuItem("chargeMana", "Charge Stun only if Mana >=", true).SetValue(new Slider(30)));
                 misc.AddItem(new MenuItem("chargeInFountain", "Charge In Fountain", true).SetValue(true));
-                misc.AddItem(new MenuItem("smartKS", "Smart KS", true).SetValue(true));
+                misc.AddItem(new MenuItem("disableAA", "Do not AA when Spells Ready", true).SetValue(false));
                 menu.AddSubMenu(misc);
             }
 
@@ -449,9 +450,6 @@ namespace xSaliceReligionAIO.Champions
             if (Player.IsDead)
                 return;
 
-            R_MEC(false);
-            W_MEC();
-
             //ks check
             if (menu.Item("smartKS", true).GetValue<bool>())
                 SmartKs();
@@ -467,6 +465,9 @@ namespace xSaliceReligionAIO.Champions
             }
             else
             {
+                R_MEC(false);
+                W_MEC();
+
                 if (menu.Item("LastHitQ", true).GetValue<KeyBind>().Active || menu.Item("LastHitQToggle", true).GetValue<KeyBind>().Active)
                     LastHit();
 
@@ -481,6 +482,61 @@ namespace xSaliceReligionAIO.Champions
 
                 Charge();
             }
+
+            int mode = menu.Item("R_Mode", true).GetValue<StringList>().SelectedIndex;
+            var target = TargetSelector.GetTarget(2000, TargetSelector.DamageType.Magical);
+            if (Tibbers == null || !Tibbers.IsValid || Tibbers.IsDead || Tibbers.Health < 0)
+                return;
+
+            if (mode == 0 && target.IsValidTarget(2000))
+            {
+                Player.IssueOrder(
+                    Tibbers.Distance(target) > 210 ? GameObjectOrder.MovePet : GameObjectOrder.AutoAttackPet, target);
+            }
+            else if(mode == 1)
+            {
+                Player.IssueOrder(GameObjectOrder.MovePet, Player);
+            }
+
+        }
+
+
+        private Obj_AI_Base Tibbers;
+        protected override void GameObject_OnCreate(GameObject sender, EventArgs args)
+        {
+            if (sender == null || !sender.IsValid || !sender.Name.Equals("Tibbers"))
+                return;
+
+            Game.PrintChat("SALICE SUMMONS TIBBERSSSS");
+            Tibbers = (Obj_AI_Base)sender;
+        }
+
+        protected override void GameObject_OnDelete(GameObject sender, EventArgs args)
+        {
+            if (sender == null || !sender.IsValid || !sender.Name.Equals("Tibbers"))
+                return;
+
+            Tibbers = null;
+        }
+
+        protected override void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base unit, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (unit.IsMe || unit.IsAlly || !(unit is Obj_AI_Hero))
+                return;
+
+            if (menu.Item("E_Block", true).GetValue<bool>())
+            {
+                if (xSLxOrbwalker.IsAutoAttack(args.SData.Name) && args.Target.IsMe && Player.Distance(args.End) < 450)
+                {
+                    E.Cast(packets());
+                }
+            }
+        }
+
+        protected override void BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
+        {
+            if (menu.Item("ComboActive", true).GetValue<KeyBind>().Active && menu.Item("disableAA", true).GetValue<bool>())
+                args.Process = !(Q.IsReady() || W.IsReady());
         }
 
         protected override void Drawing_OnDraw(EventArgs args)
@@ -515,10 +571,10 @@ namespace xSaliceReligionAIO.Champions
             }
 
         }
-      
-        protected override void Interrupter_OnPosibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+
+        protected override void Interrupter_OnPosibleToInterrupt(Obj_AI_Hero unit, Interrupter2.InterruptableTargetEventArgs spell)
         {
-            if (spell.DangerLevel < InterruptableDangerLevel.Medium || unit.IsAlly)
+            if (spell.DangerLevel < Interrupter2.DangerLevel.Medium || unit.IsAlly)
                 return;
 
             if (menu.Item("Interrupt", true).GetValue<bool>() && unit.IsValidTarget(Q.Range))

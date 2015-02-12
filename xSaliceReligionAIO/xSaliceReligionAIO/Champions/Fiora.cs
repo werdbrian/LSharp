@@ -52,6 +52,7 @@ namespace xSaliceReligionAIO.Champions
                 var wMenu = new Menu("WMenu", "WMenu");
                 {
                     wMenu.AddItem(new MenuItem("W_Incoming", "W Block incoming Atk Always",true).SetValue(true));
+                    wMenu.AddItem(new MenuItem("W_Tower", "Don't W block under Tower", true).SetValue(true));
                     wMenu.AddItem(new MenuItem("W_minion", "W Block Minion",true).SetValue(false));
                     spellMenu.AddSubMenu(wMenu);
                 }
@@ -454,11 +455,14 @@ namespace xSaliceReligionAIO.Champions
 
         protected override void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base unit, GameObjectProcessSpellCastEventArgs args)
         {
-            SpellSlot castedSlot = Player.GetSpellSlot(args.SData.Name);
-
-            if (castedSlot == SpellSlot.Q)
+            if (unit.IsMe)
             {
-                Q.LastCastAttemptT = Environment.TickCount;
+                SpellSlot castedSlot = Player.GetSpellSlot(args.SData.Name);
+
+                if (castedSlot == SpellSlot.Q)
+                {
+                    Q.LastCastAttemptT = Environment.TickCount;
+                }
             }
 
             if (unit.IsMe)
@@ -473,7 +477,10 @@ namespace xSaliceReligionAIO.Champions
                     if (!menu.Item("W_minion", true).GetValue<bool>() && !(unit is Obj_AI_Hero))
                         return;
 
-                        W.Cast(packets());
+                    if (menu.Item("W_Tower", true).GetValue<bool>() && Player.UnderTurret(true))
+                        return;
+
+                    W.Cast(packets());
                 }
             }
 

@@ -688,9 +688,9 @@ namespace xSaliceReligionAIO.Champions
             W.LastCastAttemptT = Environment.TickCount + 500;
         }
 
-        protected override void Interrupter_OnPosibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+        protected override void Interrupter_OnPosibleToInterrupt(Obj_AI_Hero unit, Interrupter2.InterruptableTargetEventArgs spell)
         {
-            if (spell.DangerLevel < InterruptableDangerLevel.Medium || unit.IsAlly)
+            if (spell.DangerLevel < Interrupter2.DangerLevel.Medium || unit.IsAlly)
                 return;
 
             if (menu.Item("QE_Interrupt", true).GetValue<bool>() && unit.IsValidTarget(_qe.Range))
