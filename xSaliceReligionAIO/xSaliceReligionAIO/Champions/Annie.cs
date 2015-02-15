@@ -39,7 +39,7 @@ namespace xSaliceReligionAIO.Champions
                 key.AddItem(new MenuItem("HarassActiveT", "Harass (toggle)!", true).SetValue(new KeyBind("N".ToCharArray()[0], KeyBindType.Toggle)));
                 key.AddItem(new MenuItem("LaneClearActive", "Farm!", true).SetValue(new KeyBind("V".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("LastHitQ", "Last hit with Q!", true).SetValue(new KeyBind("A".ToCharArray()[0], KeyBindType.Press)));
-                key.AddItem(new MenuItem("LastHitQToggle", "Last hit with Q Toggle!", true).SetValue(new KeyBind("J".ToCharArray()[0], KeyBindType.Press)));
+                key.AddItem(new MenuItem("LastHitQToggle", "Last hit with Q (Toggle)", true).SetValue(new KeyBind("J".ToCharArray()[0], KeyBindType.Toggle)));
                 key.AddItem(new MenuItem("FlashKILL", "Flash KILL", true).SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("ChargeStun", "Charge Stun (toggle)!", true).SetValue(new KeyBind("I".ToCharArray()[0], KeyBindType.Toggle)));
                 //add to menu
@@ -206,7 +206,7 @@ namespace xSaliceReligionAIO.Champions
             if (useE && StunCount() == 3 && E.IsReady() && menu.Item("E_Stun", true).GetValue<bool>())
                 E.Cast(packets());
 
-            if (useR && R.IsReady())
+            if (useR && R.IsReady() && Tibbers == null)
             {   
                 if (dmg > target.Health || !menu.Item("R_Killable", true).GetValue<KeyBind>().Active)
                 {
@@ -267,7 +267,7 @@ namespace xSaliceReligionAIO.Champions
             if(!mode)
                 minRHit = menu.Item("useR_enemyCount", true).GetValue<Slider>().Value;
 
-            if (!R.IsReady() && minRHit == 6)
+            if (!R.IsReady() || minRHit == 6 || Tibbers != null)
                 return;
 
             foreach (var pred in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget(R.Range)).
@@ -281,7 +281,7 @@ namespace xSaliceReligionAIO.Champions
         {
             var minWHit = menu.Item("useW_enemyCount", true).GetValue<Slider>().Value;
 
-            if (!W.IsReady() && minWHit == 6)
+            if (!W.IsReady() || minWHit == 6)
                 return;
 
             foreach (var pred in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget(W.Range)).
@@ -396,7 +396,7 @@ namespace xSaliceReligionAIO.Champions
                         return;
                     }
 
-                    if (menu.Item("R_To_KS", true).GetValue<bool>())
+                    if (menu.Item("R_To_KS", true).GetValue<bool>() && Tibbers == null)
                     {
                         if (Player.Distance(target.ServerPosition) <= R.Range &&
                             (Player.GetSpellDamage(target, SpellSlot.R)) > target.Health && R.IsReady())
@@ -450,21 +450,21 @@ namespace xSaliceReligionAIO.Champions
             if (Player.IsDead)
                 return;
 
-            //ks check
-            if (menu.Item("smartKS", true).GetValue<bool>())
-                SmartKs();
-
             if (menu.Item("FlashKILL", true).GetValue<KeyBind>().Active)
             {
                 Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
                 FlashStunRawr();
             }
-            else if (menu.Item("ComboActive", true).GetValue<KeyBind>().Active)
+            if (menu.Item("ComboActive", true).GetValue<KeyBind>().Active)
             {
                 Combo();
             }
             else
             {
+                //ks check
+                if (menu.Item("smartKS", true).GetValue<bool>())
+                    SmartKs();
+
                 R_MEC(false);
                 W_MEC();
 

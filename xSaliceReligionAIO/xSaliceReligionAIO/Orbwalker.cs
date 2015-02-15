@@ -317,9 +317,11 @@ namespace xSaliceReligionAIO
         {
             var delay = Menu.Item("orb_Misc_Humanizer").GetValue<Slider>().Value;
 
-            if ((MyHero.ChampionName == "Katarina" || MyHero.ChampionName == "Velkoz") && delay < 400 && (R.IsReady() || MyHero.Spellbook.GetSpell(SpellSlot.R).State == SpellState.Surpressed) && MyHero.CountEnemiesInRange(1000) > 0)
+            if ((MyHero.ChampionName == "Katarina" || MyHero.ChampionName == "Velkoz") && delay < 400 && (R.IsReady() || MyHero.Spellbook.GetSpell(SpellSlot.R).State == SpellState.Surpressed))
             {
-                delay = 400;
+                var target = TargetSelector.GetTarget(1500, TargetSelector.DamageType.Magical);
+                if(target != null)
+                    delay = 1200;
             }
             if (Environment.TickCount - _lastMovement < delay)
                 return;

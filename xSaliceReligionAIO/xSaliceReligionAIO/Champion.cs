@@ -103,7 +103,7 @@ namespace xSaliceReligionAIO
             menu.AddSubMenu(targetSelectorMenu);
 
             //Orbwalker submenu
-            OrbwalkerMenu.AddItem(new MenuItem("Orbwalker_Mode", "Change Orbwalker", true).SetValue(false));
+            OrbwalkerMenu.AddItem(new MenuItem("Orbwalker_Mode", "Change to Common Orbwalker", true).SetValue(false));
             menu.AddSubMenu(OrbwalkerMenu);
             ChooseOrbwalker(menu.Item("Orbwalker_Mode", true).GetValue<bool>());
 
