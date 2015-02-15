@@ -45,6 +45,7 @@ namespace xSaliceReligionAIO.Champions
                 key.AddItem(new MenuItem("HarassActiveT", "Harass (toggle)!", true).SetValue(new KeyBind("N".ToCharArray()[0], KeyBindType.Toggle)));
                 key.AddItem(new MenuItem("LaneClearActive", "Farm!", true).SetValue(new KeyBind("V".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("Misc_QE_Mouse", "QE to Nearest Target To Mouse", true).SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
+                key.AddItem(new MenuItem("Misc_QE_Mouse2", "QE to Mouse", true).SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("forceR", "Force R to best Target", true).SetValue(new KeyBind("R".ToCharArray()[0], KeyBindType.Press)));
                 //key.AddItem(new MenuItem("qAA", "Auto Q AAing target", true).SetValue(new KeyBind("I".ToCharArray()[0], KeyBindType.Toggle)));
                 //add to menu
@@ -488,6 +489,13 @@ namespace xSaliceReligionAIO.Champions
             if (menu.Item("Misc_QE_Mouse", true).GetValue<KeyBind>().Active)
             {
                 CastQeMouse();
+            }
+            if (menu.Item("Misc_QE_Mouse2", true).GetValue<KeyBind>().Active)
+            {
+                var startPos = Player.ServerPosition + Vector3.Normalize(Game.CursorPos - Player.ServerPosition) * (E.Range - 100);
+                Q.Cast(startPos, packets());
+                W.LastCastAttemptT = Environment.TickCount + 500;
+                _qe.LastCastAttemptT = Environment.TickCount;
             }
 
             SmartKs();
