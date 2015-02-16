@@ -319,7 +319,7 @@ namespace xSaliceReligionAIO
 
             if ((MyHero.ChampionName == "Katarina" || MyHero.ChampionName == "Velkoz") && delay < 400 && (R.IsReady() || MyHero.Spellbook.GetSpell(SpellSlot.R).State == SpellState.Surpressed))
             {
-                var target = TargetSelector.GetTarget(1500, TargetSelector.DamageType.Magical);
+                var target = TargetSelector.GetTarget(1200, TargetSelector.DamageType.Magical);
                 if(target != null)
                     delay = 400;
             }
