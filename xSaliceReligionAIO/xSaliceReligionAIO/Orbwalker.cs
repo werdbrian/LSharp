@@ -321,7 +321,7 @@ namespace xSaliceReligionAIO
             {
                 var target = TargetSelector.GetTarget(1500, TargetSelector.DamageType.Magical);
                 if(target != null)
-                    delay = 1200;
+                    delay = 400;
             }
             if (Environment.TickCount - _lastMovement < delay)
                 return;
