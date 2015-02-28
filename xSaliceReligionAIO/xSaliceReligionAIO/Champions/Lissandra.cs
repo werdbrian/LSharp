@@ -138,7 +138,7 @@ namespace xSaliceReligionAIO.Champions
             var damage = 0d;
 
             if (Q.IsReady())
-                damage += Player.GetSpellDamage(enemy, SpellSlot.Q);
+                damage += Player.GetSpellDamage(enemy, SpellSlot.Q)*2;
 
             if (W.IsReady())
                 damage += Player.GetSpellDamage(enemy, SpellSlot.W);
@@ -536,7 +536,7 @@ namespace xSaliceReligionAIO.Champions
             var unit = spell.SpellCaster.Name;
             var name = spell.SData.Name;
 
-            if (unit == ObjectManager.Player.Name && name == "LissandraEMissile")
+            if (unit == Player.Name && name == "LissandraEMissile")
             {
                 _eMissle = null;
                 _eCreated = false;
