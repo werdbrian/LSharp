@@ -49,6 +49,7 @@ namespace xSaliceReligionAIO.Champions
                 key.AddItem(new MenuItem("HarassActiveT", "Harass (toggle)!", true).SetValue(new KeyBind("Y".ToCharArray()[0], KeyBindType.Toggle)));
                 key.AddItem(new MenuItem("stunMelles", "Stun Enemy Melle Range", true).SetValue(new KeyBind("M".ToCharArray()[0], KeyBindType.Toggle)));
                 key.AddItem(new MenuItem("stunTowers", "Stun Enemy under Tower", true).SetValue(new KeyBind("J".ToCharArray()[0], KeyBindType.Toggle)));
+                key.AddItem(new MenuItem("alwaysR", "Always Cast R", true).SetValue(new KeyBind("H".ToCharArray()[0], KeyBindType.Toggle)));
                 key.AddItem(new MenuItem("LastHitQQ", "Last hit with Q", true).SetValue(new KeyBind("A".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("LaneClearActive", "Farm!", true).SetValue(new KeyBind("Z".ToCharArray()[0], KeyBindType.Press)));
                 menu.AddSubMenu(key);
@@ -240,6 +241,12 @@ namespace xSaliceReligionAIO.Champions
 
         private void CastR(Obj_AI_Hero target)
         {
+            if (menu.Item("alwaysR", true).GetValue<KeyBind>().Active)
+            {
+                R.Cast(target, packets());
+                return;
+            }
+
             if (GetComboDamage(target) > target.Health + 20)
             {
                 R.Cast(target, packets());
@@ -334,6 +341,9 @@ namespace xSaliceReligionAIO.Champions
         {
             var target = TargetSelector.GetTarget(1500, TargetSelector.DamageType.Magical);
             var distance = menu.Item("gapD", true).GetValue<Slider>().Value;
+
+            if (!target.IsValidTarget(1500))
+                return;
 
             if (Player.Distance(target.ServerPosition) >= distance && target.IsValidTarget(E.Range) && !_eCreated && E.GetPrediction(target).Hitchance >= HitChance.Medium && E.IsReady())
             {
