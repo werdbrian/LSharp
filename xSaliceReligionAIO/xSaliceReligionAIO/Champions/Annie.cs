@@ -507,7 +507,6 @@ namespace xSaliceReligionAIO.Champions
             if (sender == null || !sender.IsValid || !sender.Name.Equals("Tibbers"))
                 return;
 
-            Game.PrintChat("SALICE SUMMONS TIBBERSSSS");
             Tibbers = (Obj_AI_Base)sender;
         }
 
