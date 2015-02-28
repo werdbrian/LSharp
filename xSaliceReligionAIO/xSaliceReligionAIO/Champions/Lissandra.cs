@@ -107,6 +107,7 @@ namespace xSaliceReligionAIO.Champions
                 drawing.AddItem(new MenuItem("WRange", "W range", true).SetValue(new Circle(true, Color.FromArgb(100, 255, 0, 255))));
                 drawing.AddItem(new MenuItem("ERange", "E range", true).SetValue(new Circle(false, Color.FromArgb(100, 255, 0, 255))));
                 drawing.AddItem(new MenuItem("RRange", "R range", true).SetValue(new Circle(false, Color.FromArgb(100, 255, 0, 255))));
+                drawing.AddItem(new MenuItem("rMode", "Draw R Mode", true).SetValue(true));
 
                 MenuItem drawComboDamageMenu = new MenuItem("Draw_ComboDamage", "Draw Combo Damage", true).SetValue(true);
                 MenuItem drawFill = new MenuItem("Draw_Fill", "Draw Combo Damage Fill", true).SetValue(new Circle(true, Color.FromArgb(90, 255, 169, 4)));
@@ -481,6 +482,15 @@ namespace xSaliceReligionAIO.Champions
             {
                 Render.Circle.DrawCircle(Player.Position, Q2.Range, Color.Aquamarine);
             }
+
+            if (menu.Item("rMode", true).GetValue<bool>())
+            {
+                var wts = Drawing.WorldToScreen(Player.Position);
+
+                Drawing.DrawText(wts[0], wts[1], Color.White,
+                    menu.Item("alwaysR", true).GetValue<KeyBind>().Active ? "Always R On" : "Always R Off");
+            }
+
         }
 
         protected override void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
