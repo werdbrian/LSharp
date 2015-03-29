@@ -12,14 +12,14 @@ namespace xSaliceReligionAIO
         protected Champion()
         {
             //Events
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnGameUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
             Interrupter2.OnInterruptableTarget += Interrupter_OnPosibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
             GameObject.OnCreate += GameObject_OnCreate;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
-            Game.OnGameSendPacket += Game_OnSendPacket;
-            Game.OnGameProcessPacket += Game_OnGameProcessPacket;
+            Game.OnSendPacket += Game_OnSendPacket;
+            Game.OnProcessPacket += Game_OnGameProcessPacket;
             GameObject.OnDelete += GameObject_OnDelete;
             Obj_AI_Base.OnIssueOrder += ObjAiHeroOnOnIssueOrder;
             Spellbook.OnUpdateChargedSpell += Spellbook_OnUpdateChargedSpell;
