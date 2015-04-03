@@ -304,7 +304,7 @@ namespace xSaliceReligionAIO
             }
             if (!CanMove() || !IsAllowedToMove())
                 return;
-            if (MyHero.IsMelee() && target != null && target.Distance(MyHero) < GetAutoAttackRange(MyHero, target) &&
+            if (MyHero.IsMelee() && target != null && target.Distance(MyHero.Position) < GetAutoAttackRange(MyHero, target) &&
                 Menu.Item("orb_Melee_Prediction").GetValue<bool>() && target is Obj_AI_Hero && Game.CursorPos.Distance(target.Position) < 300)
             {
                 _movementPrediction.Delay = MyHero.BasicAttack.SpellCastTime;
