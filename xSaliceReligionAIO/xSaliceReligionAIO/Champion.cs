@@ -114,7 +114,7 @@ namespace xSaliceReligionAIO
 
             menu.AddToMainMenu();
 
-            try
+            /*try
             {
                 if (Activator.CreateInstance(null, "xSaliceReligionAIO.Champions." + Player.ChampionName) != null)
                 {
@@ -124,7 +124,8 @@ namespace xSaliceReligionAIO
             catch
             {
                 Game.PrintChat("xSalice's Religion => {0} Not Support !", Player.ChampionName);
-            }
+            }*/
+            new PluginLoader();
         }
 
         private void ChooseOrbwalker(bool mode)
