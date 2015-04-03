@@ -155,7 +155,7 @@ namespace xSaliceReligionAIO
 
         protected void Use_DFG(Obj_AI_Hero target)
         {
-            if (target != null && Player.Distance(target) < 750 && Items.CanUseItem(Dfg.Id))
+            if (target != null && Player.Distance(target.Position) < 750 && Items.CanUseItem(Dfg.Id))
                 Items.UseItem(Dfg.Id, target);
         }
 
