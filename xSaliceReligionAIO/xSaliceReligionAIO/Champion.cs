@@ -44,7 +44,7 @@ namespace xSaliceReligionAIO
         }
 
         //Orbwalker instance
-        private Orbwalking.Orbwalker _orbwalker;
+        protected static Orbwalking.Orbwalker Orbwalker;
 
         //Player instance
         protected readonly Obj_AI_Hero Player = ObjectManager.Player;
@@ -103,7 +103,7 @@ namespace xSaliceReligionAIO
             menu.AddSubMenu(targetSelectorMenu);
 
             //Orbwalker submenu
-            OrbwalkerMenu.AddItem(new MenuItem("Orbwalker_Mode", "Change to Common Orbwalker", true).SetValue(false));
+            OrbwalkerMenu.AddItem(new MenuItem("Orbwalker_Mode", "Change to Common Orbwalker", true).SetValue(true));
             menu.AddSubMenu(OrbwalkerMenu);
             ChooseOrbwalker(menu.Item("Orbwalker_Mode", true).GetValue<bool>());
 
@@ -114,17 +114,6 @@ namespace xSaliceReligionAIO
 
             menu.AddToMainMenu();
 
-            /*try
-            {
-                if (Activator.CreateInstance(null, "xSaliceReligionAIO.Champions." + Player.ChampionName) != null)
-                {
-                    Game.PrintChat("<font color = \"#FFB6C1\">xSalice's " + Player.ChampionName + " Loaded!</font>");
-                }
-            }
-            catch
-            {
-                Game.PrintChat("xSalice's Religion => {0} Not Support !", Player.ChampionName);
-            }*/
             new PluginLoader();
         }
 
@@ -139,7 +128,7 @@ namespace xSaliceReligionAIO
 
             if (mode)
             {
-                _orbwalker = new Orbwalking.Orbwalker(OrbwalkerMenu);
+                Orbwalker = new Orbwalking.Orbwalker(OrbwalkerMenu);
                 Game.PrintChat("Regular Orbwalker Loaded");
             }
             else
@@ -443,7 +432,7 @@ namespace xSaliceReligionAIO
 
         protected bool HasMana(string source)
         {
-            if (Player.ManaPercentage() > menu.Item(source + "_Manamanager", true).GetValue<Slider>().Value)
+            if (Player.ManaPercent > menu.Item(source + "_Manamanager", true).GetValue<Slider>().Value)
                 return true;
             return false;
         }

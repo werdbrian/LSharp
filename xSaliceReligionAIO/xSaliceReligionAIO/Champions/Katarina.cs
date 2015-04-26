@@ -742,11 +742,22 @@ namespace xSaliceReligionAIO.Champions
 
             SmartKs();
 
-            if ((Player.IsChannelingImportantSpell() || Player.HasBuff("katarinarsound",true)))
+            if (Player.IsChannelingImportantSpell() || Player.HasBuff("katarinarsound", true) || Player.HasBuff("KatarinaR"))
             {
-                //Game.PrintChat("RAWR");
+                if (menu.Item("Orbwalker_Mode", true).GetValue<bool>())
+                {
+                    Orbwalker.SetAttack(false);
+                    Orbwalker.SetMovement(false);
+                }
+
                 ShouldCancel();
                 return;
+            }
+
+            if (menu.Item("Orbwalker_Mode", true).GetValue<bool>())
+            {
+                Orbwalker.SetAttack(true);
+                Orbwalker.SetMovement(true);
             }
 
             if (menu.Item("Wardjump", true).GetValue<KeyBind>().Active)

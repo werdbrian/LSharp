@@ -318,7 +318,7 @@ namespace xSaliceReligionAIO.Champions
                     E.Cast();
             }
 
-            if (Player.ManaPercentage() < menu.Item("chargeMana", true).GetValue<Slider>().Value || Player.IsRecalling() || !menu.Item("ChargeStun", true).GetValue<KeyBind>().Active)
+            if (Player.ManaPercent < menu.Item("chargeMana", true).GetValue<Slider>().Value || Player.IsRecalling() || !menu.Item("ChargeStun", true).GetValue<KeyBind>().Active)
                 return;
 
             var useW = menu.Item("W_charge", true).GetValue<bool>();

@@ -246,7 +246,7 @@ namespace xSaliceReligionAIO.Champions
             var minManaHarass = menu.Item("minMana", true).GetValue<Slider>().Value;
             Obj_AI_Hero eTar = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
 
-            if (source == "Harass" && Player.ManaPercentage() < minManaHarass)
+            if (source == "Harass" && Player.ManaPercent < minManaHarass)
                 return;
 
             if (target == null)
@@ -360,10 +360,10 @@ namespace xSaliceReligionAIO.Champions
             var eManaCombo = menu.Item("eManaCombo", true).GetValue<Slider>().Value;
             var eManaHarass = menu.Item("eManaHarass", true).GetValue<Slider>().Value;
 
-            if (source == "Combo" && Player.ManaPercentage() > eManaCombo)
+            if (source == "Combo" && Player.ManaPercent > eManaCombo)
                 return true;
 
-            if (source == "Harass" && Player.ManaPercentage() > eManaHarass)
+            if (source == "Harass" && Player.ManaPercent > eManaHarass)
                 return true;
 
             return false;

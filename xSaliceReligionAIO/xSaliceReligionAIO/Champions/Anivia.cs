@@ -650,7 +650,7 @@ namespace xSaliceReligionAIO.Champions
             //if(Player.Distance(obj.Position) < 300)
             //Game.PrintChat("OBJ: " + obj.Name);
 
-            if (obj.Type != GameObjectType.obj_GeneralParticleEmmiter || Player.Distance(obj.Position) > 1500)
+            if (obj.Type != GameObjectType.obj_GeneralParticleEmitter || Player.Distance(obj.Position) > 1500)
                 return;
 
             //Q
@@ -672,7 +672,7 @@ namespace xSaliceReligionAIO.Champions
 
         protected override void GameObject_OnDelete(GameObject obj, EventArgs args)
         {
-            if (obj.Type != GameObjectType.obj_GeneralParticleEmmiter || Player.Distance(obj.Position) > 1500)
+            if (obj.Type != GameObjectType.obj_GeneralParticleEmitter || Player.Distance(obj.Position) > 1500)
                 return;
 
             //Q
