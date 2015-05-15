@@ -24,6 +24,7 @@ namespace xSaliceResurrected
             Spellbook.OnUpdateChargedSpell += Spellbook_OnUpdateChargedSpellEvent;
             Orbwalking.AfterAttack += AfterAttackEvent;
             Orbwalking.BeforeAttack += BeforeAttackEvent;
+            Orbwalking.OnAttack += onAttack;
         }
 
         public Champion(bool load)
@@ -184,6 +185,11 @@ namespace xSaliceResurrected
         protected virtual void BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
         {
             //for champ use
+        }
+
+        protected virtual void onAttack(AttackableUnit unit, AttackableUnit target)
+        {
+            
         }
 
         private void ObjAiHeroOnOnIssueOrderEvent(Obj_AI_Base sender, GameObjectIssueOrderEventArgs args)

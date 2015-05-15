@@ -66,7 +66,7 @@ namespace xSaliceResurrected.Mid
 
                 var qMenu = new Menu("QSpell", "QSpell");
                 {
-                    qMenu.AddItem(new MenuItem("qOutRange", "Only Use When target out of range", true).SetValue(false));
+                    qMenu.AddItem(new MenuItem("qOutRange", "Only Use When target out of range", true).SetValue(true));
                     spell.AddSubMenu(qMenu);
                 }
                 //W Menu
@@ -334,6 +334,10 @@ namespace xSaliceResurrected.Mid
                 if (Utils.TickCount - E.LastCastAttemptT < 0)
                     Q2.Cast(Game.CursorPos);
             }
+
+            if (args.SData.Name == "AzirW")
+            {
+            }
         }
 
         private void Escape()
@@ -489,22 +493,22 @@ namespace xSaliceResurrected.Mid
 
         private void CastW(Obj_AI_Hero target)
         {
-            if (target == null)
+            if (target == null || Player.Distance(Prediction.GetPrediction(target, W.Delay).UnitPosition, true) < W2.RangeSqr)
                 return;
 
-            if ((Q.IsReady() || QSpell.State == SpellState.Surpressed) || Player.Distance(Prediction.GetPrediction(target, W.Delay).UnitPosition, true) < W2.RangeSqr)
+            if (Q.IsReady() || QSpell.State == SpellState.Surpressed)
             {
-                var vec = Player.Distance(target, true) > W.RangeSqr
-                    ? Player.Position.To2D().Extend(target.Position.To2D(), W.Range)
-                    : Prediction.GetPrediction(target, W.Delay).UnitPosition.To2D();
-                W.Cast(vec);
+                W.Cast(Player.Position.To2D().Extend(target.Position.To2D(), W.Range));
             }
         }
 
-        protected override void BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
+        protected override void onAttack(AttackableUnit unit, AttackableUnit target)
         {
-            if (menu.Item("ComboActive", true).GetValue<KeyBind>().Active)
-                args.Process = !(!(Q.IsReady() || QSpell.State == SpellState.Surpressed) && W.IsReady() && !AzirManager.InSoldierAttackRange(args.Target));
+            if (!menu.Item("ComboActive", true).GetValue<KeyBind>().Active || !W.IsReady())
+                return;
+
+            if (Player.Distance(Prediction.GetPrediction((Obj_AI_Hero) target, W.Delay).UnitPosition, true) < W2.RangeSqr)
+                W.Cast(Prediction.GetPrediction((Obj_AI_Hero) target, W.Delay).UnitPosition.To2D());
         }
 
         private void CastQ(Obj_AI_Hero target, string source)
@@ -565,7 +569,7 @@ namespace xSaliceResurrected.Mid
             if (!menu.Item("qOutRange", true).GetValue<bool>())
                 return true;
 
-            if (target.Distance(slave.Position) > 390)
+            if (!AzirManager.InSoldierAttackRange(target))
                 return true;
 
             if (Player.GetSpellDamage(target, SpellSlot.Q) > target.Health + 10)
