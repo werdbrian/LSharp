@@ -290,7 +290,7 @@ namespace xSaliceResurrected.ADC
 
         private void Cast_W(Obj_AI_Hero target)
         {
-            if (menu.Item("W_Always", true).GetValue<bool>())
+            if (menu.Item("W_Always", true).GetValue<bool>() && Player.Distance(target) < Q.Range)
                 W.Cast();
 
             if (target.HasBuff("urgotcorrosivedebuff", true))
