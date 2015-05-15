@@ -27,7 +27,7 @@ namespace xSaliceResurrected.Mid
             SpellManager.Q = new Spell(SpellSlot.Q, 900);
             SpellManager.Q2 = new Spell(SpellSlot.Q, 2000);
             SpellManager.W = new Spell(SpellSlot.W, 450);
-            SpellManager.W2 = new Spell(SpellSlot.W, 625);
+            SpellManager.W2 = new Spell(SpellSlot.W, 575);
             SpellManager.E = new Spell(SpellSlot.E, 2000);
             SpellManager.R = new Spell(SpellSlot.R, 450);
 
