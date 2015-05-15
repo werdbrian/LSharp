@@ -30,7 +30,7 @@ namespace xSaliceResurrected.Managers
 
         private static bool InSoldierAttackRange(AttackableUnit target)
         {
-            return Soilders.Count(obj => obj.Position.Distance(target.Position) < 350 && MyHero.Distance(target) < 1000) > 0;
+            return Soilders.Count(obj => obj.Position.Distance(target.Position) < 350 && MyHero.Distance(target) < 1000 && !obj.IsMoving) > 0;
         }
 
         private static float GetAutoAttackRange(Obj_AI_Base source = null, AttackableUnit target = null)

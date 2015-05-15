@@ -333,6 +333,12 @@ namespace xSaliceResurrected.Mid
                 if (Utils.TickCount - E.LastCastAttemptT < 0)
                     Q2.Cast(Game.CursorPos);
             }
+
+            if (args.SData.Name == "AzirW")
+            {
+                Utility.DelayAction.Add(250, Orbwalking.ResetAutoAttackTimer);
+                Console.WriteLine("yay");
+            }
         }
 
         private void Escape()
