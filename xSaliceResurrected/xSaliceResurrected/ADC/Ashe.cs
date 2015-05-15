@@ -193,14 +193,14 @@ namespace xSaliceResurrected.ADC
 
                 if (useR && dmg > target.Health && Player.Distance(target) > menu.Item("R_Min_Range", true).GetValue<Slider>().Value)
                     SpellCastManager.CastBasicSkillShot(R, R.Range, TargetSelector.DamageType.Physical, HitChanceManager.GetRHitChance(source));
-            }
 
-            if (useQ && Q.IsReady())
-            {
-                var qMin = menu.Item("Q_Min_Stack", true).GetValue<Slider>().Value;
+                if (Q.IsReady() && Player.Distance(target) < 550)
+                {
+                    var qMin = menu.Item("Q_Min_Stack", true).GetValue<Slider>().Value;
 
-                if (qMin <= QStacks)
-                    Q.Cast();
+                    if (qMin <= QStacks)
+                        Q.Cast();
+                }
             }
 
             if (useW && W.IsReady())
@@ -223,6 +223,21 @@ namespace xSaliceResurrected.ADC
                 }
             }
             
+        }
+
+        protected override void AfterAttack(AttackableUnit unit, AttackableUnit target)
+        {
+            if ((menu.Item("UseQCombo", true).GetValue<bool>() && menu.Item("ComboActive", true).GetValue<KeyBind>().Active) || 
+                (menu.Item("HarassActive", true).GetValue<KeyBind>().Active && menu.Item("UseQHarass", true).GetValue<bool>()))
+            {
+                if (Q.IsReady())
+                {
+                    var qMin = menu.Item("Q_Min_Stack", true).GetValue<Slider>().Value;
+
+                    if (qMin <= QStacks)
+                        Q.Cast();
+                }
+            }
         }
 
         private int QStacks
