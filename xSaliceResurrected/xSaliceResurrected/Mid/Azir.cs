@@ -27,7 +27,7 @@ namespace xSaliceResurrected.Mid
             SpellManager.Q = new Spell(SpellSlot.Q, 900);
             SpellManager.Q2 = new Spell(SpellSlot.Q, 2000);
             SpellManager.W = new Spell(SpellSlot.W, 450);
-            SpellManager.W = new Spell(SpellSlot.W, 625);
+            SpellManager.W2 = new Spell(SpellSlot.W, 625);
             SpellManager.E = new Spell(SpellSlot.E, 2000);
             SpellManager.R = new Spell(SpellSlot.R, 450);
 
@@ -495,6 +495,9 @@ namespace xSaliceResurrected.Mid
 
         private void CastW(Obj_AI_Hero target)
         {
+            if (target == null)
+                return;
+
             if ((Q.IsReady() || QSpell.State == SpellState.Surpressed) || Player.Distance(Prediction.GetPrediction(target, W.Delay).UnitPosition, true) < W2.RangeSqr)
             {
                 var vec = Player.Distance(target, true) > W.RangeSqr
