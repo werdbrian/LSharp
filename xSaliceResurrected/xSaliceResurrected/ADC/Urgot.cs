@@ -49,6 +49,7 @@ namespace xSaliceResurrected.ADC
                 var wMenu = new Menu("WMenu", "WMenu");
                 {
                     wMenu.AddItem(new MenuItem("W_If_HP", "W If HP <= ", true).SetValue(new Slider(50)));
+                    wMenu.AddItem(new MenuItem("W_Always", "Always W At start Of Combo", true).SetValue(false));
                     spellMenu.AddSubMenu(wMenu);
                 }
 
@@ -230,8 +231,10 @@ namespace xSaliceResurrected.ADC
             var useQ = menu.Item("UseQFarm", true).GetValue<bool>();
             var useE = menu.Item("UseEFarm", true).GetValue<bool>();
 
-            if (useQ)
-                SpellCastManager.CastBasicFarm(Q);
+            var minion = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range, MinionTypes.All, MinionTeam.NotAlly);
+
+            if (useQ && minion.Count > 0)
+                Q.Cast(minion[0]);
             if (useE)
             {
                 var allMinionECount = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.NotAlly);
@@ -287,6 +290,9 @@ namespace xSaliceResurrected.ADC
 
         private void Cast_W(Obj_AI_Hero target)
         {
+            if (menu.Item("W_Always", true).GetValue<bool>())
+                W.Cast();
+
             if (target.HasBuff("urgotcorrosivedebuff", true))
                 W.Cast();
 
