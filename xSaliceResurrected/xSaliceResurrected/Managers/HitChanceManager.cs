@@ -13,7 +13,9 @@ namespace xSaliceResurrected.Managers
         public static Menu AddHitChanceMenuCombo(Boolean q, Boolean w, Boolean e, Boolean r)
         {
             _menuCombo = new Menu("Hitchance", "Hitchance");
-            
+
+            _menuCombo.AddItem(new MenuItem("ComboMovementCheck", "Only Cast When Enemy is moving(More Accurate)", true).SetValue(true));
+
             if(q)
                 _menuCombo.AddItem(new MenuItem("qHitCombo", "Q HitChance", true).SetValue(new StringList(new[] { "Low", "Med", "High", "Very High" }, 2)));
             if(w)
@@ -29,6 +31,8 @@ namespace xSaliceResurrected.Managers
         public static Menu AddHitChanceMenuHarass(Boolean q, Boolean w, Boolean e, Boolean r)
         {
             _menuHarass = new Menu("Hitchance", "Hitchance");
+
+            _menuHarass.AddItem(new MenuItem("HarassMovementCheck", "Only Cast When Enemy is moving(More Accurate)", true).SetValue(true));
 
             if (q)
                 _menuHarass.AddItem(new MenuItem("qHitHarass", "Q HitChance", true).SetValue(new StringList(new[] { "Low", "Med", "High", "Very High" }, 2)));
@@ -61,6 +65,10 @@ namespace xSaliceResurrected.Managers
             {
                 return MyHitChances[_menuCombo.Item("wHitCombo", true).GetValue<StringList>().SelectedIndex];
             }
+            else if (source == "Null")
+            {
+                return HitChance.Low;
+            }
             return MyHitChances[_menuHarass.Item("wHitHarass", true).GetValue<StringList>().SelectedIndex];
         }
 
@@ -70,6 +78,10 @@ namespace xSaliceResurrected.Managers
             {
                 return MyHitChances[_menuCombo.Item("eHitCombo", true).GetValue<StringList>().SelectedIndex];
             }
+            else if (source == "Null")
+            {
+                return HitChance.Low;
+            }
             return MyHitChances[_menuHarass.Item("eHitHarass", true).GetValue<StringList>().SelectedIndex];
         }
 
@@ -78,6 +90,10 @@ namespace xSaliceResurrected.Managers
             if (source == "Combo")
             {
                 return MyHitChances[_menuCombo.Item("rHitCombo", true).GetValue<StringList>().SelectedIndex];
+            }
+            else if (source == "Null")
+            {
+                return HitChance.Low;
             }
             return MyHitChances[_menuHarass.Item("rHitHarass", true).GetValue<StringList>().SelectedIndex];
         }

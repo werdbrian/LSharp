@@ -22,7 +22,7 @@ namespace xSaliceResurrected.Mid
             SpellManager.W = new Spell(SpellSlot.W, 650);
             SpellManager.R = new Spell(SpellSlot.R, 175);
 
-            SpellManager.Q.SetSkillshot(1200f, 250f, float.MaxValue, false, SkillshotType.SkillshotCircle);
+            SpellManager.Q.SetSkillshot(.25f, 250f, float.MaxValue, false, SkillshotType.SkillshotCircle);
             SpellManager.W.SetSkillshot(.25f, (float)(30 * 0.5), float.MaxValue, false, SkillshotType.SkillshotCone);
         }
 
@@ -172,8 +172,17 @@ namespace xSaliceResurrected.Mid
                 ItemManager.UseTargetted = true;
             }
 
-            if(useQ && Q.IsReady())
-                SpellCastManager.CastBasicSkillShot(Q, Q.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetQHitChance(source));
+            if (useQ && Q.IsReady())
+            {
+                var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
+                if (target.IsValidTarget(Q.Range))
+                {
+                    var pred = Prediction.GetPrediction(target, .5f);
+
+                    if (pred.Hitchance >= HitChanceManager.GetQHitChance(source) && target.IsMoving)
+                        Q.Cast(pred.UnitPosition);
+                }
+            }
             if(useW && W.IsReady())
                 SpellCastManager.CastBasicSkillShot(W, W.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetWHitChance(source));
 
