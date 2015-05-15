@@ -28,7 +28,7 @@ namespace xSaliceResurrected.Managers
             return dmg;
         }
 
-        private static bool InSoldierAttackRange(AttackableUnit target)
+        public static bool InSoldierAttackRange(AttackableUnit target)
         {
             return Soilders.Count(obj => obj.Position.Distance(target.Position) < 350 && MyHero.Distance(target) < 1000 && !obj.IsMoving) > 0;
         }

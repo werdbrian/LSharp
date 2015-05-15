@@ -507,6 +507,12 @@ namespace xSaliceResurrected.Mid
             }
         }
 
+        protected override void BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
+        {
+            if (menu.Item("ComboActive", true).GetValue<KeyBind>().Active)
+                args.Process = !(!(Q.IsReady() || QSpell.State == SpellState.Surpressed) && W.IsReady() && !AzirManager.InSoldierAttackRange(args.Target));
+        }
+
         private void CastQ(Obj_AI_Hero target, string source)
         {
             if (soilderCount() < 1)
