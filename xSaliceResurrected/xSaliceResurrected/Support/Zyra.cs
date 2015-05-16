@@ -29,7 +29,7 @@ namespace xSaliceResurrected.Support
 
             SpellManager.P.SetSkillshot(0.5f, 70f, 1400f, false, SkillshotType.SkillshotLine);
             SpellManager.Q.SetSkillshot(0.8f, 60f, float.MaxValue, false, SkillshotType.SkillshotCircle);
-            SpellManager.E.SetSkillshot(0.5f, 70f, 1400f, false, SkillshotType.SkillshotLine);
+            SpellManager.E.SetSkillshot(0.25f, 70f, 1400f, false, SkillshotType.SkillshotLine);
             SpellManager.R.SetSkillshot(0.1f, 400f, float.MaxValue, false, SkillshotType.SkillshotCircle);
         }
 
@@ -63,6 +63,7 @@ namespace xSaliceResurrected.Support
                 harass.AddItem(new MenuItem("UseQHarass", "Use Q", true).SetValue(true));
                 harass.AddItem(new MenuItem("UseWHarass", "Use W", true).SetValue(false));
                 harass.AddItem(new MenuItem("UseEHarass", "Use E", true).SetValue(true));
+                harass.AddItem(new MenuItem("disableAA", "Disable AA", true).SetValue(true));
                 combo.AddSubMenu(HitChanceManager.AddHitChanceMenuCombo(true, false, true, false));
                 ManaManager.AddManaManagertoMenu(harass, "Harass", 30);
                 //add to menu
@@ -271,7 +272,7 @@ namespace xSaliceResurrected.Support
 
             if (GetComboDamage(target) > target.Health - 150 && pred.Hitchance >= HitChance.High)
             {
-                R.Cast(target);
+                R.Cast(pred.UnitPosition);
             }
         }
 
@@ -380,6 +381,8 @@ namespace xSaliceResurrected.Support
                     Q.Cast(target);
             }
 
+            Orbwalker.SetAttack(true);
+
             if (menu.Item("smartKS", true).GetValue<bool>())
                 CheckKs();
 
@@ -405,7 +408,12 @@ namespace xSaliceResurrected.Support
                     Farm();
 
                 if (menu.Item("HarassActive", true).GetValue<KeyBind>().Active)
+                {
+                    if (menu.Item("disableAA", true).GetValue<bool>())
+                        Orbwalker.SetAttack(false);
+
                     Harass();
+                }
 
                 if (menu.Item("HarassActiveT", true).GetValue<KeyBind>().Active)
                     Harass();

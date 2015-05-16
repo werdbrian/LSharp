@@ -207,7 +207,10 @@ namespace xSaliceResurrected.ADC
             if (useE && E.IsReady())
                 SpellCastManager.CastBasicSkillShot(E, E.Range, TargetSelector.DamageType.Physical, HitChanceManager.GetEHitChance(source));
             if (useQ && Q.IsReady())
-                Cast_Q(target, source);
+            {
+                if(Player.Distance(target) > E.Range || !E.IsReady())
+                    Cast_Q(target, source);
+            }
         }
 
         protected override void AfterAttack(AttackableUnit unit, AttackableUnit mytarget)

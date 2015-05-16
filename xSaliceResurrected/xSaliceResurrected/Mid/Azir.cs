@@ -30,6 +30,7 @@ namespace xSaliceResurrected.Mid
             SpellManager.W2 = new Spell(SpellSlot.W, 600);
             SpellManager.E = new Spell(SpellSlot.E, 2000);
             SpellManager.R = new Spell(SpellSlot.R, 450);
+            SpellManager.R2 = new Spell(SpellSlot.R);
 
             SpellManager.Q.SetSkillshot(0, 80, 1600, false, SkillshotType.SkillshotCircle);
             SpellManager.Q2.SetSkillshot(0, 80, 1600, false, SkillshotType.SkillshotCircle);
@@ -247,7 +248,7 @@ namespace xSaliceResurrected.Mid
                 R.Cast(qTarget);
 
             //W
-            if (useW && W.IsReady())
+            if (useW && W.IsReady() && useQ)
             {
                 CastW(qTarget);
             }
@@ -328,15 +329,16 @@ namespace xSaliceResurrected.Mid
             if (!unit.IsMe)
                 return;
 
+            if (args.SData.Name == "AzirQ")
+            {
+                Q.LastCastAttemptT = Utils.TickCount + 250;
+                _rVec = Player.Position;
+            }
 
             if (args.SData.Name == "AzirE" && (Q.IsReady() || QSpell.State == SpellState.Surpressed))
             {
                 if (Utils.TickCount - E.LastCastAttemptT < 0)
                     Q2.Cast(Game.CursorPos);
-            }
-
-            if (args.SData.Name == "AzirW")
-            {
             }
         }
 
@@ -377,7 +379,7 @@ namespace xSaliceResurrected.Mid
 
         private void CastQe(Obj_AI_Hero target, string source)
         {
-            if (!target.IsValid)
+            if (target == null)
                 return;
 
             if (soilderCount() > 0)
@@ -385,6 +387,9 @@ namespace xSaliceResurrected.Mid
                 if ((Q.IsReady() || QSpell.State == SpellState.Surpressed) && E.IsReady())
                 {
                     var slaves = AzirManager.Soilders.ToList();
+
+                    if (slaves.Count == 0)
+                        return;
 
                     foreach (var slave in slaves)
                     {
@@ -432,63 +437,7 @@ namespace xSaliceResurrected.Mid
             if (target == null)
                 return;
 
-            if (soilderCount() > 0)
-            {
-                if ((Q.IsReady() || QSpell.State == SpellState.Surpressed) && E.IsReady())
-                {
-                    var slaves = AzirManager.Soilders.ToList();
-
-                    foreach (var slave in slaves)
-                    {
-                        if (Player.Distance(target.Position) < qRange && slave.IsValid)
-                        {
-                            var qPred = Util.GetP(slave.Position, Q, target, true);
-                            var vec = target.ServerPosition - Player.ServerPosition;
-                            var castBehind = qPred.CastPosition + Vector3.Normalize(vec) * 75;
-                            _rVec = qPred.CastPosition - Vector3.Normalize(vec) * 300;
-
-                            if (Q.IsReady() && (E.IsReady() || ESpell.State == SpellState.Surpressed) && R.IsReady() && qPred.Hitchance >= HitChanceManager.GetQHitChance("Combo"))
-                            {
-                                Q.Cast(castBehind);
-                                E.Cast(slave.Position);
-                                E.LastCastAttemptT = Environment.TickCount;
-                            }
-                        }
-                    }
-                }
-                if (R.IsReady())
-                {
-                    if (Player.Distance(target.Position) < 200 && Environment.TickCount - E.LastCastAttemptT > Game.Ping + 150)
-                    {
-                        R.Cast(_rVec);
-                    }
-                }
-            }
-            else if (W.IsReady())
-            {
-                Vector3 wVec = Player.ServerPosition + Vector3.Normalize(target.ServerPosition - Player.ServerPosition) * W.Range;
-
-                var qPred = Util.GetP(wVec, Q, target, true);
-
-                if ((Q.IsReady() || QSpell.State == SpellState.Surpressed) && (E.IsReady() || ESpell.State == SpellState.Surpressed) && getNearestSoilderToEnemy(target) != null
-                    && R.IsReady() && Player.Distance(target.Position) < qRange && qPred.Hitchance >= HitChanceManager.GetQHitChance("Combo"))
-                {
-                    var vec = target.ServerPosition - Player.ServerPosition;
-                    var castBehind = qPred.CastPosition + Vector3.Normalize(vec) * 75;
-                    _rVec = Player.Position;
-
-                    W.Cast(wVec);
-                    Q.Cast(castBehind);
-                    E.Cast(getNearestSoilderToEnemy(target).Position);
-                }
-                if (R.IsReady())
-                {
-                    if (Player.Distance(target.Position) < 200 && Environment.TickCount - E.LastCastAttemptT > Game.Ping + 150)
-                    {
-                        R.Cast(_rVec);
-                    }
-                }
-            }
+            CastQe(target, "Combo");
         }
 
         private void CastW(Obj_AI_Hero target)
@@ -507,8 +456,12 @@ namespace xSaliceResurrected.Mid
             if (!menu.Item("ComboActive", true).GetValue<KeyBind>().Active || !W.IsReady())
                 return;
 
-            if (Player.Distance(Prediction.GetPrediction((Obj_AI_Hero) target, W.Delay).UnitPosition, true) < W2.RangeSqr)
-                W.Cast(Prediction.GetPrediction((Obj_AI_Hero) target, W.Delay).UnitPosition.To2D());
+            if (unit is Obj_AI_Hero)
+            {
+                if (Player.Distance(Prediction.GetPrediction((Obj_AI_Hero) target, W.Delay).UnitPosition, true) <
+                    W2.RangeSqr)
+                    W.Cast(Prediction.GetPrediction((Obj_AI_Hero) target, W.Delay).UnitPosition.To2D());
+            }
         }
 
         private void CastQ(Obj_AI_Hero target, string source)
@@ -752,8 +705,14 @@ namespace xSaliceResurrected.Mid
                 Orbwalking.Orbwalk(null, Game.CursorPos);
 
                 _insecTarget = TargetSelector.GetSelectedTarget();
+
                 if (_insecTarget != null)
+                {
+                    if (_insecTarget.HasBuffOfType(BuffType.Knockup) || _insecTarget.HasBuffOfType(BuffType.Knockback))
+                        R2.Cast(_rVec);
+
                     Insec();
+                }
             }
             else if (menu.Item("qeCombo", true).GetValue<KeyBind>().Active)
             {

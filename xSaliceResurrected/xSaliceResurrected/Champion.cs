@@ -122,7 +122,7 @@ namespace xSaliceResurrected
 
         private void Game_OnGameUpdateEvent(EventArgs args)
         {
-            if (LagManager.Enabled)
+            if (LagManager.Enabled && Player.ChampionName.ToLower() != "azir")
                 if (!LagManager.ReadyState)
                     return;
 

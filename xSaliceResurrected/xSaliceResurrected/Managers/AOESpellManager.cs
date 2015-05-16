@@ -69,7 +69,7 @@ namespace xSaliceResurrected.Managers
 
         private static void CastMec(Spell spell, int minHit)
         {
-            if (!spell.IsReady())
+            if (!spell.IsReady() || ObjectManager.Player.HealthPercent <= 10)
                 return;
 
             foreach (var target in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget(spell.Range)))
@@ -82,7 +82,6 @@ namespace xSaliceResurrected.Managers
 
                 if (nearByEnemies >= minHit)
                 {
-                    Console.WriteLine("Hit Regular: " + nearByEnemies);
                     spell.Cast(target);
                     return;
                 }
@@ -91,7 +90,7 @@ namespace xSaliceResurrected.Managers
 
         private static void CastComboMec(Spell spell, int minHit)
         {
-            if (!spell.IsReady() || !E.IsReady())
+            if (!spell.IsReady() || !E.IsReady() || ObjectManager.Player.HealthPercent <= 10)
                 return;
 
             const int gateDis = 200;

@@ -22,7 +22,7 @@ namespace xSaliceResurrected.Mid
             SpellManager.W = new Spell(SpellSlot.W, 650);
             SpellManager.R = new Spell(SpellSlot.R, 175);
 
-            SpellManager.Q.SetSkillshot(.25f, 250f, float.MaxValue, false, SkillshotType.SkillshotCircle);
+            SpellManager.Q.SetSkillshot(.625f, 250f, float.MaxValue, false, SkillshotType.SkillshotCircle);
             SpellManager.W.SetSkillshot(.25f, (float)(30 * 0.5), float.MaxValue, false, SkillshotType.SkillshotCone);
         }
 
@@ -177,7 +177,7 @@ namespace xSaliceResurrected.Mid
                 var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
                 if (target.IsValidTarget(Q.Range))
                 {
-                    var pred = Prediction.GetPrediction(target, .5f);
+                    var pred = Prediction.GetPrediction(target, 625);
 
                     if (pred.Hitchance >= HitChanceManager.GetQHitChance(source) && target.IsMoving)
                         Q.Cast(pred.UnitPosition);
