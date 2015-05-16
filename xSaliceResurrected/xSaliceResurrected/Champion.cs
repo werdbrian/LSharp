@@ -22,6 +22,7 @@ namespace xSaliceResurrected
             GameObject.OnDelete += GameObject_OnDeleteEvent;
             Obj_AI_Base.OnIssueOrder += ObjAiHeroOnOnIssueOrderEvent;
             Spellbook.OnUpdateChargedSpell += Spellbook_OnUpdateChargedSpellEvent;
+            Spellbook.OnCastSpell += SpellbookOnOnCastSpell;
             Orbwalking.AfterAttack += AfterAttackEvent;
             Orbwalking.BeforeAttack += BeforeAttackEvent;
             Orbwalking.OnAttack += onAttack;
@@ -211,5 +212,11 @@ namespace xSaliceResurrected
         {
             //for champ use
         }
+
+        protected virtual void SpellbookOnOnCastSpell(Spellbook sender, SpellbookCastSpellEventArgs args)
+        {
+            //for Champion used
+        }
+
     }
 }

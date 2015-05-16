@@ -24,7 +24,7 @@ namespace xSaliceResurrected.Support
             SpellManager.P = new Spell(SpellSlot.Q, 1470);
             SpellManager.Q = new Spell(SpellSlot.Q, 800);
             SpellManager.W = new Spell(SpellSlot.W, 825);
-            SpellManager.E = new Spell(SpellSlot.E, 950);
+            SpellManager.E = new Spell(SpellSlot.E, 875);
             SpellManager.R = new Spell(SpellSlot.R, 700);
 
             SpellManager.P.SetSkillshot(0.5f, 70f, 1400f, false, SkillshotType.SkillshotLine);
