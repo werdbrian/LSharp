@@ -318,7 +318,9 @@ namespace xSaliceResurrected.ADC
                 return true;
 
             if (_hasBuff || Player.HasBuff("LucianPassiveBuff"))
+            {
                 return false;
+            }
 
             if (Environment.TickCount - Q.LastCastAttemptT < 500)
                 return false;
