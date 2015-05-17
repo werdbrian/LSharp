@@ -20,7 +20,7 @@ namespace xSaliceResurrected.ADC
         private void LoadSpells()
         {
             SpellManager.Q = new Spell(SpellSlot.Q, 650);
-            SpellManager.Q.SetTargetted(0.25f, float.MaxValue);
+            SpellManager.Q.SetSkillshot(0.3f, 65f, float.MaxValue, false, SkillshotType.SkillshotLine);
 
             SpellManager.QExtend = new Spell(SpellSlot.Q, 1150);
             SpellManager.QExtend.SetSkillshot(0.3f, 65f, float.MaxValue, true, SkillshotType.SkillshotLine);
@@ -237,7 +237,7 @@ namespace xSaliceResurrected.ADC
             var pred = QExtend.GetPrediction(target, true);
             var collisions = pred.CollisionObjects.Where(x => Player.Distance(x) < Q.Range).ToList();
 
-            if (!collisions.Any() || pred.Hitchance < HitChanceManager.GetQHitChance(source))
+            if (!collisions.Any() || Q.GetPrediction(target).Hitchance < HitChanceManager.GetQHitChance(source))
                 return;
 
             if (Q.Cast(collisions[0]) == Spell.CastStates.SuccessfullyCasted)
