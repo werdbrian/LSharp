@@ -20,10 +20,10 @@ namespace xSaliceResurrected.ADC
         private void LoadSpells()
         {
             SpellManager.Q = new Spell(SpellSlot.Q, 650);
-            SpellManager.Q.SetSkillshot(0.3f, 65f, float.MaxValue, false, SkillshotType.SkillshotLine);
+            SpellManager.Q.SetTargetted(0.25f, float.MaxValue);
 
-            SpellManager.QExtend = new Spell(SpellSlot.Q, 1150);
-            SpellManager.QExtend.SetSkillshot(0.3f, 65f, float.MaxValue, true, SkillshotType.SkillshotLine);
+            SpellManager.QExtend = new Spell(SpellSlot.Q, 1100);
+            SpellManager.QExtend.SetSkillshot(0.35f, 25f, float.MaxValue, false, SkillshotType.SkillshotLine);
 
             SpellManager.W = new Spell(SpellSlot.W, 1000);
             SpellManager.W.SetSkillshot(0.3f, 80, 1600, true, SkillshotType.SkillshotLine);
@@ -53,7 +53,7 @@ namespace xSaliceResurrected.ADC
                 combo.AddItem(new MenuItem("UseWCombo", "Use W", true).SetValue(true));
                 combo.AddItem(new MenuItem("UseECombo", "Use E", true).SetValue(true));
                 combo.AddItem(new MenuItem("UseRCombo", "Use R", true).SetValue(true));
-                combo.AddSubMenu(HitChanceManager.AddHitChanceMenuCombo(true, true, false, false));
+                combo.AddSubMenu(HitChanceManager.AddHitChanceMenuCombo(false, true, false, false));
                 //add to menu
                 menu.AddSubMenu(combo);
             }
@@ -63,7 +63,7 @@ namespace xSaliceResurrected.ADC
                 harass.AddItem(new MenuItem("UseQHarass", "Use Q", true).SetValue(true));
                 harass.AddItem(new MenuItem("UseWHarass", "Use W", true).SetValue(false));
                 harass.AddItem(new MenuItem("UseEHarass", "Use E", true).SetValue(true));
-                harass.AddSubMenu(HitChanceManager.AddHitChanceMenuHarass(true, true, false, false));
+                harass.AddSubMenu(HitChanceManager.AddHitChanceMenuHarass(false, true, false, false));
                 ManaManager.AddManaManagertoMenu(harass, "Harass", 30);
                 //add to menu
                 menu.AddSubMenu(harass);
@@ -196,17 +196,23 @@ namespace xSaliceResurrected.ADC
                 }
             }
 
-            if (useQ)
-                Cast_Q(source);
-            if (useW)
+            _ticker++;
+            if (_ticker > 45)
+                _ticker = 0;
+
+            if (useQ && _ticker < 15)
+                Cast_Q();
+            if (useW && _ticker < 30)
                 Cast_W(source);
-            if (useE)
+            if (useE && _ticker == 45)
                 Cast_E();
             if (useR)
                 Cast_R();
         }
 
-        private void Cast_Q(string source, Obj_AI_Hero forceTarget = null)
+        private int _ticker;
+
+        private void Cast_Q(Obj_AI_Hero forceTarget = null)
         {
             if (!Q.IsReady() || !PassiveCheck())
                 return;
@@ -235,13 +241,24 @@ namespace xSaliceResurrected.ADC
                 return;
 
             var pred = QExtend.GetPrediction(target, true);
-            var collisions = pred.CollisionObjects.Where(x => Player.Distance(x) < Q.Range).ToList();
+            var collisions = MinionManager.GetMinions(Player.ServerPosition, Q.Range, MinionTypes.All, MinionTeam.NotAlly);
 
-            if (!collisions.Any() || Q.GetPrediction(target).Hitchance < HitChanceManager.GetQHitChance(source))
+            if (!collisions.Any() || !target.IsMoving)
                 return;
 
-            if (Q.Cast(collisions[0]) == Spell.CastStates.SuccessfullyCasted)
-                Q.LastCastAttemptT = Environment.TickCount;
+            foreach (var minion in collisions)
+            {
+                var poly = new Geometry.Polygon.Rectangle(Player.ServerPosition, Player.ServerPosition.Extend(minion.ServerPosition, QExtend.Range), QExtend.Width);
+
+                if (poly.IsInside(pred.UnitPosition))
+                {
+                    if (Q.Cast(minion) == Spell.CastStates.SuccessfullyCasted)
+                    {
+                        Q.LastCastAttemptT = Environment.TickCount;
+                        return;
+                    }
+                }
+            }
         }
 
         private void Cast_W(string source)
@@ -299,6 +316,9 @@ namespace xSaliceResurrected.ADC
             if (!menu.Item("CheckPassive", true).GetValue<bool>())
                 return true;
 
+            if (_hasBuff)
+                return false;
+
             if (Environment.TickCount - Q.LastCastAttemptT < 500)
                 return false;
 
@@ -308,10 +328,26 @@ namespace xSaliceResurrected.ADC
             if (Environment.TickCount - E.LastCastAttemptT < 500)
                 return false;
 
-            if (Player.HasBuff("LucianPassiveBuff"))
-                return false;
-
             return true;
+        }
+
+        private bool _hasBuff;
+        protected override void ObjAiBaseOnOnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
+        {
+            if (!sender.IsMe)
+                return;
+
+            if (args.Buff.DisplayName == "LucianPassiveBuff")
+                _hasBuff = true;
+        }
+
+        protected override void ObjAiBaseOnOnBuffRemove(Obj_AI_Base sender, Obj_AI_BaseBuffRemoveEventArgs args)
+        {
+            if (!sender.IsMe)
+                return;
+
+            if (args.Buff.DisplayName == "LucianPassiveBuff")
+                _hasBuff = false;
         }
 
         private void SmartKs()
@@ -324,7 +360,7 @@ namespace xSaliceResurrected.ADC
                 //Q
                 if (Q.IsKillable(target) && Player.Distance(target.Position) < QExtend.Range && Q.IsReady())
                 {
-                    Cast_Q("Null", target);
+                    Cast_Q(target);
                 }
                 //E
                 if (W.IsKillable(target) && Player.Distance(target.Position) < W.Range && W.IsReady())
@@ -349,7 +385,7 @@ namespace xSaliceResurrected.ADC
                 if (minion == null)
                     return;
 
-                Q.CastOnUnit(minion);
+                Q.Cast(minion);
             }
             if (useW)
             {
