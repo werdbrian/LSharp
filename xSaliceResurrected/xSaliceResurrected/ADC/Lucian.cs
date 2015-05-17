@@ -19,11 +19,11 @@ namespace xSaliceResurrected.ADC
 
         private void LoadSpells()
         {
-            SpellManager.Q = new Spell(SpellSlot.Q, 675);
+            SpellManager.Q = new Spell(SpellSlot.Q, 650);
             SpellManager.Q.SetTargetted(0.25f, float.MaxValue);
 
-            SpellManager.QExtend = new Spell(SpellSlot.Q, 1100);
-            SpellManager.QExtend.SetSkillshot(0.25f, 5f, float.MaxValue, true, SkillshotType.SkillshotLine);
+            SpellManager.QExtend = new Spell(SpellSlot.Q, 1150);
+            SpellManager.QExtend.SetSkillshot(0.3f, 65f, float.MaxValue, true, SkillshotType.SkillshotLine);
 
             SpellManager.W = new Spell(SpellSlot.W, 1000);
             SpellManager.W.SetSkillshot(0.3f, 80, 1600, true, SkillshotType.SkillshotLine);
