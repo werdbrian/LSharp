@@ -51,6 +51,10 @@ namespace xSaliceResurrected.Managers
 
         private static void Mec(EventArgs arg)
         {
+            if (LagManager.Enabled)
+                if (!LagManager.ReadyState)
+                    return;
+
             if (!_menu.Item("enabledAOE", true).GetValue<bool>())
                 return;
 

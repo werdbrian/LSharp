@@ -317,7 +317,7 @@ namespace xSaliceResurrected.ADC
             if (!menu.Item("CheckPassive", true).GetValue<bool>())
                 return true;
 
-            if (_hasBuff)
+            if (_hasBuff || Player.HasBuff("LucianPassiveBuff"))
                 return false;
 
             if (Environment.TickCount - Q.LastCastAttemptT < 500)

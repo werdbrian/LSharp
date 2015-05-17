@@ -27,8 +27,8 @@ namespace xSaliceResurrected
             Orbwalking.AfterAttack += AfterAttackEvent;
             Orbwalking.BeforeAttack += BeforeAttackEvent;
             Orbwalking.OnAttack += onAttack;
-            Obj_AI_Base.OnBuffAdd += ObjAiBaseOnOnBuffAdd;
-            Obj_AI_Base.OnBuffRemove += ObjAiBaseOnOnBuffRemove;
+            //Obj_AI_Base.OnBuffAdd += ObjAiBaseOnOnBuffAdd;
+            //Obj_AI_Base.OnBuffRemove += ObjAiBaseOnOnBuffRemove;
         }
 
         public Champion(bool load)
