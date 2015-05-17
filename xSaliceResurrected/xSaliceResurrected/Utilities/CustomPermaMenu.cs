@@ -16,10 +16,10 @@ namespace xSaliceResurrected.Utilities
         private static readonly HashSet<PermaMenu> MyPermaMenus = new HashSet<PermaMenu>();
 
         private static readonly Render.Sprite MySprite = new Render.Sprite(Resources.banner, Vector2.Zero);
-        private static readonly Render.Line MyLine = new Render.Line(Vector2.Zero, Vector2.Zero, 1, new ColorBGRA(0, 186, 250, 255));
-        private static readonly Render.Line MyLine2 = new Render.Line(Vector2.Zero, Vector2.Zero, 1, new ColorBGRA(0, 186, 250, 255));
-        private static readonly Render.Line MyLine3 = new Render.Line(Vector2.Zero, Vector2.Zero, 1, new ColorBGRA(0, 186, 250, 255));
-        private static readonly Render.Line MyLine4 = new Render.Line(Vector2.Zero, Vector2.Zero, 1, new ColorBGRA(0, 186, 250, 255));
+        private static readonly Render.Line MyLine = new Render.Line(Vector2.Zero, Vector2.Zero, 1, new ColorBGRA(209, 179, 40, 255));
+        private static readonly Render.Line MyLine2 = new Render.Line(Vector2.Zero, Vector2.Zero, 1, new ColorBGRA(209, 179, 40, 255));
+        private static readonly Render.Line MyLine3 = new Render.Line(Vector2.Zero, Vector2.Zero, 1, new ColorBGRA(209, 179, 40, 255));
+        private static readonly Render.Line MyLine4 = new Render.Line(Vector2.Zero, Vector2.Zero, 1, new ColorBGRA(209, 179, 40, 255));
 
         public CustomPermaMenu()
         {
@@ -58,7 +58,7 @@ namespace xSaliceResurrected.Utilities
 
                         if (Champion.menu.Item(obj.Source, true).GetValue<KeyBind>().Active)
                         {
-                            obj.RenderTxt.Color = new ColorBGRA(0, 186, 250, 255);
+                            obj.RenderTxt.Color = new ColorBGRA(209, 179, 40, 255);
                             obj.RenderTxt.text = obj.Text + "On";
                         }
                         else
@@ -74,7 +74,7 @@ namespace xSaliceResurrected.Utilities
             }
 
             //sprite
-            MySprite.X = _menuX - 10;
+            MySprite.X = _menuX - 12;
             MySprite.Y = _menuY - 35;
             MySprite.OnEndScene();
 
@@ -112,7 +112,7 @@ namespace xSaliceResurrected.Utilities
         {
             Source = source;
             Text = text;
-            RenderTxt = new Render.Text(0, 0, "text", 16, new ColorBGRA(0, 186, 250, 255), "monospace");
+            RenderTxt = new Render.Text(0, 0, "text", 16, new ColorBGRA(209, 179, 40, 255), "monospace");
             MenuItem = new MenuItem(text, text, true).SetValue(true);
         }
 

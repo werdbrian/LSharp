@@ -23,6 +23,7 @@ namespace xSaliceResurrected
             Obj_AI_Base.OnIssueOrder += ObjAiHeroOnOnIssueOrderEvent;
             Spellbook.OnUpdateChargedSpell += Spellbook_OnUpdateChargedSpellEvent;
             Spellbook.OnCastSpell += SpellbookOnOnCastSpell;
+            Spellbook.OnStopCast += SpellbookOnOnStopCast;
             Orbwalking.AfterAttack += AfterAttackEvent;
             Orbwalking.BeforeAttack += BeforeAttackEvent;
             Orbwalking.OnAttack += onAttack;
@@ -214,6 +215,11 @@ namespace xSaliceResurrected
         }
 
         protected virtual void SpellbookOnOnCastSpell(Spellbook sender, SpellbookCastSpellEventArgs args)
+        {
+            //for Champion used
+        }
+
+        protected virtual void SpellbookOnOnStopCast(Spellbook sender, SpellbookStopCastEventArgs args)
         {
             //for Champion used
         }
