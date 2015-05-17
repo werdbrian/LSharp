@@ -24,7 +24,7 @@ namespace xSaliceResurrected.ADC
             SpellManager.W = new Spell(SpellSlot.W, 800);
 
             SpellManager.E = new Spell(SpellSlot.E, 600);
-            SpellManager.E.SetSkillshot(.1f, (float)(45 * Math.PI / 180), 1500, false, SkillshotType.SkillshotCone);
+            SpellManager.E.SetSkillshot(.1f, 70, 1500, false, SkillshotType.SkillshotCircle);
 
             SpellManager.R = new Spell(SpellSlot.R, 1500);
             SpellManager.R.SetSkillshot(.2f, 50, 1500, true, SkillshotType.SkillshotLine);

@@ -5,6 +5,7 @@ using LeagueSharp.Common;
 using SharpDX;
 using xSaliceResurrected.Base;
 using xSaliceResurrected.Mid;
+using Color = System.Drawing.Color;
 
 namespace xSaliceResurrected.Managers
 {
@@ -79,13 +80,25 @@ namespace xSaliceResurrected.Managers
             foreach (var target in HeroManager.Enemies.Where(x => x.IsValidTarget(spell.Range)))
             {
                 var pred = spell.GetPrediction(target, true);
-                 Obj_AI_Hero target1 = target;
-                var nearByEnemies = spell.Collision || spell.Type == SkillshotType.SkillshotCircle ? 
-                    1 + HeroManager.Enemies.Where(x => x.NetworkId != target1.NetworkId && x.IsValidTarget(spell.Range + 200))
-                    .Count(x => pred.CastPosition.Distance(spell.GetPrediction(x, true).UnitPosition) < spell.Width + x.BoundingRadius) : pred.AoeTargetsHitCount;
+
+                var nearByEnemies = 1;
+
+                if (spell.Type == SkillshotType.SkillshotLine && spell.Collision)
+                {
+                    var poly = new Geometry.Polygon.Circle(pred.UnitPosition, spell.Width);
+
+                    nearByEnemies +=
+                        HeroManager.Enemies.Where(x => x.NetworkId != target.NetworkId)
+                            .Count(enemy => poly.IsInside(enemy.ServerPosition));
+                }
+                else
+                {
+                    nearByEnemies = pred.AoeTargetsHitCount;
+                }
 
                 if (nearByEnemies >= minHit)
                 {
+                    Console.WriteLine("Yes: " + nearByEnemies);
                     spell.Cast(target);
                     return;
                 }
@@ -102,20 +115,23 @@ namespace xSaliceResurrected.Managers
             foreach (var target in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget(spell.Range)))
             {
                 var tarPred = spell.GetPrediction(target, true);
-                Obj_AI_Hero target1 = target;
-                int nearByTargets = 1 + ObjectManager.Get<Obj_AI_Hero>().Where(x => x.NetworkId != target1.NetworkId && x.IsValidTarget(spell.Range + 200))
-                    .Count(x => tarPred.CastPosition.Distance(spell.GetPrediction(x, true).UnitPosition) < spell.Width + x.BoundingRadius);
-
+                
                 Vector3 gateVector = ObjectManager.Player.Position + Vector3.Normalize(target.ServerPosition - ObjectManager.Player.Position)*gateDis;
 
-                if (ObjectManager.Player.Distance(tarPred.CastPosition) < spell.Range + 100 && nearByTargets >= minHit)
+                var nearByEnemies = 1;
+
+                var poly = new Geometry.Polygon.Circle(tarPred.UnitPosition, spell.Width);
+
+                nearByEnemies += HeroManager.Enemies.Where(x => x.NetworkId != target.NetworkId).Count(enemy => poly.IsInside(enemy.ServerPosition));
+
+                if (ObjectManager.Player.Distance(tarPred.CastPosition) < spell.Range + 100 && nearByEnemies >= minHit)
                 {
                     if (Jayce.HammerTime && R.IsReady() && Jayce.CanQcd == 0 && Jayce.CanEcd == 0)
                         R.Cast();
                     else if(Jayce.HammerTime)
                         return;
 
-                    Console.WriteLine("Hit Combo: " + nearByTargets);
+                    Console.WriteLine("Hit Combo: " + nearByEnemies);
                     E.Cast(gateVector);
                     spell.Cast(tarPred.CastPosition);
                     return;

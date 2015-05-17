@@ -21,7 +21,7 @@ namespace xSaliceResurrected.ADC
             SpellManager.Q = new Spell(SpellSlot.Q, 1000);
             SpellManager.Q.SetSkillshot(0.2667f, 60f, 1600f, true, SkillshotType.SkillshotLine);
 
-            SpellManager.Q2 = new Spell(SpellSlot.Q, 1200);
+            SpellManager.Q2 = new Spell(SpellSlot.Q, 1300);
             SpellManager.Q2.SetSkillshot(0.3f, 60f, 1800f, false, SkillshotType.SkillshotLine);
 
             SpellManager.W = new Spell(SpellSlot.W);

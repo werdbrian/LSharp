@@ -32,7 +32,7 @@ namespace xSaliceResurrected.Managers
 
         public static Obj_AI_Hero Target;
 
-        private static int lastMura;
+        private static int _lastMura;
 
         private static void CreateList()
         {
@@ -132,6 +132,7 @@ namespace xSaliceResurrected.Managers
 
             Orbwalking.AfterAttack += AfterAttack;
             Orbwalking.OnAttack += OnAttack;
+            Spellbook.OnCastSpell += SpellbookOnOnCastSpell;
             Game.OnUpdate += Game_OnGameUpdate;
         }
 
@@ -152,7 +153,7 @@ namespace xSaliceResurrected.Managers
 
         private static void Game_OnGameUpdate(EventArgs args)
         {
-            if (ObjectManager.Player.HasBuff("Muramana") && Items.CanUseItem(3042) && Environment.TickCount - lastMura > 5000)
+            if (ObjectManager.Player.HasBuff("Muramana") && Items.CanUseItem(3042) && Utils.TickCount - _lastMura > 5000)
             {
                 Items.UseItem(3042);
             }
@@ -240,33 +241,75 @@ namespace xSaliceResurrected.Managers
                     if (AlwaysUse(item.ActiveName))
                     {
                         Items.UseItem(item.ActiveId);
-                        lastMura = Environment.TickCount;
+                        _lastMura = Utils.TickCount;
                     }
 
                     if (KillableTarget)
                     {
                         Items.UseItem(item.ActiveId, Target);
-                        lastMura = Environment.TickCount;
+                        _lastMura = Utils.TickCount;
                     }
 
                     if (ObjectManager.Player.HealthPercent <= UseAtMyHp(item.ActiveName) && !OnlyIfKillable(item.ActiveName))
                     {
                         Items.UseItem(item.ActiveId);
-                        lastMura = Environment.TickCount;
+                        _lastMura = Utils.TickCount;
                     }
 
                     if (Target.HealthPercent <= UseAtEnemyHp(item.ActiveName) && !OnlyIfKillable(item.ActiveName))
                     {
                         Items.UseItem(item.ActiveId);
-                        lastMura = Environment.TickCount;
+                        _lastMura = Utils.TickCount;
                     }
                 }
                 else if (ObjectManager.Player.HasBuff("Muramana"))
                 {
-                    lastMura = Environment.TickCount;
+                    _lastMura = Utils.TickCount;
                 }
             }
         }
+
+        private static void SpellbookOnOnCastSpell(Spellbook sender, SpellbookCastSpellEventArgs args)
+        {
+            if (!sender.Owner.IsMe || !(args.Target is Obj_AI_Hero))
+                return;
+
+            foreach (var item in ItemList.Where(x => x.Mode == 2 && Items.CanUseItem(x.ActiveId) && ShouldUse(x.ActiveName)))
+            {
+                if (!ObjectManager.Player.HasBuff("Muramana"))
+                {
+                    //Game.PrintChat("RAWR");
+                    if (AlwaysUse(item.ActiveName))
+                    {
+                        Items.UseItem(item.ActiveId);
+                        _lastMura = Utils.TickCount;
+                    }
+
+                    if (KillableTarget)
+                    {
+                        Items.UseItem(item.ActiveId, Target);
+                        _lastMura = Utils.TickCount;
+                    }
+
+                    if (ObjectManager.Player.HealthPercent <= UseAtMyHp(item.ActiveName) && !OnlyIfKillable(item.ActiveName))
+                    {
+                        Items.UseItem(item.ActiveId);
+                        _lastMura = Utils.TickCount;
+                    }
+
+                    if (Target.HealthPercent <= UseAtEnemyHp(item.ActiveName) && !OnlyIfKillable(item.ActiveName))
+                    {
+                        Items.UseItem(item.ActiveId);
+                        _lastMura = Utils.TickCount;
+                    }
+                }
+                else if (ObjectManager.Player.HasBuff("Muramana"))
+                {
+                    _lastMura = Utils.TickCount;
+                }
+            }
+        }
+
         public static float CalcDamage(Obj_AI_Base target, double currentDmg)
         {
             double dmg = currentDmg;

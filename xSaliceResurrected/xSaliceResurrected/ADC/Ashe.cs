@@ -22,7 +22,7 @@ namespace xSaliceResurrected.ADC
             SpellManager.Q = new Spell(SpellSlot.Q);
 
             SpellManager.W = new Spell(SpellSlot.W, 1200);
-            SpellManager.W.SetSkillshot(0.25f, 60f, 1500f, true, SkillshotType.SkillshotLine);
+            SpellManager.W.SetSkillshot(0.25f, 70f, 1500f, true, SkillshotType.SkillshotCone);
 
             SpellManager.E = new Spell(SpellSlot.E);
 
