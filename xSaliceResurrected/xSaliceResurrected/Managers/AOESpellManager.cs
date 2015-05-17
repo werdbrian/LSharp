@@ -76,12 +76,12 @@ namespace xSaliceResurrected.Managers
             if (!spell.IsReady() || ObjectManager.Player.HealthPercent <= 10)
                 return;
 
-            foreach (var target in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget(spell.Range)))
+            foreach (var target in HeroManager.Enemies.Where(x => x.IsValidTarget(spell.Range)))
             {
                 var pred = spell.GetPrediction(target, true);
                  Obj_AI_Hero target1 = target;
                 var nearByEnemies = spell.Collision || spell.Type == SkillshotType.SkillshotCircle ? 
-                    1 + ObjectManager.Get<Obj_AI_Hero>().Where(x => x.NetworkId != target1.NetworkId && x.IsValidTarget(spell.Range + 200))
+                    1 + HeroManager.Enemies.Where(x => x.NetworkId != target1.NetworkId && x.IsValidTarget(spell.Range + 200))
                     .Count(x => pred.CastPosition.Distance(spell.GetPrediction(x, true).UnitPosition) < spell.Width + x.BoundingRadius) : pred.AoeTargetsHitCount;
 
                 if (nearByEnemies >= minHit)
