@@ -81,6 +81,7 @@ namespace xSaliceResurrected.ADC
             var misc = new Menu("Misc", "Misc");
             {
                 misc.AddSubMenu(AoeSpellManager.AddHitChanceMenuCombo(false, true, false, false));
+                misc.AddItem(new MenuItem("MovementCheck", "Only Cast Extended Q When Enemy is moving(More Accurate)", true).SetValue(false));
                 misc.AddItem(new MenuItem("CheckPassive", "Smart Passive", true).SetValue(true));
                 misc.AddItem(new MenuItem("smartKS", "Use Smart KS System", true).SetValue(true));
                 misc.AddItem(new MenuItem("E_If_HP", "Do not E If HP <=", true).SetValue(new Slider(20)));
@@ -92,10 +93,10 @@ namespace xSaliceResurrected.ADC
             {
                 drawMenu.AddItem(new MenuItem("Draw_Disabled", "Disable All", true).SetValue(false));
                 drawMenu.AddItem(new MenuItem("Draw_Q", "Draw Q", true).SetValue(true));
+                drawMenu.AddItem(new MenuItem("Draw_Q_Extended", "Draw Q Extended", true).SetValue(true));
                 drawMenu.AddItem(new MenuItem("Draw_W", "Draw W", true).SetValue(true));
                 drawMenu.AddItem(new MenuItem("Draw_E", "Draw E", true).SetValue(true));
                 drawMenu.AddItem(new MenuItem("Draw_R", "Draw R", true).SetValue(true));
-                drawMenu.AddItem(new MenuItem("Draw_R_Killable", "Draw R Mark on Killable", true).SetValue(true));
 
                 MenuItem drawComboDamageMenu = new MenuItem("Draw_ComboDamage", "Draw Combo Damage", true).SetValue(true);
                 MenuItem drawFill = new MenuItem("Draw_Fill", "Draw Combo Damage Fill", true).SetValue(new Circle(true, Color.FromArgb(90, 255, 169, 4)));
@@ -243,7 +244,7 @@ namespace xSaliceResurrected.ADC
             var pred = QExtend.GetPrediction(target, true);
             var collisions = MinionManager.GetMinions(Player.ServerPosition, Q.Range, MinionTypes.All, MinionTeam.NotAlly);
 
-            if (!collisions.Any() || !target.IsMoving)
+            if (!collisions.Any() || (!target.IsMoving && menu.Item("MovementCheck", true).GetValue<bool>()))
                 return;
 
             foreach (var minion in collisions)
@@ -456,6 +457,10 @@ namespace xSaliceResurrected.ADC
             if (menu.Item("Draw_Q", true).GetValue<bool>())
                 if (Q.Level > 0)
                     Render.Circle.DrawCircle(Player.Position, Q.Range, Q.IsReady() ? Color.Green : Color.Red);
+
+            if (menu.Item("Draw_Q_Extended", true).GetValue<bool>())
+                if (Q.Level > 0)
+                    Render.Circle.DrawCircle(Player.Position, QExtend.Range, Q.IsReady() ? Color.Green : Color.Red);
 
             if (menu.Item("Draw_W", true).GetValue<bool>())
                 if (W.Level > 0)
