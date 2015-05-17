@@ -336,6 +336,7 @@ namespace xSaliceResurrected.ADC
         }
 
         private bool _hasBuff;
+        /*
         protected override void ObjAiBaseOnOnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
         {
             if (!sender.IsMe)
@@ -352,7 +353,7 @@ namespace xSaliceResurrected.ADC
 
             if (args.Buff.DisplayName == "LucianPassiveBuff")
                 _hasBuff = false;
-        }
+        }*/
 
         private void SmartKs()
         {

@@ -451,7 +451,7 @@ namespace xSaliceResurrected.Mid
             }
         }
 
-        protected override void onAttack(AttackableUnit unit, AttackableUnit target)
+        protected override void OnAttack(AttackableUnit unit, AttackableUnit target)
         {
             if (!menu.Item("ComboActive", true).GetValue<KeyBind>().Active || !W.IsReady())
                 return;

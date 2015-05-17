@@ -26,7 +26,7 @@ namespace xSaliceResurrected
             Spellbook.OnStopCast += SpellbookOnOnStopCast;
             Orbwalking.AfterAttack += AfterAttackEvent;
             Orbwalking.BeforeAttack += BeforeAttackEvent;
-            Orbwalking.OnAttack += onAttack;
+            Orbwalking.OnAttack += OnAttack;
             //Obj_AI_Base.OnBuffAdd += ObjAiBaseOnOnBuffAdd;
             //Obj_AI_Base.OnBuffRemove += ObjAiBaseOnOnBuffRemove;
         }
@@ -191,7 +191,7 @@ namespace xSaliceResurrected
             //for champ use
         }
 
-        protected virtual void onAttack(AttackableUnit unit, AttackableUnit target)
+        protected virtual void OnAttack(AttackableUnit unit, AttackableUnit target)
         {
             
         }
@@ -226,7 +226,7 @@ namespace xSaliceResurrected
             //for Champion used
         }
 
-        protected virtual void ObjAiBaseOnOnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
+       /* protected virtual void ObjAiBaseOnOnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
         {
             //for Champion used
         }
@@ -234,7 +234,7 @@ namespace xSaliceResurrected
         protected virtual void ObjAiBaseOnOnBuffRemove(Obj_AI_Base sender, Obj_AI_BaseBuffRemoveEventArgs args)
         {
             //for Champion used
-        }
+        }*/
 
     }
 }
