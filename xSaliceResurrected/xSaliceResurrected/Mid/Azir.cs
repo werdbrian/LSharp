@@ -358,10 +358,15 @@ namespace xSaliceResurrected.Mid
 
                 var nearSlave = GetNearestSoilderToMouse();
 
-                if (E.IsReady() || ESpell.State == SpellState.Surpressed)
+                if ((E.IsReady() || ESpell.State == SpellState.Surpressed) &&
+                    Player.Distance(Game.CursorPos) > Game.CursorPos.Distance(nearSlave.Position))
                 {
                     E.Cast(nearSlave.Position);
                     E.LastCastAttemptT = Utils.TickCount + 250;
+                }
+                else if (W.IsReady())
+                {
+                    W.Cast(wVec);
                 }
             }
             
