@@ -90,6 +90,9 @@ namespace xSaliceResurrected.Managers
                     nearByEnemies +=
                         HeroManager.Enemies.Where(x => x.NetworkId != target.NetworkId)
                             .Count(enemy => poly.IsInside(enemy.ServerPosition));
+
+                    if(nearByEnemies > 1)
+                    Console.WriteLine("Yes: " + nearByEnemies);
                 }
                 else
                 {
@@ -98,7 +101,7 @@ namespace xSaliceResurrected.Managers
 
                 if (nearByEnemies >= minHit)
                 {
-                    Console.WriteLine("Yes: " + nearByEnemies);
+                    
                     spell.Cast(target);
                     return;
                 }
