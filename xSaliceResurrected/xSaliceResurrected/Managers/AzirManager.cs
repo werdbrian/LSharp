@@ -76,7 +76,7 @@ namespace xSaliceResurrected.Managers
                 && minion.Health < 3 * (MyHero.BaseAttackDamage + MyHero.FlatPhysicalDamageMod))
                                        let t = (int)(MyHero.AttackCastDelay * 1000) - 100 + Game.Ping / 2
                                        let predHealth = HealthPrediction.GetHealthPrediction(minion, t, 0)
-                                       where minion.Team != GameObjectTeam.Neutral && predHealth > 0 && predHealth <= (InSoldierAttackRange(minion) ? GetAzirAaSandwarriorDamage(minion) - 25 : MyHero.GetAutoAttackDamage(minion, true))
+                                       where minion.Team != GameObjectTeam.Neutral && predHealth > 0 && predHealth <= (InSoldierAttackRange(minion) ? GetAzirAaSandwarriorDamage(minion) - 30 : MyHero.GetAutoAttackDamage(minion, true))
                                        select minion)
                     return minion;
             }
@@ -144,7 +144,7 @@ namespace xSaliceResurrected.Managers
             minion.IsValidTarget(850) && minion.Team != GameObjectTeam.Neutral &&
             InAutoAttackRange(minion) &&
             HealthPrediction.LaneClearHealthPrediction(minion, (int)((MyHero.AttackDelay * 1000) * 2f), 0) <=
-            (InSoldierAttackRange(minion) ? GetAzirAaSandwarriorDamage(minion) - 25 : MyHero.GetAutoAttackDamage(minion, true)));
+            (InSoldierAttackRange(minion) ? GetAzirAaSandwarriorDamage(minion) - 30 : MyHero.GetAutoAttackDamage(minion, true)));
         }
 
         private Obj_AI_Hero GetBestHeroTarget()

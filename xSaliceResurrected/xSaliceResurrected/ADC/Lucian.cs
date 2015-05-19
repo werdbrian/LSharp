@@ -383,7 +383,7 @@ namespace xSaliceResurrected.ADC
             var useQ = menu.Item("UseQFarm", true).GetValue<bool>();
             var useW = menu.Item("UseWFarm", true).GetValue<bool>();
 
-            if (useQ)
+            if (useQ && PassiveCheck())
             {
                 var allMinions = MinionManager.GetMinions(ObjectManager.Player.Position, Q.Range, MinionTypes.All, MinionTeam.NotAlly);
                 var minion = allMinions.FirstOrDefault(minionn => minionn.Distance(Player.Position) <= Q.Range && HealthPrediction.LaneClearHealthPrediction(minionn, 500) > 0);
@@ -392,7 +392,7 @@ namespace xSaliceResurrected.ADC
 
                 Q.Cast(minion);
             }
-            if (useW)
+            if (useW && PassiveCheck())
             {
                 var allMinionE = MinionManager.GetMinions(Player.ServerPosition, W.Range, MinionTypes.All, MinionTeam.NotAlly);
 
