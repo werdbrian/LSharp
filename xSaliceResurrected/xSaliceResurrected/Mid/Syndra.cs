@@ -622,10 +622,9 @@ namespace xSaliceResurrected.Mid
                     if (!poly.IsInside(qePred.UnitPosition))
                         return;
 
-                    poly.Draw(Color.LawnGreen);
-
                     if (qePred.Hitchance >= HitChanceManager.GetQEHitChance("Combo"))
                     {
+                        poly.Draw(Color.LawnGreen);
                         var line = new Geometry.Polygon.Line(Player.Position, endPos);
                         line.Draw(Color.LawnGreen);
                         Render.Circle.DrawCircle(startPos, Q.Width/2, Color.Aquamarine);
