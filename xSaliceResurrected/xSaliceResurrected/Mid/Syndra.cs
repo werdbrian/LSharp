@@ -496,9 +496,7 @@ namespace xSaliceResurrected.Mid
 
         private void CastQeMouse()
         {
-            foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget(_qe.Range)))
-                if (Game.CursorPos.Distance(enemy.ServerPosition) < 300)
-                    Cast_QE("Null", enemy);
+            Cast_QE("Null");
         }
 
         private void QImmobile()
