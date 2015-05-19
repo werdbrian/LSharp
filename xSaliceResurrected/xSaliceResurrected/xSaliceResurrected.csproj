@@ -50,6 +50,7 @@
     <Compile Include="Mid\Jayce.cs" />
     <Compile Include="ADC\Urgot.cs" />
     <Compile Include="Mid\Orianna.cs" />
+    <Compile Include="Mid\Syndra.cs" />
     <Compile Include="Mid\Viktor.cs" />
     <Compile Include="Managers\AOESpellManager.cs" />
     <Compile Include="Managers\HitChanceManager.cs" />
