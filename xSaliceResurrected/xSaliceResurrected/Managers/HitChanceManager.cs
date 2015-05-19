@@ -10,7 +10,7 @@ namespace xSaliceResurrected.Managers
 
         private static readonly HitChance[] MyHitChances = { HitChance.Low, HitChance.Medium, HitChance.High, HitChance.VeryHigh };
 
-        public static Menu AddHitChanceMenuCombo(Boolean q, Boolean w, Boolean e, Boolean r)
+        public static Menu AddHitChanceMenuCombo(Boolean q, Boolean w, Boolean e, Boolean r, Boolean _qe = false)
         {
             _menuCombo = new Menu("Hitchance", "Hitchance");
 
@@ -22,11 +22,12 @@ namespace xSaliceResurrected.Managers
                 _menuCombo.AddItem(new MenuItem("eHitCombo", "E HitChance", true).SetValue(new StringList(new[] { "Low", "Med", "High", "Very High" }, 2)));
             if(r)
                 _menuCombo.AddItem(new MenuItem("rHitCombo", "R HitChance", true).SetValue(new StringList(new[] { "Low", "Med", "High", "Very High" }, 2)));
-
+            if(_qe)
+                _menuCombo.AddItem(new MenuItem("qeHitCombo", "QE HitChance", true).SetValue(new StringList(new[] { "Low", "Med", "High", "Very High" }, 2)));
             return _menuCombo;
         }
 
-        public static Menu AddHitChanceMenuHarass(Boolean q, Boolean w, Boolean e, Boolean r)
+        public static Menu AddHitChanceMenuHarass(Boolean q, Boolean w, Boolean e, Boolean r, Boolean _qe = false)
         {
             _menuHarass = new Menu("Hitchance", "Hitchance");
 
@@ -38,7 +39,8 @@ namespace xSaliceResurrected.Managers
                 _menuHarass.AddItem(new MenuItem("eHitHarass", "E HitChance", true).SetValue(new StringList(new[] { "Low", "Med", "High", "Very High" }, 2)));
             if (r)
                 _menuHarass.AddItem(new MenuItem("rHitHarass", "R HitChance", true).SetValue(new StringList(new[] { "Low", "Med", "High", "Very High" }, 2)));
-
+            if (_qe)
+                _menuHarass.AddItem(new MenuItem("qeHitHarass", "QE HitChance", true).SetValue(new StringList(new[] { "Low", "Med", "High", "Very High" }, 2)));
             return _menuHarass;
         }
 
@@ -92,6 +94,19 @@ namespace xSaliceResurrected.Managers
                 return HitChance.Low;
             }
             return MyHitChances[_menuHarass.Item("rHitHarass", true).GetValue<StringList>().SelectedIndex];
+        }
+
+        public static HitChance GetQEHitChance(string source)
+        {
+            if (source == "Combo")
+            {
+                return MyHitChances[_menuCombo.Item("qeHitCombo", true).GetValue<StringList>().SelectedIndex];
+            }
+            else if (source == "Null")
+            {
+                return HitChance.Low;
+            }
+            return MyHitChances[_menuHarass.Item("qeHitHarass", true).GetValue<StringList>().SelectedIndex];
         }
 
     }

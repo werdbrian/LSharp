@@ -90,7 +90,7 @@ namespace xSaliceResurrected.Mid
                 combo.AddItem(new MenuItem("UseWCombo", "Use W", true).SetValue(true));
                 combo.AddItem(new MenuItem("UseECombo", "Use E", true).SetValue(true));
                 combo.AddItem(new MenuItem("UseRCombo", "Use R", true).SetValue(true));
-
+                combo.AddSubMenu(HitChanceManager.AddHitChanceMenuCombo(true, true, true, false, true));
                 menu.AddSubMenu(combo);
             }
 
@@ -100,6 +100,7 @@ namespace xSaliceResurrected.Mid
                 harass.AddItem(new MenuItem("UseQEHarass", "Use QE", true).SetValue(true));
                 harass.AddItem(new MenuItem("UseWHarass", "Use W", true).SetValue(true));
                 harass.AddItem(new MenuItem("UseEHarass", "Use E", true).SetValue(true));
+                harass.AddSubMenu(HitChanceManager.AddHitChanceMenuHarass(true, true, true, false, true));
                 ManaManager.AddManaManagertoMenu(harass, "Harass", 30);
                 //add to menu
                 menu.AddSubMenu(harass);
@@ -230,13 +231,13 @@ namespace xSaliceResurrected.Mid
                 Cast_R();
 
             if (useQ)
-                Cast_Q();
+                SpellCastManager.CastBasicSkillShot(Q, Q.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetQHitChance(source));
 
             if (useE)
-                Cast_E();
+                Cast_E(source);
 
             if (useW)
-                Cast_W(true);
+                Cast_W(true, source);
 
             //items
             if (source == "Combo")
@@ -255,8 +256,7 @@ namespace xSaliceResurrected.Mid
             }
 
             if (useQe)
-                Cast_QE();
-
+                Cast_QE(source);
 
         }
 
@@ -273,7 +273,7 @@ namespace xSaliceResurrected.Mid
                 SpellCastManager.CastBasicFarm(Q);
 
             if (useW)
-                Cast_W(false);
+                Cast_W(false, "Null");
 
             if (useE)
                 SpellCastManager.CastBasicFarm(E);
@@ -299,24 +299,12 @@ namespace xSaliceResurrected.Mid
                 //QE
                 if (E.IsKillable(target) && Player.Distance(target.Position) < _qe.Range)
                 {
-                    Cast_QE(false, target);
+                    Cast_QE("Null", target);
                 }
             }
         }
 
-        private void Cast_Q()
-        {
-            var qTarget = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
-            if (qTarget == null)
-                return;
-
-            if (Q.IsReady())
-            {
-                Q.Cast(qTarget);
-            }
-        }
-
-        private void Cast_W(bool mode)
+        private void Cast_W(bool mode, string source)
         {
             if (mode)
             {
@@ -344,12 +332,16 @@ namespace xSaliceResurrected.Mid
                 if (wToggleState != 1 && Get_Current_Orb() != null)
                 {
                     W.From = Get_Current_Orb().ServerPosition;
+                    var pred = W.GetPrediction(wTarget);
+
+                    if (pred.Hitchance < HitChanceManager.GetWHitChance(source))
+                        return;
 
                     if (Player.Distance(wTarget.Position) < E.Range - 100)
                     {
                         if (W.IsReady() && Utils.TickCount - W.LastCastAttemptT > -300 + Game.Ping)
                         {
-                            var vector = W.GetPrediction(wTarget).CastPosition.Shorten(Player.ServerPosition, 100);
+                            var vector = pred.CastPosition.Shorten(Player.ServerPosition, 100);
                             W.Cast(vector);
                             Console.WriteLine("Shooting to vector");
                             return;
@@ -366,8 +358,9 @@ namespace xSaliceResurrected.Mid
             {
                 var grabbableObj = Get_Nearest_orb();
                 var wToggleState = Player.Spellbook.GetSpell(SpellSlot.W).ToggleState;
+                var allMinionsW = MinionManager.GetMinions(Player.ServerPosition, W.Range, MinionTypes.All, MinionTeam.NotAlly);
 
-                if (grabbableObj == null)
+                if (grabbableObj == null || allMinionsW.Count < 1)
                     return;
 
                 if (wToggleState == 1 && Utils.TickCount - W.LastCastAttemptT > Game.Ping && W.IsReady())
@@ -382,7 +375,6 @@ namespace xSaliceResurrected.Mid
 
                 W.From = Get_Current_Orb().ServerPosition;
 
-                var allMinionsW = MinionManager.GetMinions(Player.ServerPosition, W.Range, MinionTypes.All, MinionTeam.NotAlly);
                 var farmLocation = Q.GetCircularFarmLocation(allMinionsW, W.Width);
 
                 if (farmLocation.MinionsHit > 0)
@@ -394,7 +386,7 @@ namespace xSaliceResurrected.Mid
             }
         }
 
-        private void Cast_E()
+        private void Cast_E(string source)
         {
             if (GetOrbCount() <= 0)
                 return;
@@ -416,12 +408,16 @@ namespace xSaliceResurrected.Mid
 
                 var projection = targetPos.UnitPosition.To2D().ProjectOn(startPos.To2D(), endPos.To2D());
 
-                if (!projection.IsOnSegment || targetPos.Hitchance < HitChance.Medium || !(projection.LinePoint.Distance(targetPos.UnitPosition.To2D()) < _qe.Width))
-                    return;
+                if (!projection.IsOnSegment || targetPos.Hitchance < HitChance.Medium ||
+                    !(projection.LinePoint.Distance(targetPos.UnitPosition.To2D()) < _qe.Width))
+                    continue;
 
-                E.Cast(startPos);
-                W.LastCastAttemptT = Utils.TickCount + 500;
-                return;
+                if (targetPos.Hitchance >= HitChanceManager.GetEHitChance(source))
+                {
+                    E.Cast(startPos);
+                    W.LastCastAttemptT = Utils.TickCount + 500;
+                    return;
+                }
             }
         }
 
@@ -452,7 +448,7 @@ namespace xSaliceResurrected.Mid
             }
         }
 
-        private void Cast_QE(bool usePred = true, Obj_AI_Base target = null)
+        private void Cast_QE(string source, Obj_AI_Base target = null)
         {
             var qeTarget = TargetSelector.GetTarget(_qe.Range, TargetSelector.DamageType.Magical);
             if (qeTarget == null || !Q.IsReady() || !E.IsReady())
@@ -475,7 +471,7 @@ namespace xSaliceResurrected.Mid
 
             poly.Draw(Color.LawnGreen);
 
-            if (qePred.Hitchance >= HitChance.Medium)
+            if (qePred.Hitchance >= HitChanceManager.GetQEHitChance(source))
             {
                 Q.Cast(startPos);
                 W.LastCastAttemptT = Utils.TickCount + 500;
@@ -487,7 +483,7 @@ namespace xSaliceResurrected.Mid
         {
             foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget(_qe.Range)))
                 if (Game.CursorPos.Distance(enemy.ServerPosition) < 300)
-                    Cast_QE(false, enemy);
+                    Cast_QE("Null", enemy);
         }
 
         private void QImmobile()
@@ -597,7 +593,7 @@ namespace xSaliceResurrected.Mid
 
                 poly.Draw(Color.LawnGreen);
 
-                if (qePred.Hitchance >= HitChance.Medium)
+                if (qePred.Hitchance >= HitChanceManager.GetQEHitChance("Combo"))
                 {
                     var line = new Geometry.Polygon.Line(Player.Position, endPos);
                     line.Draw(Color.LawnGreen);
@@ -705,7 +701,7 @@ namespace xSaliceResurrected.Mid
                 return;
 
             if (menu.Item("QE_Interrupt", true).GetValue<bool>() && unit.IsValidTarget(_qe.Range))
-                Cast_QE(false, unit);
+                Cast_QE("Null", unit);
         }
 
     }
