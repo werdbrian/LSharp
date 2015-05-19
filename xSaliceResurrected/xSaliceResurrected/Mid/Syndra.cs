@@ -118,6 +118,7 @@ namespace xSaliceResurrected.Mid
 
             var miscMenu = new Menu("Misc", "Misc");
             {
+                miscMenu.AddSubMenu(AoeSpellManager.AddHitChanceMenuCombo(true, false, true, false));
                 miscMenu.AddItem(new MenuItem("QE_Interrupt", "Use QE to Interrupt", true).SetValue(true));
                 miscMenu.AddItem(new MenuItem("E_Gap_Closer", "Use E On Gap Closer", true).SetValue(true));
                 miscMenu.AddItem(new MenuItem("smartKS", "Use Smart KS System", true).SetValue(true));
