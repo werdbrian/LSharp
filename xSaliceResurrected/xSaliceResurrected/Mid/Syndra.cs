@@ -231,6 +231,9 @@ namespace xSaliceResurrected.Mid
             if (useR)
                 Cast_R();
 
+            if (useQe)
+                Cast_QE(source);
+
             if (useQ)
                 SpellCastManager.CastBasicSkillShot(Q, Q.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetQHitChance(source));
 
@@ -255,10 +258,6 @@ namespace xSaliceResurrected.Mid
                     ItemManager.UseTargetted = true;
                 }
             }
-
-            if (useQe)
-                Cast_QE(source);
-
         }
 
         private void Farm()
@@ -455,28 +454,43 @@ namespace xSaliceResurrected.Mid
             if (qeTarget == null || !Q.IsReady() || !E.IsReady())
                 return;
 
-            var from = Prediction.GetPrediction(qeTarget, Q.Delay + E.Delay).UnitPosition;
-            var startPos = Player.ServerPosition + Vector3.Normalize(from - Player.ServerPosition) * (E.Range - 100);
-            double rangeLeft = 100 + (-0.6 * Player.Distance(startPos) + 950);
-            var endPos = startPos + Vector3.Normalize(startPos - Player.ServerPosition) * (float)rangeLeft;
-
-            _qe.From = startPos;
-            _qe.Delay = Q.Delay + E.Delay + Player.Distance(from) / E.Speed;
-
-            var qePred = _qe.GetPrediction(qeTarget);
-                
-            var poly = new Geometry.Polygon.Rectangle(startPos, endPos, _qe.Width);
-
-            if (!poly.IsInside(qePred.UnitPosition))
-                return;
-
-            poly.Draw(Color.LawnGreen);
-
-            if (qePred.Hitchance >= HitChanceManager.GetQEHitChance(source))
+            var qTarget = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
+            if (qTarget.IsValidTarget(E.Range))
             {
-                Q.Cast(startPos);
-                W.LastCastAttemptT = Utils.TickCount + 500;
-                _qe.LastCastAttemptT = Environment.TickCount;
+                var pred = Q.GetPrediction(qTarget);
+
+                if (pred.Hitchance >= HitChanceManager.GetQEHitChance(source))
+                {
+                    Q.Cast(pred.CastPosition);
+                    W.LastCastAttemptT = Utils.TickCount + 500;
+                    _qe.LastCastAttemptT = Environment.TickCount;
+                }
+            }
+            else
+            {
+                var from = Prediction.GetPrediction(qeTarget, Q.Delay + E.Delay).UnitPosition;
+                var startPos = Player.ServerPosition + Vector3.Normalize(from - Player.ServerPosition)*(E.Range - 100);
+                double rangeLeft = 100 + (-0.6*Player.Distance(startPos) + 950);
+                var endPos = startPos + Vector3.Normalize(startPos - Player.ServerPosition)*(float) rangeLeft;
+
+                _qe.From = startPos;
+                _qe.Delay = Q.Delay + E.Delay + Player.Distance(from)/E.Speed;
+
+                var qePred = _qe.GetPrediction(qeTarget);
+
+                var poly = new Geometry.Polygon.Rectangle(startPos, endPos, _qe.Width);
+
+                if (!poly.IsInside(qePred.UnitPosition))
+                    return;
+
+                poly.Draw(Color.LawnGreen);
+
+                if (qePred.Hitchance >= HitChanceManager.GetQEHitChance(source))
+                {
+                    Q.Cast(startPos);
+                    W.LastCastAttemptT = Utils.TickCount + 500;
+                    _qe.LastCastAttemptT = Environment.TickCount;
+                }
             }
         }
 
@@ -577,29 +591,48 @@ namespace xSaliceResurrected.Mid
                 if (qeTarget == null || !Q.IsReady() || !E.IsReady())
                     return;
 
-                var from = Prediction.GetPrediction(qeTarget, Q.Delay + E.Delay).UnitPosition;
-                var startPos = Player.ServerPosition + Vector3.Normalize(from - Player.ServerPosition) * (E.Range - 100);
-                double rangeLeft = 100 + (-0.6 * Player.Distance(startPos) + 950);
-                var endPos = startPos + Vector3.Normalize(startPos - Player.ServerPosition) * (float)rangeLeft;
-
-                _qe.From = startPos;
-                _qe.Delay = Q.Delay + E.Delay + Player.Distance(from) / E.Speed;
-
-                var qePred = _qe.GetPrediction(qeTarget);
-                
-                var poly = new Geometry.Polygon.Rectangle(startPos, endPos, _qe.Width);
-
-                if (!poly.IsInside(qePred.UnitPosition))
-                    return;
-
-                poly.Draw(Color.LawnGreen);
-
-                if (qePred.Hitchance >= HitChanceManager.GetQEHitChance("Combo"))
+                var qTarget = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
+                if (qTarget.IsValidTarget(E.Range))
                 {
-                    var line = new Geometry.Polygon.Line(Player.Position, endPos);
-                    line.Draw(Color.LawnGreen);
-                    Render.Circle.DrawCircle(startPos, Q.Width / 2, Color.Aquamarine);
-                    Render.Circle.DrawCircle(endPos, Q.Width / 2, Color.SpringGreen);
+                    var pred = Q.GetPrediction(qTarget);
+
+                    if (pred.Hitchance >= HitChanceManager.GetQEHitChance("Combo"))
+                    {
+                        var poly = new Geometry.Polygon.Rectangle(pred.CastPosition, Player.ServerPosition.Extend(pred.CastPosition, _qe.Range), _qe.Width);
+                        poly.Draw(Color.LawnGreen);
+                        var line = new Geometry.Polygon.Line(Player.Position, Player.ServerPosition.Extend(pred.CastPosition, _qe.Range));
+                        line.Draw(Color.LawnGreen);
+                        Render.Circle.DrawCircle(pred.CastPosition, Q.Width / 2, Color.Aquamarine);
+                        Render.Circle.DrawCircle(Player.ServerPosition.Extend(pred.CastPosition, _qe.Range), Q.Width / 2, Color.SpringGreen);
+                    }
+                }
+                else
+                {
+                    var from = Prediction.GetPrediction(qeTarget, Q.Delay + E.Delay).UnitPosition;
+                    var startPos = Player.ServerPosition +
+                                   Vector3.Normalize(from - Player.ServerPosition)*(E.Range - 100);
+                    double rangeLeft = 100 + (-0.6*Player.Distance(startPos) + 950);
+                    var endPos = startPos + Vector3.Normalize(startPos - Player.ServerPosition)*(float) rangeLeft;
+
+                    _qe.From = startPos;
+                    _qe.Delay = Q.Delay + E.Delay + Player.Distance(from)/E.Speed;
+
+                    var qePred = _qe.GetPrediction(qeTarget);
+
+                    var poly = new Geometry.Polygon.Rectangle(startPos, endPos, _qe.Width);
+
+                    if (!poly.IsInside(qePred.UnitPosition))
+                        return;
+
+                    poly.Draw(Color.LawnGreen);
+
+                    if (qePred.Hitchance >= HitChanceManager.GetQEHitChance("Combo"))
+                    {
+                        var line = new Geometry.Polygon.Line(Player.Position, endPos);
+                        line.Draw(Color.LawnGreen);
+                        Render.Circle.DrawCircle(startPos, Q.Width/2, Color.Aquamarine);
+                        Render.Circle.DrawCircle(endPos, Q.Width/2, Color.SpringGreen);
+                    }
                 }
             }
 
