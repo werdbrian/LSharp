@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
+using LeagueSharp.Common.Data;
 
 namespace xSaliceResurrected.Managers
 {
@@ -17,7 +18,7 @@ namespace xSaliceResurrected.Managers
 
         private int Range { get; set; }
 
-        private string Type { get; set; }
+        private string BuffName { get; set; }
 
         private int Mode { get; set; } // 0 = target, 1 = on click, 2 = toggle
 
@@ -40,7 +41,7 @@ namespace xSaliceResurrected.Managers
             {
                 ActiveId = 3144,
                 ActiveName = "Bilgewater Cutlass",
-                Type = "Offensive",
+                BuffName = "Offensive",
                 Range = 450,
                 Mode = 0,
             });
@@ -49,7 +50,7 @@ namespace xSaliceResurrected.Managers
             {
                 ActiveId = 3153,
                 ActiveName = "Blade of the Ruined King",
-                Type = "Offensive",
+                BuffName = "Offensive",
                 Range = 450,
                 Mode = 0,
             });
@@ -58,8 +59,17 @@ namespace xSaliceResurrected.Managers
             {
                 ActiveId = 3146,
                 ActiveName = "Hextech Gunblade",
-                Type = "Offensive",
+                BuffName = "Offensive",
                 Range = 700,
+                Mode = 0,
+            });
+
+            ItemList.Add(new ItemManager
+            {
+                ActiveId = ItemData.Frost_Queens_Claim.Id,
+                ActiveName = "Frost Queen's Claim",
+                BuffName = "Offensive",
+                Range = 850,
                 Mode = 0,
             });
 
@@ -67,7 +77,7 @@ namespace xSaliceResurrected.Managers
             {
                 ActiveId = 3042,
                 ActiveName = "Muramana",
-                Type = "Offensive",
+                BuffName = "Offensive",
                 Range = int.MaxValue,
                 Mode = 2,
             });
@@ -76,7 +86,7 @@ namespace xSaliceResurrected.Managers
             {
                 ActiveId = 3074,
                 ActiveName = "Ravenous Hydra",
-                Type = "Offensive",
+                BuffName = "Offensive",
                 Range = 400,
                 Mode = 1,
             });
@@ -85,7 +95,7 @@ namespace xSaliceResurrected.Managers
             {
                 ActiveId = 3077,
                 ActiveName = "Tiamat",
-                Type = "Offensive",
+                BuffName = "Offensive",
                 Range = 400,
                 Mode = 1,
             });
@@ -94,9 +104,39 @@ namespace xSaliceResurrected.Managers
             {
                 ActiveId = 3142,
                 ActiveName = "Youmuu's Ghostblade",
-                Type = "Offensive",
+                BuffName = "Offensive",
                 Range = (int)(ObjectManager.Player.AttackRange * 2),
                 Mode = 1,
+            });
+
+            //Mode 3 = flask
+            ItemList.Add(new ItemManager
+            {
+                ActiveId = ItemData.Crystalline_Flask.Id,
+                ActiveName = "Crystaline Flask",
+                BuffName = "ItemCrystalFlask",
+                Range = int.MaxValue,
+                Mode = 3,
+            });
+
+            //Mode 4 = Health
+            ItemList.Add(new ItemManager
+            {
+                ActiveId = ItemData.Health_Potion.Id,
+                ActiveName = "Health Potion",
+                BuffName = "RegenerationPotion",
+                Range = int.MaxValue,
+                Mode = 4,
+            });
+
+            //mode 5 = mana
+            ItemList.Add(new ItemManager
+            {
+                ActiveId = ItemData.Mana_Potion.Id,
+                ActiveName = "Mana Potion",
+                BuffName = "FlaskOfCrystalWater",
+                Range = int.MaxValue,
+                Mode = 5,
             });
 
         }
@@ -110,13 +150,21 @@ namespace xSaliceResurrected.Managers
 
             var offensiveItem = new Menu("Offensive Items", "Offensive Items");
             {
-                foreach (var item in ItemList)
+                foreach (var item in ItemList.Where(x => x.Mode != 3))
                 {
                     AddOffensiveItem(offensiveItem, item);
                 }
                 _myMenu.AddSubMenu(offensiveItem);
             }
 
+            var potions = new Menu("Potions", "Potions");
+            {
+                foreach (var item in ItemList.Where(x => (x.Mode == 3 || x.Mode == 5 || x.Mode == 4)))
+                {
+                    AddPotion(potions, item);
+                }
+                _myMenu.AddSubMenu(potions);
+            }
 
             var summoners = new Menu("Summoners", "Summoners");
             {
@@ -151,13 +199,58 @@ namespace xSaliceResurrected.Managers
             }
         }
 
+        private static void AddPotion(Menu subMenu, ItemManager item)
+        {
+            var active = new Menu(item.ActiveName, item.ActiveName);
+            {
+                active.AddItem(new MenuItem(item.ActiveName, item.ActiveName, true).SetValue(true));
+                if (item.Mode == 3 || item.Mode == 4)
+                    active.AddItem(new MenuItem(item.ActiveName + "myHP", "Use if HP <= %", true).SetValue(new Slider(50)));
+                if (item.Mode == 3 || item.Mode == 5)
+                    active.AddItem(new MenuItem(item.ActiveName + "myMP", "Use if MP <= %", true).SetValue(new Slider(50)));
+
+                subMenu.AddSubMenu(active);
+            }
+        }
+
         private static void Game_OnGameUpdate(EventArgs args)
         {
+            //muramana
             if (ObjectManager.Player.HasBuff("Muramana") && Items.CanUseItem(3042) && Utils.TickCount - _lastMura > 5000)
             {
                 CastMuraMana();
             }
 
+            //Health
+            if (!IsUsingHealthPot)
+            {
+                foreach (var potion in from potion in ItemList.Where(x => (x.Mode == 3 || x.Mode == 4) &&
+                    Items.HasItem(x.ActiveId) &&
+                    Items.CanUseItem(x.ActiveId) &&
+                    ShouldUse(x.ActiveName))
+                    where !ObjectManager.Player.IsRecalling() && !ObjectManager.Player.InFountain()
+                    where ObjectManager.Player.HealthPercent <= UsePotAtHp(potion.ActiveName)
+                    select potion)
+                {
+                    Items.UseItem(potion.ActiveId);
+                }
+            }
+            //Mana
+            if (!IsUsingManaPot)
+            {
+                foreach (var potion in from potion in ItemList.Where(x => (x.Mode == 3 || x.Mode == 5) &&
+                    Items.HasItem(x.ActiveId) &&
+                    Items.CanUseItem(x.ActiveId) &&
+                    ShouldUse(x.ActiveName))
+                    where !ObjectManager.Player.IsRecalling() && !ObjectManager.Player.InFountain()
+                    where ObjectManager.Player.ManaPercent <= UsePotAtMp(potion.ActiveName)
+                    select potion)
+                {
+                    Items.UseItem(potion.ActiveId);
+                }
+            }
+
+            //offensive
             if (Target == null || ObjectManager.Player.IsDead)
                 return;
 
@@ -316,7 +409,7 @@ namespace xSaliceResurrected.Managers
         {
             double dmg = currentDmg;
 
-            foreach (var item in ItemList.Where(x => Items.HasItem(x.ActiveId) && ShouldUse(x.ActiveName) && Items.CanUseItem(x.ActiveId) && AddToDmgCalc(x.ActiveName)))
+            foreach (var item in ItemList.Where(x => Items.HasItem(x.ActiveId) && ShouldUse(x.ActiveName) && Items.CanUseItem(x.ActiveId) && AddToDmgCalc(x.ActiveName) && x.Mode <= 2))
             {
                 //bilge
                 if (item.ActiveId == 3144)
@@ -423,6 +516,34 @@ namespace xSaliceResurrected.Managers
             return _myMenu.Item(name + "enemyHP", true).GetValue<Slider>().Value;
         }
 
+        private static int UsePotAtHp(string name)
+        {
+            return _myMenu.Item(name + "myHP", true).GetValue<Slider>().Value;
+        }
 
+        private static int UsePotAtMp(string name)
+        {
+            return _myMenu.Item(name + "myMP", true).GetValue<Slider>().Value;
+        }
+
+        private static bool IsUsingHealthPot
+        {
+            get
+            {
+                return
+                    ItemList.Where(x => (x.Mode == 3 || x.Mode == 4))
+                        .Any(x => ObjectManager.Player.HasBuff(x.BuffName, true));
+            }
+        }
+
+        private static bool IsUsingManaPot
+        {
+            get
+            {
+                return
+                    ItemList.Where(x => (x.Mode == 3 || x.Mode == 5))
+                        .Any(x => ObjectManager.Player.HasBuff(x.BuffName, true));
+            }
+        }
     }
 }

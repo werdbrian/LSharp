@@ -3,6 +3,7 @@ using LeagueSharp;
 using LeagueSharp.Common;
 using xSaliceResurrected.Base;
 using xSaliceResurrected.Managers;
+using xSaliceResurrected.Utilities;
 
 namespace xSaliceResurrected
 {
@@ -80,6 +81,9 @@ namespace xSaliceResurrected
             
             //Lag Manager
             LagManager.AddLagManager(menu);
+
+            //Gank Alerter
+            GankAlerter gank = new GankAlerter(menu);
 
             menu.AddToMainMenu();
 

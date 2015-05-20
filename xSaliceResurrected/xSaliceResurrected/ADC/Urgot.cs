@@ -170,7 +170,7 @@ namespace xSaliceResurrected.ADC
 
             comboDamage = ItemManager.CalcDamage(target, comboDamage);
 
-            return (float)(comboDamage + Player.GetAutoAttackDamage(target) * 5);
+            return (float)(comboDamage + Player.GetAutoAttackDamage(target) * 3);
         }
 
         private void Combo()
