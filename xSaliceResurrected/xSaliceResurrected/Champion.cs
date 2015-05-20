@@ -27,8 +27,8 @@ namespace xSaliceResurrected
             Orbwalking.AfterAttack += AfterAttackEvent;
             Orbwalking.BeforeAttack += BeforeAttackEvent;
             Orbwalking.OnAttack += OnAttack;
-            //Obj_AI_Base.OnBuffAdd += ObjAiBaseOnOnBuffAdd;
-            //Obj_AI_Base.OnBuffRemove += ObjAiBaseOnOnBuffRemove;
+            Obj_AI_Base.OnBuffAdd += ObjAiBaseOnOnBuffAdd;
+            Obj_AI_Base.OnBuffRemove += ObjAiBaseOnOnBuffRemove;
         }
 
         public Champion(bool load)
@@ -226,7 +226,7 @@ namespace xSaliceResurrected
             //for Champion used
         }
 
-       /* protected virtual void ObjAiBaseOnOnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
+       protected virtual void ObjAiBaseOnOnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
         {
             //for Champion used
         }
@@ -234,7 +234,7 @@ namespace xSaliceResurrected
         protected virtual void ObjAiBaseOnOnBuffRemove(Obj_AI_Base sender, Obj_AI_BaseBuffRemoveEventArgs args)
         {
             //for Champion used
-        }*/
+        }
 
     }
 }

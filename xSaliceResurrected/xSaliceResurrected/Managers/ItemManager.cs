@@ -132,7 +132,7 @@ namespace xSaliceResurrected.Managers
 
             Orbwalking.AfterAttack += AfterAttack;
             Orbwalking.OnAttack += OnAttack;
-            Spellbook.OnCastSpell += SpellbookOnOnCastSpell;
+            Obj_AI_Base.OnProcessSpellCast += SpellbookOnOnCastSpell;
             Game.OnUpdate += Game_OnGameUpdate;
         }
 
@@ -155,7 +155,7 @@ namespace xSaliceResurrected.Managers
         {
             if (ObjectManager.Player.HasBuff("Muramana") && Items.CanUseItem(3042) && Utils.TickCount - _lastMura > 5000)
             {
-                Items.UseItem(3042);
+                CastMuraMana();
             }
 
             if (Target == null || ObjectManager.Player.IsDead)
@@ -240,25 +240,25 @@ namespace xSaliceResurrected.Managers
                     //Game.PrintChat("RAWR");
                     if (AlwaysUse(item.ActiveName))
                     {
-                        Items.UseItem(item.ActiveId);
+                        CastMuraMana();
                         _lastMura = Utils.TickCount;
                     }
 
                     if (KillableTarget)
                     {
-                        Items.UseItem(item.ActiveId, Target);
+                        CastMuraMana();
                         _lastMura = Utils.TickCount;
                     }
 
                     if (ObjectManager.Player.HealthPercent <= UseAtMyHp(item.ActiveName) && !OnlyIfKillable(item.ActiveName))
                     {
-                        Items.UseItem(item.ActiveId);
+                        CastMuraMana();
                         _lastMura = Utils.TickCount;
                     }
 
                     if (Target.HealthPercent <= UseAtEnemyHp(item.ActiveName) && !OnlyIfKillable(item.ActiveName))
                     {
-                        Items.UseItem(item.ActiveId);
+                        CastMuraMana();
                         _lastMura = Utils.TickCount;
                     }
                 }
@@ -269,37 +269,39 @@ namespace xSaliceResurrected.Managers
             }
         }
 
-        private static void SpellbookOnOnCastSpell(Spellbook sender, SpellbookCastSpellEventArgs args)
+        private static void SpellbookOnOnCastSpell(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
-            if (!sender.Owner.IsMe || !(args.Target is Obj_AI_Hero))
+            if (!sender.IsMe || !(args.Target is Obj_AI_Hero))
+                return;
+
+            if (!args.SData.HaveHitEffect && !args.SData.IsAutoAttack())
                 return;
 
             foreach (var item in ItemList.Where(x => x.Mode == 2 && Items.CanUseItem(x.ActiveId) && ShouldUse(x.ActiveName)))
             {
                 if (!ObjectManager.Player.HasBuff("Muramana"))
                 {
-                    //Game.PrintChat("RAWR");
                     if (AlwaysUse(item.ActiveName))
                     {
-                        Items.UseItem(item.ActiveId);
+                        CastMuraMana();
                         _lastMura = Utils.TickCount;
                     }
 
                     if (KillableTarget)
                     {
-                        Items.UseItem(item.ActiveId, Target);
+                        CastMuraMana();
                         _lastMura = Utils.TickCount;
                     }
 
                     if (ObjectManager.Player.HealthPercent <= UseAtMyHp(item.ActiveName) && !OnlyIfKillable(item.ActiveName))
                     {
-                        Items.UseItem(item.ActiveId);
+                        CastMuraMana();
                         _lastMura = Utils.TickCount;
                     }
 
                     if (Target.HealthPercent <= UseAtEnemyHp(item.ActiveName) && !OnlyIfKillable(item.ActiveName))
                     {
-                        Items.UseItem(item.ActiveId);
+                        CastMuraMana();
                         _lastMura = Utils.TickCount;
                     }
                 }
@@ -360,7 +362,7 @@ namespace xSaliceResurrected.Managers
             return dmg;
         }
 
-        public static double LichDamage()
+        private static double LichDamage()
         {
             double dmg = 0;
 
@@ -380,6 +382,15 @@ namespace xSaliceResurrected.Managers
         {
             if (target != null && IgniteSlot != SpellSlot.Unknown && ObjectManager.Player.Spellbook.CanUseSpell(IgniteSlot) == SpellState.Ready && ObjectManager.Player.Distance(target.Position) < 650)
                 ObjectManager.Player.Spellbook.CastSpell(IgniteSlot, target);
+        }
+
+        private static void CastMuraMana()
+        {
+            var mura = ObjectManager.Player.GetSpellSlot("Muramana");
+            if (mura != SpellSlot.Unknown && mura.IsReady())
+            {
+                ObjectManager.Player.Spellbook.CastSpell(mura);
+            }
         }
 
         private static bool ShouldUse(string name)

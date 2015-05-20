@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using LeagueSharp;
@@ -46,6 +47,12 @@ namespace xSaliceResurrected.ADC
 
             var spellMenu = new Menu("SpellMenu", "SpellMenu");
             {
+                var qMenu = new Menu("QMenu", "QMenu");
+                {
+                    qMenu.AddItem(new MenuItem("Q_Poison", "Auto Q Poison Target", true).SetValue(true));
+                    spellMenu.AddSubMenu(qMenu);
+                }
+
                 var wMenu = new Menu("WMenu", "WMenu");
                 {
                     wMenu.AddItem(new MenuItem("W_If_HP", "W If HP <= ", true).SetValue(new Slider(50)));
@@ -213,6 +220,31 @@ namespace xSaliceResurrected.ADC
             }
         }
 
+        private readonly List<Obj_AI_Hero> _poisonTargets = new List<Obj_AI_Hero>();
+
+        protected override void ObjAiBaseOnOnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
+        {
+            if (sender.IsMe || !(sender is Obj_AI_Hero) || !sender.IsEnemy)
+                return;
+
+            if (args.Buff.Name == "urgotcorrosivedebuff")
+            {
+                _poisonTargets.Add((Obj_AI_Hero) sender);
+                Console.WriteLine("Added: " + _poisonTargets.Count);
+            }
+        }
+
+        protected override void ObjAiBaseOnOnBuffRemove(Obj_AI_Base sender, Obj_AI_BaseBuffRemoveEventArgs args)
+        {
+            if (sender.IsMe || !(sender is Obj_AI_Hero) || !sender.IsEnemy)
+                return;
+            if (args.Buff.Name == "urgotcorrosivedebuff")
+            {
+                _poisonTargets.RemoveAll(x => x.NetworkId == sender.NetworkId);
+                Console.WriteLine("Added: " + _poisonTargets.Count);
+            }
+        }
+
         protected override void AfterAttack(AttackableUnit unit, AttackableUnit mytarget)
         {
             var target = (Obj_AI_Base)mytarget;
@@ -220,10 +252,13 @@ namespace xSaliceResurrected.ADC
             if (!menu.Item("ComboActive", true).GetValue<KeyBind>().Active || !unit.IsMe || !(target is Obj_AI_Hero))
                 return;
 
+            if (menu.Item("UseWCombo", true).GetValue<bool>())
+                W.Cast();
             if (menu.Item("UseECombo", true).GetValue<bool>() && E.IsReady())
                 E.Cast(target);
             if (menu.Item("UseQCombo", true).GetValue<bool>() && Q.IsReady())
-                Q.Cast(target);
+                if (Player.Distance(target) > E.Range || !E.IsReady())
+                    Q.Cast(target);
         }
 
         private void Farm()
@@ -341,7 +376,15 @@ namespace xSaliceResurrected.ADC
 
             if (Player.IsChannelingImportantSpell())
                 return;
-                
+
+            if (menu.Item("Q_Poison", true).GetValue<bool>() && _poisonTargets.Count > 0)
+            {
+                var target = _poisonTargets.OrderByDescending(GetComboDamage).FirstOrDefault();
+
+                if (target.IsValidTarget(Q2.Range))
+                    Q2.Cast(target);
+            }
+
             if (menu.Item("smartKS", true).GetValue<bool>())
                 CheckKs();
 

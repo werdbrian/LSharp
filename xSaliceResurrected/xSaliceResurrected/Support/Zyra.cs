@@ -366,6 +366,16 @@ namespace xSaliceResurrected.Support
             }
         }
 
+
+        protected override void BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
+        {
+            if (!menu.Item("disableAA", true).GetValue<bool>() )
+                return;
+
+            if ((args.Target is Obj_AI_Minion) && menu.Item("HarassActive", true).GetValue<KeyBind>().Active)
+                args.Process = false;
+        }
+
         protected override void Game_OnGameUpdate(EventArgs args)
         {
             if (Player.IsDead)
@@ -380,8 +390,6 @@ namespace xSaliceResurrected.Support
                 if (pred.Hitchance >= HitChance.High)
                     Q.Cast(target);
             }
-
-            Orbwalker.SetAttack(true);
 
             if (menu.Item("smartKS", true).GetValue<bool>())
                 CheckKs();
@@ -408,12 +416,8 @@ namespace xSaliceResurrected.Support
                     Farm();
 
                 if (menu.Item("HarassActive", true).GetValue<KeyBind>().Active)
-                {
-                    if (menu.Item("disableAA", true).GetValue<bool>())
-                        Orbwalker.SetAttack(false);
-
                     Harass();
-                }
+                
 
                 if (menu.Item("HarassActiveT", true).GetValue<KeyBind>().Active)
                     Harass();

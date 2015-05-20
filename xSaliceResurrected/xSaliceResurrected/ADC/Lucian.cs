@@ -304,7 +304,7 @@ namespace xSaliceResurrected.ADC
             if (!R.IsReady())
                 return;
 
-            var target = TargetSelector.GetTarget(E.Range + Player.AttackRange, TargetSelector.DamageType.Physical);
+            var target = TargetSelector.GetTarget(R.Range, TargetSelector.DamageType.Physical);
 
             if (target == null)
                 return;
@@ -336,7 +336,7 @@ namespace xSaliceResurrected.ADC
         }
 
         private bool _hasBuff;
-        /*
+        
         protected override void ObjAiBaseOnOnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
         {
             if (!sender.IsMe)
@@ -353,7 +353,7 @@ namespace xSaliceResurrected.ADC
 
             if (args.Buff.DisplayName == "LucianPassiveBuff")
                 _hasBuff = false;
-        }*/
+        }
 
         private void SmartKs()
         {
