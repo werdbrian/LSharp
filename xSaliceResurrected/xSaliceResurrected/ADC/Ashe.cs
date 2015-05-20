@@ -102,6 +102,7 @@ namespace xSaliceResurrected.ADC
                 //aoe
                 miscMenu.AddSubMenu(AoeSpellManager.AddHitChanceMenuCombo(false, true, false, true));
                 miscMenu.AddItem(new MenuItem("smartKS", "Smart KS", true).SetValue(true));
+                miscMenu.AddItem(new MenuItem("ksR", "KS with R", true).SetValue(true));
                 miscMenu.AddItem(new MenuItem("UseInt", "Use R to Interrupt", true).SetValue(true));
                 //add to menu
                 menu.AddSubMenu(miscMenu);
@@ -293,7 +294,7 @@ namespace xSaliceResurrected.ADC
                 }
 
                 //R
-                if (Player.Distance(target) <= R.Range && Player.GetSpellDamage(target, SpellSlot.R) > target.Health && R.IsReady())
+                if (Player.Distance(target) <= R.Range && Player.GetSpellDamage(target, SpellSlot.R) > target.Health && R.IsReady() && menu.Item("ksR", true).GetValue<bool>())
                 {
                     R.Cast(target);
                     return;
