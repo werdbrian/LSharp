@@ -247,9 +247,7 @@ namespace xSaliceResurrected.Mid
                 Cast_E();
             if (useQ && Q.IsReady())
             {
-                SpellCastManager.CastBasicSkillShot(Q, Q.Range, TargetSelector.DamageType.Magical,
-                    HitChanceManager.GetQHitChance(source));
-                return;
+                SpellCastManager.CastBasicSkillShot(Q, Q.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetQHitChance(source));
             }
             if (useW && W.IsReady())
             {
