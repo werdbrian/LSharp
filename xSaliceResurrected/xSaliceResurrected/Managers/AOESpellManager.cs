@@ -83,7 +83,7 @@ namespace xSaliceResurrected.Managers
 
                 var nearByEnemies = 1;
 
-                if ((spell.Type == SkillshotType.SkillshotLine && spell.Collision) || spell.Type == SkillshotType.SkillshotCircle)
+                if (spell.Type == SkillshotType.SkillshotLine && spell.Collision)
                 {
                     var poly = new Geometry.Polygon.Circle(pred.UnitPosition, spell.Width);
 
