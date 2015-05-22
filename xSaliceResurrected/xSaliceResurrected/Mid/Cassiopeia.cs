@@ -21,7 +21,7 @@ namespace xSaliceResurrected.Mid
         private void SetSpells()
         {
             SpellManager.Q = new Spell(SpellSlot.Q, 850);
-            SpellManager.Q.SetSkillshot(0.6f, 100f, float.MaxValue, true, SkillshotType.SkillshotCircle);
+            SpellManager.Q.SetSkillshot(0.25f, 100f, 2500, true, SkillshotType.SkillshotCircle);
 
             SpellManager.W = new Spell(SpellSlot.W, 850);
             SpellManager.W.SetSkillshot(0.5f, 90f, 2500, false, SkillshotType.SkillshotCircle);
@@ -44,9 +44,10 @@ namespace xSaliceResurrected.Mid
                 key.AddItem(new MenuItem("HarassActive", "Harass!", true).SetValue(new KeyBind("C".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("HarassActiveT", "Harass (toggle)!", true).SetValue(new KeyBind("N".ToCharArray()[0], KeyBindType.Toggle)));
                 key.AddItem(new MenuItem("LaneClearActive", "Farm!", true).SetValue(new KeyBind("V".ToCharArray()[0], KeyBindType.Press)));
+                key.AddItem(new MenuItem("LastHitE", "Last Hit With E", true).SetValue(new KeyBind("A".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("forceUlt", "Ult Helper", true).SetValue(new KeyBind("H".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("flashUlt", "Ult Flash", true).SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
-                key.AddItem(new MenuItem("aoeUltOnly", "AOE Ult Only", true).SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Toggle)));
+                key.AddItem(new MenuItem("aoeUltOnly", "AOE Ult Only", true).SetValue(new KeyBind("Y".ToCharArray()[0], KeyBindType.Toggle)));
                 //add to menu
                 menu.AddSubMenu(key);
             }
@@ -58,6 +59,12 @@ namespace xSaliceResurrected.Mid
                     qMenu.AddItem(new MenuItem("Auto_Q_Immobile", "Auto Q Immobile", true).SetValue(true));
                     qMenu.AddItem(new MenuItem("Auto_Q_Dashing", "Auto Q Dashing", true).SetValue(true));
                     spellMenu.AddSubMenu(qMenu);
+                }
+
+                var wMenu = new Menu("WMenu", "WMenu");
+                {
+                    wMenu.AddItem(new MenuItem("OnlyWIfnotPoison", "Only W if Q is offcd and enemy not poison", true).SetValue(false));
+                    spellMenu.AddSubMenu(wMenu);
                 }
 
                 var eMenu = new Menu("EMenu", "EMenu");
@@ -109,6 +116,9 @@ namespace xSaliceResurrected.Mid
                 farm.AddItem(new MenuItem("UseQFarm", "Use Q", true).SetValue(true));
                 farm.AddItem(new MenuItem("UseWFarm", "Use W", true).SetValue(true));
                 farm.AddItem(new MenuItem("UseEFarm", "Use E", true).SetValue(false));
+                farm.AddItem(new MenuItem("EMode", "E Mode", true).SetValue(new StringList(new[] { "Poisoned", "LastHit", "PoisonLastHit"})));
+                farm.AddItem(new MenuItem("QMinHit", "Min Minion to Q", true).SetValue(new Slider(3, 1, 6)));
+                farm.AddItem(new MenuItem("WMinHit", "Min Minion to W", true).SetValue(new Slider(3, 1, 6)));
                 ManaManager.AddManaManagertoMenu(farm, "LaneClear", 50);
                 menu.AddSubMenu(farm);
             }
@@ -132,6 +142,7 @@ namespace xSaliceResurrected.Mid
                 drawMenu.AddItem(new MenuItem("Draw_W", "Draw W", true).SetValue(true));
                 drawMenu.AddItem(new MenuItem("Draw_E", "Draw E", true).SetValue(true));
                 drawMenu.AddItem(new MenuItem("Draw_R", "Draw R", true).SetValue(true));
+                drawMenu.AddItem(new MenuItem("FlashUltNotification", "Ult Flash Killable Notification", true).SetValue(true));
 
                 MenuItem drawComboDamageMenu = new MenuItem("Draw_ComboDamage", "Draw Combo Damage", true).SetValue(true);
                 MenuItem drawFill = new MenuItem("Draw_Fill", "Draw Combo Damage Fill", true).SetValue(new Circle(true, Color.FromArgb(90, 255, 169, 4)));
@@ -165,6 +176,7 @@ namespace xSaliceResurrected.Mid
                 customMenu.AddItem(myCust.AddToMenu("Harass Active: ", "HarassActive"));
                 customMenu.AddItem(myCust.AddToMenu("Harass(T) Active: ", "HarassActiveT"));
                 customMenu.AddItem(myCust.AddToMenu("Laneclear Active: ", "LaneClearActive"));
+                customMenu.AddItem(myCust.AddToMenu("LastHitE Active: ", "LastHitE"));
                 customMenu.AddItem(myCust.AddToMenu("Ult help Active: ", "forceUlt"));
                 customMenu.AddItem(myCust.AddToMenu("Ult Flash Active: ", "flashUlt"));
                 customMenu.AddItem(myCust.AddToMenu("AOE Ult Active: ", "aoeUltOnly"));
@@ -236,7 +248,17 @@ namespace xSaliceResurrected.Mid
             if (useQ && Q.IsReady())
                 SpellCastManager.CastBasicSkillShot(Q, Q.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetQHitChance(source));
             if (useW && W.IsReady())
-                SpellCastManager.CastBasicSkillShot(W, W.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetWHitChance(source));
+            {
+                if (menu.Item("OnlyWIfnotPoison", true).GetValue<bool>())
+                {
+                    var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
+
+                    if(!Q.IsReady() && PoisonDuration(target) <= E.Delay)
+                        SpellCastManager.CastBasicSkillShot(W, W.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetWHitChance(source));
+                }
+                else
+                    SpellCastManager.CastBasicSkillShot(W, W.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetWHitChance(source));
+            }
         }
 
         protected override void BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
@@ -379,17 +401,77 @@ namespace xSaliceResurrected.Mid
             var useW = menu.Item("UseWFarm", true).GetValue<bool>();
             var useE = menu.Item("UseEFarm", true).GetValue<bool>();
 
-            var minions = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.NotAlly);
             if (useQ)
-                SpellCastManager.CastBasicFarm(Q);
-            if (useW)
-                SpellCastManager.CastBasicFarm(W);
-            if (useE && minions.Count > 0)
             {
-                var minion = minions.FirstOrDefault(x => PoisonDuration(x) > E.Delay);
+                var min = menu.Item("QMinHit", true).GetValue<Slider>().Value;
+                var minionQ = MinionManager.GetMinions(Player.ServerPosition, Q.Range, MinionTypes.All, MinionTeam.NotAlly);
 
-                if (minion != null)
-                    E.Cast(minion);
+                var pred = Q.GetCircularFarmLocation(minionQ, 120);
+
+                if (pred.MinionsHit >= min)
+                    Q.Cast(pred.Position);
+            }
+            if (useW)
+            {
+                var min = menu.Item("WMinHit", true).GetValue<Slider>().Value;
+                var minionW = MinionManager.GetMinions(Player.ServerPosition, W.Range, MinionTypes.All, MinionTeam.NotAlly);
+
+                var pred = W.GetCircularFarmLocation(minionW);
+
+                if (pred.MinionsHit >= min)
+                    W.Cast(pred.Position);
+            }
+            if (useE)
+            {
+                var mode = menu.Item("EMode", true).GetValue<StringList>().SelectedIndex;
+                var minions = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.NotAlly);
+
+                if (minions.Count == 0)
+                    return;
+
+                if (mode == 0)
+                {
+                    var minion = minions.FirstOrDefault(x => PoisonDuration(x) > E.Delay);
+
+                    if (minion != null)
+                        E.Cast(minion);
+                }
+                else if(mode == 1)
+                {
+                    foreach (var x in minions)
+                    {
+                        var healthPred = HealthPrediction.GetHealthPrediction(x, (int)Player.Distance(x), Game.Ping +  200);
+
+                        if (healthPred <= Player.GetSpellDamage(x, SpellSlot.E))
+                            E.Cast(x);
+                    }
+                }
+                else if (mode == 2)
+                {
+                    foreach (var x in minions.Where(x => PoisonDuration(x) > E.Delay))
+                    {
+                        var healthPred = HealthPrediction.GetHealthPrediction(x, (int)Player.Distance(x), Game.Ping + 200);
+
+                        if (healthPred <= Player.GetSpellDamage(x, SpellSlot.E))
+                            E.Cast(x);
+                    }
+                }
+            }
+        }
+
+        private void LastHit()
+        {
+            if (!E.IsReady())
+                return;
+
+            var minions = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.NotAlly);
+
+            if (minions.Count == 0)
+                return;
+
+            foreach (var x in from x in minions let healthPred = HealthPrediction.GetHealthPrediction(x, (int)Player.Distance(x), Game.Ping + 200) where healthPred <= Player.GetSpellDamage(x, SpellSlot.E) select x)
+            {
+                E.Cast(x);
             }
         }
 
@@ -525,7 +607,16 @@ namespace xSaliceResurrected.Mid
 
         private void ForceUlt()
         {
-            SpellCastManager.CastBasicSkillShot(R, R.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetRHitChance("Combo"));
+            if (R.IsReady())
+                return;
+
+            var target = TargetSelector.GetTarget(R.Range, TargetSelector.DamageType.Magical);
+
+            if (!target.IsValidTarget(R.Range))
+                return;
+
+            if (target.IsFacing(Player))
+                R.Cast(target);
         }
 
         protected override void Game_OnGameUpdate(EventArgs args)
@@ -556,6 +647,9 @@ namespace xSaliceResurrected.Mid
             {
                 if (menu.Item("E_Poison", true).GetValue<bool>())
                     AutoEPoisonTargets();
+
+                if (menu.Item("LastHitE", true).GetValue<KeyBind>().Active)
+                    LastHit();
 
                 if (menu.Item("LaneClearActive", true).GetValue<KeyBind>().Active)
                     Farm();
@@ -596,6 +690,8 @@ namespace xSaliceResurrected.Mid
                 R.Cast(gapcloser.Sender);
         }
 
+        private int _lastNotification;
+
         protected override void Drawing_OnDraw(EventArgs args)
         {
             if (menu.Item("Draw_Disabled", true).GetValue<bool>())
@@ -616,6 +712,23 @@ namespace xSaliceResurrected.Mid
             if (menu.Item("Draw_R", true).GetValue<bool>())
                 if (R.Level > 0)
                     Render.Circle.DrawCircle(Player.Position, R.Range, R.IsReady() ? Color.Green : Color.Red);
+
+            if (menu.Item("FlashUltNotification", true).GetValue<bool>())
+            {
+                var enemy = HeroManager.Enemies.Where(x => R.IsKillable(x)).ToList();
+
+                if (!enemy.Any())
+                    return;
+
+                foreach (var x in enemy)
+                {
+                    if (Utils.TickCount - _lastNotification > 0)
+                    {
+                        Notifications.AddNotification(x.BaseSkinName + " Flash Ult Killable", 500);
+                        _lastNotification = Utils.TickCount + 5000;
+                    }
+                }
+            }
         }
     }
 }
