@@ -254,9 +254,11 @@ namespace xSaliceResurrected.Mid
                 if (menu.Item("OnlyWIfnotPoison", true).GetValue<bool>())
                 {
                     var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
-
-                    if(!Q.IsReady() && PoisonDuration(target) <= E.Delay)
-                        SpellCastManager.CastBasicSkillShot(W, W.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetWHitChance(source));
+                    if (target.IsValidTarget(W.Range))
+                    {
+                        if (!Q.IsReady() && PoisonDuration(target) <= E.Delay)
+                            SpellCastManager.CastBasicSkillShot(W, W.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetWHitChance(source));
+                    }
                 }
                 else
                     SpellCastManager.CastBasicSkillShot(W, W.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetWHitChance(source));
