@@ -12,8 +12,8 @@ namespace xSaliceResurrected.Mid
 {
     class Viktor : Champion
     {
-        private static GameObject rObj = null;
-        private static bool activeR = false;
+        private static GameObject _rObj;
+        private static bool _activeR;
         private static int _lastR;
 
         public Viktor()
@@ -32,6 +32,7 @@ namespace xSaliceResurrected.Mid
             SpellManager.E2 = new Spell(SpellSlot.E, 700);
             SpellManager.R = new Spell(SpellSlot.R, 700);
 
+            SpellManager.Q.SetTargetted(0.25f, 2000);
             SpellManager.W.SetSkillshot(.25f, 300, float.MaxValue, false, SkillshotType.SkillshotCircle);
             SpellManager.E.SetSkillshot(0.2f, 90, 1000, false, SkillshotType.SkillshotCircle);
             SpellManager.E2.SetSkillshot(0.2f, 90, 1000, false, SkillshotType.SkillshotCircle);
@@ -104,6 +105,7 @@ namespace xSaliceResurrected.Mid
             {
                 farm.AddItem(new MenuItem("UseQFarm", "Use Q", true).SetValue(true));
                 farm.AddItem(new MenuItem("UseEFarm", "Use E", true).SetValue(true));
+                farm.AddItem(new MenuItem("MinMinion", "Min Minion To E >=", true).SetValue(new Slider(3, 1, 5)));
                 //add to menu
                 menu.AddSubMenu(farm);
             }
@@ -179,7 +181,7 @@ namespace xSaliceResurrected.Mid
                 damage += 5 * Player.GetSpellDamage(enemy, SpellSlot.R, 1);
             }
 
-            if (activeR)
+            if (_activeR)
                 damage += Player.GetSpellDamage(enemy, SpellSlot.R, 1);
 
             return (float)damage;
@@ -232,7 +234,7 @@ namespace xSaliceResurrected.Mid
                 return;
             }
 
-            if (useR &&  R.IsReady() && !activeR && ShouldR(target, dmg) && R.GetPrediction(target).Hitchance >= HitChanceManager.GetRHitChance(source))
+            if (useR &&  R.IsReady() && !_activeR && ShouldR(target, dmg) && R.GetPrediction(target).Hitchance >= HitChanceManager.GetRHitChance(source))
             {
                 if (target != null) R.Cast(target.Position);
             }
@@ -276,12 +278,12 @@ namespace xSaliceResurrected.Mid
 
         private static void AutoR()
         {
-            if (activeR && rObj != null)
+            if (_activeR && _rObj != null)
             {
                 foreach (
                     Obj_AI_Hero target in
                         ObjectManager.Get<Obj_AI_Hero>()
-                            .Where(x => x.IsValidTarget(2000)).OrderByDescending(x => x.Distance(rObj.Position)))
+                            .Where(x => x.IsValidTarget(2000)).OrderByDescending(x => x.Distance(_rObj.Position)))
                 {
                     if (target != null)
                     {
@@ -293,6 +295,17 @@ namespace xSaliceResurrected.Mid
                     }
                 }
             }
+        }
+
+        protected override void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base unit, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (!unit.IsMe)
+                return;
+
+             SpellSlot castedSlot = ObjectManager.Player.GetSpellSlot(args.SData.Name);
+
+            if (castedSlot == SpellSlot.Q)
+                Utility.DelayAction.Add(250, Orbwalking.ResetAutoAttackTimer);
         }
 
         protected override void Game_OnGameUpdate(EventArgs args)
@@ -312,7 +325,7 @@ namespace xSaliceResurrected.Mid
             if (menu.Item("ComboActive", true).GetValue<KeyBind>().Active)
             {
                 Combo();
-            }
+            }    
             else
             {
                 if (menu.Item("LastHitQQ", true).GetValue<KeyBind>().Active)
@@ -350,7 +363,7 @@ namespace xSaliceResurrected.Mid
         {
             var result = new Vector2();
             var minionCount = 0;
-            var startPos = ObjectManager.Player.ServerPosition.To2D();
+            var startPos = lineSource;
 
             var max = minionPositions.Count;
             for (var i = 0; i < max; i++)
@@ -388,8 +401,7 @@ namespace xSaliceResurrected.Mid
         {
             if (!Orbwalking.CanMove(40)) return;
 
-            var minionsE = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.NotAlly);
-            var points = minionsE.Select(x => x.ServerPosition.To2D()).ToList();
+
             var allMinionsQ = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range + Q.Width, MinionTypes.All, MinionTeam.NotAlly);
 
             var useQ = menu.Item("UseQFarm", true).GetValue<bool>();
@@ -400,14 +412,21 @@ namespace xSaliceResurrected.Mid
                 Q.Cast(allMinionsQ[0]);
             }
 
+            var minionsE = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.NotAlly);
+            if (minionsE.Count == 0)
+                return;
+
+            var minionsE2 = MinionManager.GetMinions(minionsE[0].ServerPosition, E.Range, MinionTypes.All, MinionTeam.NotAlly);
+            var points = minionsE2.Select(x => x.ServerPosition.To2D()).ToList();
             if (useE && E.IsReady() && minionsE.Count > 0)
             {
                 E2.UpdateSourcePosition(minionsE[0].ServerPosition, minionsE[0].ServerPosition);
                 var pred = GetBestLineFarmLocation(minionsE[0].ServerPosition.To2D(), points, E.Width, E2.Range);
+                var min = menu.Item("MinMinion", true).GetValue<Slider>().Value;
 
-                if (pred.MinionsHit > 1)
+                if (pred.MinionsHit >= min)
                 {
-                    SpellCastManager.CastLineSpell(minionsE[0].ServerPosition, pred.Position.To3D());
+                    SpellCastManager.CastLineSpell(minionsE[0].Position, pred.Position.To3D());
                 }
             }
         }
@@ -429,8 +448,8 @@ namespace xSaliceResurrected.Mid
                 if (obj.IsValid && obj.Name.Contains("Viktor_Base_R"))
                 {
                     Console.WriteLine("R activated");
-                    activeR = true;
-                    rObj = obj;
+                    _activeR = true;
+                    _rObj = obj;
                 }
             }
 
@@ -443,8 +462,8 @@ namespace xSaliceResurrected.Mid
                 if (obj.IsValid && obj.Name.Contains("Viktor_Base_R"))
                 {
                     //Game.PrintChat("woot2");
-                    activeR = false;
-                    rObj = null;
+                    _activeR = false;
+                    _rObj = null;
                 }
             }
         }
