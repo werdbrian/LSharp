@@ -220,7 +220,7 @@ namespace xSaliceResurrected.Mid
                         Q.Cast(target);
                     }
 
-                    if (useE && E.IsReady() && Player.Distance(target.Position) < E.Range && Environment.TickCount - E.LastCastAttemptT > 0 &&
+                    if (useE && E.IsReady() && Player.Distance(target.Position) < E.Range && Utils.TickCount - E.LastCastAttemptT > 0 &&
                         Player.Distance(target.Position) > eDis)
                     {
                         if (menu.Item("smartE", true).GetValue<bool>() &&
@@ -230,7 +230,7 @@ namespace xSaliceResurrected.Mid
 
                         var delay = menu.Item("E_Delay_Slider", true).GetValue<Slider>().Value;
                         E.Cast(target);
-                        E.LastCastAttemptT = Environment.TickCount + delay;
+                        E.LastCastAttemptT = Utils.TickCount + delay;
                     }
                 }
                 else if (mode == 1) //eqw
@@ -249,7 +249,7 @@ namespace xSaliceResurrected.Mid
                         ItemManager.UseTargetted = true;
                     }
 
-                    if (useE && E.IsReady() && Player.Distance(target.Position) < E.Range && Environment.TickCount - E.LastCastAttemptT > 0 &&
+                    if (useE && E.IsReady() && Player.Distance(target.Position) < E.Range && Utils.TickCount - E.LastCastAttemptT > 0 &&
                         Player.Distance(target.Position) > eDis)
                     {
                         if (menu.Item("smartE", true).GetValue<bool>() &&
@@ -259,7 +259,7 @@ namespace xSaliceResurrected.Mid
 
                         var delay = menu.Item("E_Delay_Slider", true).GetValue<Slider>().Value;
                         E.Cast(target);
-                        E.LastCastAttemptT = Environment.TickCount + delay;
+                        E.LastCastAttemptT = Utils.TickCount + delay;
                     }
 
                     if (useQ && Q.IsReady() && Player.Distance(target.Position) <= Q.Range)
@@ -431,7 +431,7 @@ namespace xSaliceResurrected.Mid
                 if (target != null)
                 {
                     var delay = menu.Item("E_Delay_Slider", true).GetValue<Slider>().Value;
-                    bool shouldE = !menu.Item("KS_With_E", true).GetValue<KeyBind>().Active && Environment.TickCount - E.LastCastAttemptT > 0;
+                    bool shouldE = !menu.Item("KS_With_E", true).GetValue<KeyBind>().Active && Utils.TickCount - E.LastCastAttemptT > 0;
                     //QEW
                     if (Player.Distance(target.ServerPosition) <= E.Range && shouldE &&
                         (Player.GetSpellDamage(target, SpellSlot.E) + Player.GetSpellDamage(target, SpellSlot.Q) + Player.GetSpellDamage(target, SpellSlot.Q, 1) +
@@ -442,7 +442,7 @@ namespace xSaliceResurrected.Mid
                             CancelUlt(target);
                             Q.Cast(target);
                             E.Cast(target);
-                            E.LastCastAttemptT = Environment.TickCount + delay;
+                            E.LastCastAttemptT = Utils.TickCount + delay;
                             if (Player.Distance(target.ServerPosition) < W.Range)
                                 W.Cast();
                             return;
@@ -458,7 +458,7 @@ namespace xSaliceResurrected.Mid
                         {
                             CancelUlt(target);
                             E.Cast(target);
-                            E.LastCastAttemptT = Environment.TickCount + delay;
+                            E.LastCastAttemptT = Utils.TickCount + delay;
                             if (Player.Distance(target.ServerPosition) < W.Range)
                                 W.Cast();
                             //Game.PrintChat("ks 5");
@@ -475,7 +475,7 @@ namespace xSaliceResurrected.Mid
                         {
                             CancelUlt(target);
                             E.Cast(target);
-                            E.LastCastAttemptT = Environment.TickCount + delay;
+                            E.LastCastAttemptT = Utils.TickCount + delay;
                             Q.Cast(target);
                             //Game.PrintChat("ks 6");
                             return;
@@ -511,7 +511,7 @@ namespace xSaliceResurrected.Mid
                         {
                             CancelUlt(target);
                             E.Cast(target);
-                            E.LastCastAttemptT = Environment.TickCount + delay;
+                            E.LastCastAttemptT = Utils.TickCount + delay;
                             //Game.PrintChat("ks 8");
                             return;
                         }
@@ -587,7 +587,7 @@ namespace xSaliceResurrected.Mid
 
             if (castedSlot == SpellSlot.R)
             {
-                R.LastCastAttemptT = Environment.TickCount;
+                R.LastCastAttemptT = Utils.TickCount;
             }
         }
 
@@ -660,7 +660,7 @@ namespace xSaliceResurrected.Mid
             if (!(sender is Obj_AI_Minion))
                 return;
 
-            if (Environment.TickCount < WardJumper.LastPlaced + 300)
+            if (Utils.TickCount < WardJumper.LastPlaced + 300)
             {
                 var ward = (Obj_AI_Minion)sender;
                 if (ward.Name.ToLower().Contains("ward") && ward.Distance(WardJumper.LastWardPos) < 500 && E.IsReady())

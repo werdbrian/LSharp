@@ -239,7 +239,7 @@ namespace xSaliceResurrected.Support
 
             if (castedSlot == SpellSlot.E || castedSlot == SpellSlot.Q)
             {
-                E.LastCastAttemptT = Environment.TickCount;
+                E.LastCastAttemptT = Utils.TickCount;
             }
         }
 
@@ -248,7 +248,7 @@ namespace xSaliceResurrected.Support
             if (!W.IsReady() || Player.Distance(pos) > W.Range || W.Instance.Ammo == 0)
                 return;
 
-            if (Environment.TickCount - E.LastCastAttemptT > 100 + Game.Ping)
+            if (Utils.TickCount - E.LastCastAttemptT > 100 + Game.Ping)
                 return;
 
             if (W.Instance.Ammo == 1)// 1 cast

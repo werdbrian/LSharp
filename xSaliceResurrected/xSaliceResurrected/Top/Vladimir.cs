@@ -316,7 +316,7 @@ namespace xSaliceResurrected.Top
 
             if (menu.Item("StackE", true).GetValue<KeyBind>().Active)
             {
-                if (E.IsReady() && Environment.TickCount - E.LastCastAttemptT >= 9900)
+                if (E.IsReady() && Utils.TickCount - E.LastCastAttemptT >= 9900)
                     E.Cast();
             }
         }
@@ -328,7 +328,7 @@ namespace xSaliceResurrected.Top
 
             if (args.SData.Name == "VladimirTidesofBlood")
             {
-                E.LastCastAttemptT = Environment.TickCount + 250;
+                E.LastCastAttemptT = Utils.TickCount + 250;
             }
         }
 

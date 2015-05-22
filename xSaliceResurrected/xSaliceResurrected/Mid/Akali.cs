@@ -429,19 +429,19 @@ namespace xSaliceResurrected.Mid
         private void ModeSwitch()
         {
             int mode = menu.Item("Combo_mode", true).GetValue<StringList>().SelectedIndex;
-            int lasttime = Environment.TickCount - _lasttick;
+            int lasttime = Utils.TickCount - _lasttick;
 
             if (menu.Item("Combo_Switch", true).GetValue<KeyBind>().Active && lasttime > Game.Ping)
             {
                 if (mode == 0)
                 {
                     menu.Item("Combo_mode", true).SetValue(new StringList(new[] { "Normal", "Q-Delay-R-AA-Q-AA" }, 1));
-                    _lasttick = Environment.TickCount + 300;
+                    _lasttick = Utils.TickCount + 300;
                 }
                 else
                 {
                     menu.Item("Combo_mode", true).SetValue(new StringList(new[] { "Normal", "Q-Delay-R-AA-Q-AA" }));
-                    _lasttick = Environment.TickCount + 300;
+                    _lasttick = Utils.TickCount + 300;
                 }
             }
         }

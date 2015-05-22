@@ -301,7 +301,7 @@ namespace xSaliceResurrected.Top
                     if (Player.GetSpellDamage(target, SpellSlot.Q) * 2 > target.Health)
                         Q.Cast(target);
 
-                    if (Environment.TickCount - Q.LastCastAttemptT > 3800 && Environment.TickCount - Q.LastCastAttemptT < 4000)
+                    if (Utils.TickCount - Q.LastCastAttemptT > 3800 && Utils.TickCount - Q.LastCastAttemptT < 4000)
                         Q.Cast(target);
 
                     var minDistance = menu.Item("Q_Min_Distance", true).GetValue<Slider>().Value;
@@ -324,7 +324,7 @@ namespace xSaliceResurrected.Top
                         }
 
                         //check if can Q without activating
-                        if (bestMinion != null && Environment.TickCount - Q.LastCastAttemptT > 4000)
+                        if (bestMinion != null && Utils.TickCount - Q.LastCastAttemptT > 4000)
                         {
                             if (target.Distance(bestMinion.Position, true) < Q.RangeSqr && Player.Distance(bestMinion.Position, true) < Q.RangeSqr)
                             {
@@ -346,7 +346,7 @@ namespace xSaliceResurrected.Top
                 if (target == null)
                     return;
 
-                if (Q.IsReady() && Environment.TickCount - Q.LastCastAttemptT > 4000 && Player.Distance(target.Position) < Q.Range && Player.Distance(target.Position) > Player.AttackRange)
+                if (Q.IsReady() && Utils.TickCount - Q.LastCastAttemptT > 4000 && Player.Distance(target.Position) < Q.Range && Player.Distance(target.Position) > Player.AttackRange)
                     Q.Cast(target);
             }
         }
@@ -401,19 +401,19 @@ namespace xSaliceResurrected.Top
         private void ModeSwitch()
         {
             int mode = menu.Item("Combo_mode", true).GetValue<StringList>().SelectedIndex;
-            int lasttime = Environment.TickCount - _lasttick;
+            int lasttime = Utils.TickCount - _lasttick;
 
             if (menu.Item("Combo_Switch", true).GetValue<KeyBind>().Active && lasttime > Game.Ping)
             {
                 if (mode == 0)
                 {
                     menu.Item("Combo_mode", true).SetValue(new StringList(new[] { "Normal", "Q-AA-Q-AA-Ult" }, 1));
-                    _lasttick = Environment.TickCount + 300;
+                    _lasttick = Utils.TickCount + 300;
                 }
                 else if (mode == 1)
                 {
                     menu.Item("Combo_mode", true).SetValue(new StringList(new[] { "Normal", "Q-AA-Q-AA-Ult" }));
-                    _lasttick = Environment.TickCount + 300;
+                    _lasttick = Utils.TickCount + 300;
                 }
             }
         }
@@ -429,7 +429,7 @@ namespace xSaliceResurrected.Top
 
             ModeSwitch();
 
-            if (Environment.TickCount - R.LastCastAttemptT < 750 && _dodgeHero != null)
+            if (Utils.TickCount - R.LastCastAttemptT < 750 && _dodgeHero != null)
                 R.Cast(_dodgeHero);
 
             if (menu.Item("ComboActive", true).GetValue<KeyBind>().Active)
@@ -482,7 +482,7 @@ namespace xSaliceResurrected.Top
 
                 if (castedSlot == SpellSlot.Q)
                 {
-                    Q.LastCastAttemptT = Environment.TickCount;
+                    Q.LastCastAttemptT = Utils.TickCount;
                 }
             }
 
@@ -521,7 +521,7 @@ namespace xSaliceResurrected.Top
                     //Game.PrintChat("RAWR");
                     R.Cast(unit);
                     _dodgeHero = unit;
-                    R.LastCastAttemptT = Environment.TickCount;
+                    R.LastCastAttemptT = Utils.TickCount;
                 }
             }
         }

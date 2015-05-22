@@ -58,7 +58,7 @@ namespace xSaliceResurrected.Utilities
 
                     Player.Spellbook.CastSpell(invSlot.SpellSlot, position);
                     LastWardPos = position;
-                    LastPlaced = Environment.TickCount;
+                    LastPlaced = Utils.TickCount;
                 }
             }
 
@@ -102,7 +102,7 @@ namespace xSaliceResurrected.Utilities
                 }
             }
 
-            if (Environment.TickCount <= LastPlaced + 3000 || !E.IsReady()) return;
+            if (Utils.TickCount <= LastPlaced + 3000 || !E.IsReady()) return;
 
             Vector3 cursorPos = Game.CursorPos;
             Vector3 myPos = Player.ServerPosition;
@@ -117,7 +117,7 @@ namespace xSaliceResurrected.Utilities
 
             Items.UseItem((int)invSlot.Id, wardPosition);
             LastWardPos = wardPosition;
-            LastPlaced = Environment.TickCount;
+            LastPlaced = Utils.TickCount;
         }
 
         private static InventorySlot FindBestWardItem()

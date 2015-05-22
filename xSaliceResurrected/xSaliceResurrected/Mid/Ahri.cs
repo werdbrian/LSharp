@@ -278,12 +278,12 @@ namespace xSaliceResurrected.Mid
                 if (ShouldR(eTarget, dmg) && R.IsReady())
                 {
                     R.Cast(Game.CursorPos);
-                    _rTimer = Environment.TickCount - 250;
+                    _rTimer = Utils.TickCount - 250;
                 }
                 if (_rTimeLeft > 9500 && _rOn && R.IsReady())
                 {
                     R.Cast(Game.CursorPos);
-                    _rTimer = Environment.TickCount - 250;
+                    _rTimer = Utils.TickCount - 250;
                 }
             }
         }
@@ -427,7 +427,7 @@ namespace xSaliceResurrected.Mid
                     {
                         //Game.PrintChat("R-E Mode Intiate!");
                         R.Cast(Game.CursorPos);
-                        _rTimer = Environment.TickCount - 250;
+                        _rTimer = Utils.TickCount - 250;
                         return true;
                     }
                 }
@@ -480,7 +480,7 @@ namespace xSaliceResurrected.Mid
             _rOn = IsRActive();
 
             if (_rOn)
-                _rTimeLeft = Environment.TickCount - _rTimer;
+                _rTimeLeft = Utils.TickCount - _rTimer;
 
             //ks check
             if (menu.Item("smartKS", true).GetValue<bool>())

@@ -463,7 +463,7 @@ namespace xSaliceResurrected.Mid
                 {
                     Q.Cast(pred.CastPosition);
                     W.LastCastAttemptT = Utils.TickCount + 500;
-                    _qe.LastCastAttemptT = Environment.TickCount;
+                    _qe.LastCastAttemptT = Utils.TickCount;
                 }
             }
             else
@@ -489,7 +489,7 @@ namespace xSaliceResurrected.Mid
                 {
                     Q.Cast(startPos);
                     W.LastCastAttemptT = Utils.TickCount + 500;
-                    _qe.LastCastAttemptT = Environment.TickCount;
+                    _qe.LastCastAttemptT = Utils.TickCount;
                 }
             }
         }
@@ -525,7 +525,7 @@ namespace xSaliceResurrected.Mid
                 var startPos = Player.ServerPosition + Vector3.Normalize(Game.CursorPos - Player.ServerPosition) * (E.Range - 100);
                 Q.Cast(startPos);
                 W.LastCastAttemptT = Utils.TickCount + 500;
-                _qe.LastCastAttemptT = Environment.TickCount;
+                _qe.LastCastAttemptT = Utils.TickCount;
             }
 
             SmartKs();

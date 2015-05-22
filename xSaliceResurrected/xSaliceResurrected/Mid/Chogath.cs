@@ -255,7 +255,7 @@ namespace xSaliceResurrected.Mid
                             : 0) > target.Health)
                     {
                         CastFlashR(target);
-                        _lastFlash = Environment.TickCount;
+                        _lastFlash = Utils.TickCount;
                         return;
                     }
                 }
@@ -297,7 +297,7 @@ namespace xSaliceResurrected.Mid
             if (menu.Item("smartKS", true).GetValue<bool>())
                 CheckKs();
 
-            if (menu.Item("flashR", true).GetValue<KeyBind>().Active || Environment.TickCount - _lastFlash < 2500)
+            if (menu.Item("flashR", true).GetValue<KeyBind>().Active || Utils.TickCount - _lastFlash < 2500)
             {
                 Orbwalking.Orbwalk(null, Game.CursorPos);
                 var target = TargetSelector.GetSelectedTarget();
