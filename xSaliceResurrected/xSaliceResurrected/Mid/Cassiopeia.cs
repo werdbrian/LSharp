@@ -713,18 +713,18 @@ namespace xSaliceResurrected.Mid
                 if (R.Level > 0)
                     Render.Circle.DrawCircle(Player.Position, R.Range, R.IsReady() ? Color.Green : Color.Red);
 
-            if (menu.Item("FlashUltNotification", true).GetValue<bool>())
+            if (menu.Item("FlashUltNotification", true).GetValue<bool>() && SummonerManager.Flash_Ready() && R.IsReady())
             {
                 var enemy = HeroManager.Enemies.Where(x => R.IsKillable(x)).ToList();
 
                 if (!enemy.Any())
                     return;
 
-                foreach (var x in enemy)
+                foreach (var x in enemy.Where(x => x.IsValidTarget(R2.Range)))
                 {
                     if (Utils.TickCount - _lastNotification > 0)
                     {
-                        Notifications.AddNotification(x.BaseSkinName + " Flash Ult Killable", 500);
+                        Notifications.AddNotification(x.BaseSkinName + " Flash Ult Killable", 5000);
                         _lastNotification = Utils.TickCount + 5000;
                     }
                 }
