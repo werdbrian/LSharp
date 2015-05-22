@@ -199,17 +199,33 @@ namespace xSaliceResurrected.ADC
             }
 
             _ticker++;
-            if (_ticker > 45)
+            if (_ticker > 60)
                 _ticker = 0;
 
-            if (useQ && _ticker < 15)
+            if (useQ && _ticker < 20 && _ticker > 0)
                 Cast_Q();
-            if (useW && _ticker < 30)
+            if (useW && _ticker < 40 && _ticker >= 20)
                 Cast_W(source);
-            if (useE && _ticker == 45)
+            if (useE && _ticker < 60 && _ticker >= 40)
                 Cast_E();
             if (useR)
                 Cast_R();
+        }
+
+        protected override void SpellbookOnOnCastSpell(Spellbook sender, SpellbookCastSpellEventArgs args)
+        {
+            if (!sender.Owner.IsMe)
+                return;
+
+            if (!PassiveCheck() && args.Slot != SpellSlot.R)
+                args.Process = false;
+
+            if (args.Slot == SpellSlot.Q && _ticker >= 20)
+                args.Process = false;
+            if (args.Slot == SpellSlot.W && (_ticker >= 40 || _ticker < 20))
+                args.Process = false;
+            if (args.Slot == SpellSlot.E && (_ticker >= 60 || _ticker < 40))
+                args.Process = false;
         }
 
         private int _ticker;
@@ -228,7 +244,7 @@ namespace xSaliceResurrected.ADC
             {
                 if (Q.Cast(target) == Spell.CastStates.SuccessfullyCasted)
                 {
-                    Q.LastCastAttemptT = Environment.TickCount;
+                    _lastQ = Utils.TickCount;
                     Utility.DelayAction.Add(300, () => Player.IssueOrder(GameObjectOrder.AttackUnit, target));
                     return;
                 }
@@ -256,7 +272,7 @@ namespace xSaliceResurrected.ADC
                 {
                     if (Q.Cast(minion) == Spell.CastStates.SuccessfullyCasted)
                     {
-                        Q.LastCastAttemptT = Environment.TickCount;
+                        _lastQ = Utils.TickCount;
                         return;
                     }
                 }
@@ -313,23 +329,27 @@ namespace xSaliceResurrected.ADC
                 R.Cast(target);
         }
 
+        private float _lastQ;
+        private float _lastW;
+        private float _lastE;
         private bool PassiveCheck()
         {
             if (!menu.Item("CheckPassive", true).GetValue<bool>())
                 return true;
 
-            if (_hasBuff || Player.HasBuff("LucianPassiveBuff"))
-            {
-                return false;
-            }
-
-            if (Environment.TickCount - Q.LastCastAttemptT < 500)
+            if (_hasBuff)
                 return false;
 
-            if (Environment.TickCount - W.LastCastAttemptT < 500)
+            if (Player.HasBuff("LucianPassiveBuff"))
                 return false;
 
-            if (Environment.TickCount - E.LastCastAttemptT < 500)
+            if (Utils.TickCount - _lastQ < 500)
+                return false;
+
+            if (Utils.TickCount - _lastW < 500)
+                return false;
+
+            if (Utils.TickCount - _lastE < 500)
                 return false;
 
             return true;
@@ -441,15 +461,15 @@ namespace xSaliceResurrected.ADC
 
             if (castedSlot == SpellSlot.Q)
             {
-                Q.LastCastAttemptT = Environment.TickCount;
+                _lastQ = Utils.TickCount;
             }
             if (castedSlot == SpellSlot.W)
             {
-                W.LastCastAttemptT = Environment.TickCount;
+                _lastW = Utils.TickCount;
             }
             if (castedSlot == SpellSlot.E)
             {
-                E.LastCastAttemptT = Environment.TickCount;
+                _lastE = Utils.TickCount;
             }
         }
 

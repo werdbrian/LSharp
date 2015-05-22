@@ -50,6 +50,7 @@ namespace xSaliceResurrected.ADC
                 var qMenu = new Menu("QMenu", "QMenu");
                 {
                     qMenu.AddItem(new MenuItem("Q_Poison", "Auto Q Poison Target", true).SetValue(true));
+                    qMenu.AddItem(new MenuItem("ForceE", "Require to use E first if Enemy is in E range", true).SetValue(false));
                     spellMenu.AddSubMenu(qMenu);
                 }
 
@@ -215,7 +216,7 @@ namespace xSaliceResurrected.ADC
                 SpellCastManager.CastBasicSkillShot(E, E.Range, TargetSelector.DamageType.Physical, HitChanceManager.GetEHitChance(source));
             if (useQ && Q.IsReady())
             {
-                if(Player.Distance(target) > E.Range || !E.IsReady())
+                if (Player.Distance(target) > E.Range || !E.IsReady() || !menu.Item("ForceE", true).GetValue<bool>())
                     Cast_Q(target, source);
             }
         }
@@ -257,7 +258,6 @@ namespace xSaliceResurrected.ADC
             if (menu.Item("UseECombo", true).GetValue<bool>() && E.IsReady())
                 E.Cast(target);
             if (menu.Item("UseQCombo", true).GetValue<bool>() && Q.IsReady())
-                if (Player.Distance(target) > E.Range || !E.IsReady())
                     Q.Cast(target);
         }
 
