@@ -246,7 +246,11 @@ namespace xSaliceResurrected.Mid
             if (useE && E.IsReady())
                 Cast_E();
             if (useQ && Q.IsReady())
-                SpellCastManager.CastBasicSkillShot(Q, Q.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetQHitChance(source));
+            {
+                SpellCastManager.CastBasicSkillShot(Q, Q.Range, TargetSelector.DamageType.Magical,
+                    HitChanceManager.GetQHitChance(source));
+                return;
+            }
             if (useW && W.IsReady())
             {
                 if (menu.Item("OnlyWIfnotPoison", true).GetValue<bool>())
