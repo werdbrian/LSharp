@@ -420,7 +420,7 @@ namespace xSaliceResurrected.Mid
                 var min = menu.Item("WMinHit", true).GetValue<Slider>().Value;
                 var minionW = MinionManager.GetMinions(Player.ServerPosition, W.Range, MinionTypes.All, MinionTeam.NotAlly);
 
-                var pred = W.GetCircularFarmLocation(minionW);
+                var pred = W.GetCircularFarmLocation(minionW, 200);
 
                 if (pred.MinionsHit >= min)
                     W.Cast(pred.Position);
