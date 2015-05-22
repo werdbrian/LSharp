@@ -29,7 +29,7 @@ namespace xSaliceResurrected.Managers
             if (pred.Hitchance >= hitChance)
             {
                 
-                spell.Cast(spell.Type == SkillshotType.SkillshotCircle ? pred.UnitPosition : pred.CastPosition);
+                spell.Cast(pred.CastPosition);
             }
         }
 
