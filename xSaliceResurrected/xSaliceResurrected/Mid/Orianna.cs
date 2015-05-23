@@ -30,13 +30,13 @@ namespace xSaliceResurrected.Mid
             //intalize spell
             SpellManager.Q = new Spell(SpellSlot.Q, 825);
             SpellManager.W = new Spell(SpellSlot.W);
-            SpellManager.E = new Spell(SpellSlot.E, 1095);
+            SpellManager.E = new Spell(SpellSlot.E, 1100);
             SpellManager.R = new Spell(SpellSlot.R);
 
-            SpellManager.Q.SetSkillshot(0.25f, 80, 1300, false, SkillshotType.SkillshotLine);
+            SpellManager.Q.SetSkillshot(0.25f, 80, 1300, false, SkillshotType.SkillshotCircle);
             SpellManager.W.SetSkillshot(0f, 250, float.MaxValue, false, SkillshotType.SkillshotCircle);
             SpellManager.E.SetSkillshot(0.25f, 145, 1700, false, SkillshotType.SkillshotLine);
-            SpellManager.R.SetSkillshot(0.60f, 370, float.MaxValue, false, SkillshotType.SkillshotCircle);
+            SpellManager.R.SetSkillshot(0.60f, 350, float.MaxValue, false, SkillshotType.SkillshotCircle);
 
             SpellManager.SpellList.Add(Q);
             SpellManager.SpellList.Add(W);
@@ -77,17 +77,17 @@ namespace xSaliceResurrected.Mid
                     eMenu.AddSubMenu(new Menu("E Ally Inc Spell", "shield"));
                     eMenu.SubMenu("shield").AddItem(new MenuItem("eAllyIfHP", "If HP < %", true).SetValue(new Slider(40)));
                     foreach (Obj_AI_Hero ally in ObjectManager.Get<Obj_AI_Hero>().Where(ally => ally.IsAlly))
-                        eMenu.SubMenu("shield").AddItem(new MenuItem("shield" + ally.BaseSkinName, ally.BaseSkinName, true).SetValue(false));
+                        eMenu.SubMenu("shield").AddItem(new MenuItem("shield" + ally.BaseSkinName, ally.BaseSkinName, true).SetValue(true));
 
                     spellMenu.AddSubMenu(eMenu);
                 }
                 //R
                 var rMenu = new Menu("RSpell", "RSpell");
                 {
-                    rMenu.AddItem(new MenuItem("autoR", "Use R if hit", true).SetValue(new Slider(3, 1, 5)));
+                    rMenu.AddItem(new MenuItem("autoR", "Use R if hit (Global check)", true).SetValue(new Slider(3, 1, 5)));
                     rMenu.AddItem(new MenuItem("blockR", "Block R if no enemy", true).SetValue(true));
                     rMenu.AddItem(new MenuItem("overK", "OverKill Check", true).SetValue(true));
-                    rMenu.AddItem(new MenuItem("killR", "R Multi Only Toggle", true).SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Toggle)));
+                    rMenu.AddItem(new MenuItem("killR", "Use R only if it hits multiple target", true).SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Toggle)));
 
                     rMenu.AddSubMenu(new Menu("Auto use R on", "intR"));
                     foreach (Obj_AI_Hero enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.Team != Player.Team))
@@ -362,8 +362,8 @@ namespace xSaliceResurrected.Mid
                                 if (E.IsReady() && isOnseg &&
                                     prediction3.UnitPosition.Distance(pointLine.To3D()) < E.Width)
                                 {
-                                    //Game.PrintChat("Dmg 1");
-                                    E.Cast(ally);
+                                    Console.WriteLine("Dmg 1");
+                                    E.CastOnUnit(ally);
                                     return;
                                 }
                             }
@@ -380,7 +380,7 @@ namespace xSaliceResurrected.Mid
                         if (minTravelTime < travelTime && Player.Distance(etarget.ServerPosition) <= E.Range &&
                             E.IsReady())
                         {
-                            E.Cast(etarget);
+                            E.CastOnUnit(etarget);
                         }
                     }
                     break;
@@ -396,8 +396,8 @@ namespace xSaliceResurrected.Mid
 
                         if (E.IsReady() && isOnseg && prediction.UnitPosition.Distance(pointLine.To3D()) < E.Width)
                         {
-                            //Game.PrintChat("Dmg 2");
-                            E.Cast(Player);
+                            //Console.WriteLine("Dmg 2");
+                            E.CastOnUnit(Player);
                             return;
                         }
                     }
@@ -409,7 +409,7 @@ namespace xSaliceResurrected.Mid
                     if (minTravelTime2 < travelTime2 && target.Distance(Player.ServerPosition) <= Q.Range + Q.Width &&
                         E.IsReady())
                     {
-                        E.Cast(Player);
+                        E.CastOnUnit(Player);
                     }
 
                     break;
@@ -434,8 +434,8 @@ namespace xSaliceResurrected.Mid
                             if (E.IsReady() && isOnseg &&
                                 prediction2.UnitPosition.Distance(pointLine.To3D()) < E.Width)
                             {
-                                //Game.PrintChat("Dmg 3");
-                                E.Cast(ally);
+                                Console.WriteLine("Dmg 3");
+                                E.CastOnUnit(ally);
                                 return;
                             }
                         }
@@ -453,7 +453,7 @@ namespace xSaliceResurrected.Mid
                     if (minTravelTime3 < travelTime3 && Player.Distance(etarget.ServerPosition) <= E.Range &&
                         E.IsReady())
                     {
-                        E.Cast(etarget);
+                        E.CastOnUnit(etarget);
                     }
 
                     break;
@@ -462,11 +462,11 @@ namespace xSaliceResurrected.Mid
 
         private void CastQ(Obj_AI_Base target, String source)
         {
-            if (_isBallMoving) return;
+            if (_isBallMoving || !target.IsValidTarget(Q.Range)) return;
 
-            PredictionOutput prediction = Util.GetP(_currentBallPosition, Q, target, true);
+            PredictionOutput prediction = Util.GetP(_currentBallPosition, Q, target,  true);
 
-            if (Q.IsReady() && prediction.Hitchance >= HitChanceManager.GetQHitChance(source) && Player.Distance(target.Position) <= Q.Range + Q.Width)
+            if (Q.IsReady() && prediction.Hitchance >= HitChanceManager.GetQHitChance(source) && Player.Distance(target.Position) <= Q.Range)
             {
                 Q.Cast(prediction.CastPosition);
             }
@@ -590,7 +590,7 @@ namespace xSaliceResurrected.Mid
             if (_ballStatus == 0 && W.IsReady())
                 W.Cast();
             else if (E.IsReady() && _ballStatus != 0)
-                E.Cast(Player);
+                E.CastOnUnit(Player);
         }
 
         protected override void Game_OnGameUpdate(EventArgs args)
@@ -663,11 +663,11 @@ namespace xSaliceResurrected.Mid
                 if ((spell.Slot == SpellSlot.R && menuItem.Active) || (spell.Slot == SpellSlot.W && menuItem.Active))
                 {
                     if (_ballStatus == 0)
-                        Render.Circle.DrawCircle(Player.Position, spell.Range, spell.IsReady() ? Color.Aqua : Color.Red);
+                        Render.Circle.DrawCircle(Player.Position, spell.Width, spell.IsReady() ? Color.Aqua : Color.Red);
                     else if (_ballStatus == 2)
-                        Render.Circle.DrawCircle(_allyDraw, spell.Range, spell.IsReady() ? Color.Aqua : Color.Red);
+                        Render.Circle.DrawCircle(_allyDraw, spell.Width, spell.IsReady() ? Color.Aqua : Color.Red);
                     else
-                        Render.Circle.DrawCircle(_currentBallPosition, spell.Range, spell.IsReady() ? Color.Aqua : Color.Red);
+                        Render.Circle.DrawCircle(_currentBallPosition, spell.Width, spell.IsReady() ? Color.Aqua : Color.Red);
                 }
                 else if (menuItem.Active)
                     Render.Circle.DrawCircle(Player.Position, spell.Range, spell.IsReady() ? Color.Aqua : Color.Red);
@@ -689,12 +689,11 @@ namespace xSaliceResurrected.Mid
                         if (menu.Item("shield" + ally.BaseSkinName, true).GetValue<bool>())
                         {
                             int hp = menu.Item("eAllyIfHP", true).GetValue<Slider>().Value;
-                            float hpPercent = ally.Health / ally.MaxHealth * 100;
 
-                            if (ally.Distance(args.End) < 500 && hpPercent <= hp)
+                            if (ally.Distance(args.End) < 500 && ally.HealthPercent <= hp)
                             {
                                 //Game.PrintChat("shielding");
-                                E.Cast(ally);
+                                E.CastOnUnit(ally);
                                 _isBallMoving = true;
                                 return;
                             }
@@ -708,7 +707,7 @@ namespace xSaliceResurrected.Mid
             {
                 if (Initiator.InitatorList.Where(spell => args.SData.Name == spell.SDataName).Where(spell => menu.Item(spell.SpellName, true).GetValue<bool>()).Any(spell => E.IsReady() && Player.Distance(unit.Position) < E.Range))
                 {
-                    E.Cast(unit);
+                    E.CastOnUnit(unit);
                     _isBallMoving = true;
                     return;
                 }
@@ -734,7 +733,7 @@ namespace xSaliceResurrected.Mid
 
         protected override void Interrupter_OnPosibleToInterrupt(Obj_AI_Hero unit, Interrupter2.InterruptableTargetEventArgs spell)
         {
-            if (!menu.Item("UseInt", true).GetValue<bool>()) return;
+            if (!menu.Item("UseInt", true).GetValue<bool>() || _isBallMoving) return;
 
             if (Player.Distance(unit.Position) < R.Width)
             {
@@ -750,6 +749,9 @@ namespace xSaliceResurrected.Mid
         {
             if (args.Slot != SpellSlot.R)
                 return;
+
+            if (_isBallMoving)
+                args.Process = false;
 
             if (CountR() == 0 && menu.Item("blockR", true).GetValue<bool>())
             {
