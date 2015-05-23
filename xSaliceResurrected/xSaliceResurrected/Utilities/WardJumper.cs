@@ -77,7 +77,7 @@ namespace xSaliceResurrected.Utilities
             {
                 if (E.IsReady())
                 {
-                    E.CastOnUnit(ward);
+                    E.Cast(ward);
                     return;
                 }
             }
@@ -87,7 +87,7 @@ namespace xSaliceResurrected.Utilities
             {
                 if (E.IsReady())
                 {
-                    E.CastOnUnit(hero);
+                    E.Cast(hero);
                     return;
                 }
             }
@@ -97,7 +97,7 @@ namespace xSaliceResurrected.Utilities
             {
                 if (E.IsReady())
                 {
-                    E.CastOnUnit(minion);
+                    E.Cast(minion);
                     return;
                 }
             }

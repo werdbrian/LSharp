@@ -444,7 +444,7 @@ namespace xSaliceResurrected.Mid
 
             if (Get_Ult_Dmg(rTarget) > rTarget.Health - 20 && rTarget.Distance(Player.Position) < R.Range)
             {
-                R.CastOnUnit(rTarget);
+                R.Cast(rTarget);
             }
         }
 
@@ -535,7 +535,7 @@ namespace xSaliceResurrected.Mid
                 var target = TargetSelector.GetTarget(R.Range, TargetSelector.DamageType.Magical);
 
                 if (target != null)
-                    R.CastOnUnit(target);
+                    R.Cast(target);
             }
             if (menu.Item("ComboActive", true).GetValue<KeyBind>().Active)
             {

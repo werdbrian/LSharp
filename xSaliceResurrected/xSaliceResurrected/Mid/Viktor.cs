@@ -12,14 +12,14 @@ namespace xSaliceResurrected.Mid
 {
     class Viktor : Champion
     {
-        private static GameObject _rObj;
-        private static bool _activeR;
+        private static Obj_AI_Minion _rObj;
         private static int _lastR;
 
         public Viktor()
         {
             LoadSpells();
             LoadMenu();
+            _lastR = Utils.TickCount;
         }
 
         private void LoadSpells()
@@ -181,7 +181,7 @@ namespace xSaliceResurrected.Mid
                 damage += 5 * Player.GetSpellDamage(enemy, SpellSlot.R, 1);
             }
 
-            if (_activeR)
+            if (_rObj != null)
                 damage += Player.GetSpellDamage(enemy, SpellSlot.R, 1);
 
             return (float)damage;
@@ -234,7 +234,7 @@ namespace xSaliceResurrected.Mid
                 return;
             }
 
-            if (useR &&  R.IsReady() && !_activeR && ShouldR(target, dmg) && R.GetPrediction(target).Hitchance >= HitChanceManager.GetRHitChance(source))
+            if (useR &&  R.IsReady() && _rObj == null && ShouldR(target, dmg) && R.GetPrediction(target).Hitchance >= HitChanceManager.GetRHitChance(source))
             {
                 if (target != null) R.Cast(target.Position);
             }
@@ -276,36 +276,33 @@ namespace xSaliceResurrected.Mid
             return false;
         }
 
-        private static void AutoR()
+        private void AutoR()
         {
-            if (_activeR && _rObj != null)
+            if (_rObj != null && Utils.TickCount - _lastR > 200)
             {
                 foreach (
                     Obj_AI_Hero target in
-                        ObjectManager.Get<Obj_AI_Hero>()
+                        HeroManager.Enemies
                             .Where(x => x.IsValidTarget(2000)).OrderByDescending(x => x.Distance(_rObj.Position)))
                 {
-                    if (target != null)
-                    {
-                        if (R.IsReady())
-                        {
-                            R.Cast(target.ServerPosition);
-                            return;
-                        }
-                    }
+                    Player.Spellbook.CastSpell(SpellSlot.R, target.ServerPosition);
+                    _lastR = Utils.TickCount;
                 }
             }
         }
 
-        protected override void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base unit, GameObjectProcessSpellCastEventArgs args)
+        protected override void BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
         {
-            if (!unit.IsMe)
+            if (!menu.Item("ComboActive", true).GetValue<KeyBind>().Active &&
+                !menu.Item("HarassActive", true).GetValue<KeyBind>().Active)
                 return;
 
-             SpellSlot castedSlot = ObjectManager.Player.GetSpellSlot(args.SData.Name);
-
-            if (castedSlot == SpellSlot.Q)
-                Utility.DelayAction.Add(250, Orbwalking.ResetAutoAttackTimer);
+            if (args.Target.Type == GameObjectType.obj_AI_Hero)
+            {
+                args.Process = !(Q.IsReady() && Player.Mana >= QSpell.ManaCost);
+            }
+            else
+                args.Process = true;
         }
 
         protected override void Game_OnGameUpdate(EventArgs args)
@@ -315,12 +312,8 @@ namespace xSaliceResurrected.Mid
 
             SpellCastManager.CastBestLine(false, E, E2, (int)(E2.Range/2), menu);
 
-            int rTimeLeft = Utils.TickCount - _lastR;
-            if ((rTimeLeft <= 400))
-            {
-                AutoR();
-                _lastR = Utils.TickCount - 250;
-            }
+            AutoR();
+            
 
             if (menu.Item("ComboActive", true).GetValue<KeyBind>().Active)
             {
@@ -359,7 +352,7 @@ namespace xSaliceResurrected.Mid
             }
         }
 
-        public static MinionManager.FarmLocation GetBestLineFarmLocation(Vector2 lineSource, List<Vector2> minionPositions, float width, float range)
+        private static MinionManager.FarmLocation GetBestLineFarmLocation(Vector2 lineSource, List<Vector2> minionPositions, float width, float range)
         {
             var result = new Vector2();
             var minionCount = 0;
@@ -443,13 +436,16 @@ namespace xSaliceResurrected.Mid
 
         protected override void GameObject_OnCreate(GameObject obj, EventArgs args)
         {
+            if (!(obj is Obj_AI_Minion) || obj.IsEnemy)
+                return;
+
+            Console.WriteLine(obj.Name);
             if (Player.Distance(obj.Position) < 3000)
             {
-                if (obj.IsValid && obj.Name.Contains("Viktor_Base_R"))
+                if (obj.IsValid && obj.Name == "Storm")
                 {
-                    Console.WriteLine("R activated");
-                    _activeR = true;
-                    _rObj = obj;
+                    Console.WriteLine(obj.Type);
+                    _rObj = (Obj_AI_Minion)obj;
                 }
             }
 
@@ -457,12 +453,14 @@ namespace xSaliceResurrected.Mid
 
         protected override void GameObject_OnDelete(GameObject obj, EventArgs args)
         {
+            if (!(obj is Obj_AI_Minion) || obj.IsEnemy)
+                return;
+
             if (Player.Distance(obj.Position) < 3000)
             {
-                if (obj.IsValid && obj.Name.Contains("Viktor_Base_R"))
+                if (obj.IsValid && obj.Name == "Storm")
                 {
-                    //Game.PrintChat("woot2");
-                    _activeR = false;
+                    Console.WriteLine(obj.Type);
                     _rObj = null;
                 }
             }

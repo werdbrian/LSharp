@@ -156,7 +156,9 @@ namespace xSaliceResurrected.Mid
             double damage = 0d;
 
             if (Q.IsReady())
-                damage += Player.GetSpellDamage(enemy, SpellSlot.Q) + Player.GetSpellDamage(enemy, SpellSlot.Q, 1);
+                damage += Player.GetSpellDamage(enemy, SpellSlot.Q);
+
+            damage += MarkDmg(enemy);
 
             if (W.IsReady())
                 damage += Player.GetSpellDamage(enemy, SpellSlot.W);
@@ -349,10 +351,10 @@ namespace xSaliceResurrected.Mid
                 foreach (Obj_AI_Base minion in allMinions)
                 {
                     if (minion.IsValidTarget(Q.Range) &&
-                        HealthPrediction.GetHealthPrediction(minion, (int)(Player.Distance(minion.Position) * 1000 / 1400)) <
+                        HealthPrediction.GetHealthPrediction(minion, (int)(Player.Distance(minion.Position) * 1000 / 1400), 200) <
                         Player.GetSpellDamage(minion, SpellSlot.Q) - 35)
                     {
-                        Q.CastOnUnit(minion);
+                        Q.Cast(minion);
                         return;
                     }
                 }
@@ -360,11 +362,16 @@ namespace xSaliceResurrected.Mid
 
             if (W.IsReady() && useW)
             {
-                if (allMinions.Where(minion => minion.IsValidTarget(W.Range) && minion.Health < Player.GetSpellDamage(minion, SpellSlot.W) - 35).Any(minion => Player.Distance(minion.ServerPosition) < W.Range))
+                if (allMinions.Where(minion => minion.IsValidTarget(W.Range) && minion.Health < Player.GetSpellDamage(minion, SpellSlot.W) + MarkDmg(minion) - 35).Any(minion => Player.Distance(minion.ServerPosition) < W.Range))
                 {
                     W.Cast();
                 }
             }
+        }
+
+        private double MarkDmg(Obj_AI_Base target)
+        {
+            return Player.HasBuff("katarinaqmark") ? MarkDmg(target) : 0;
         }
 
         private void Farm()
@@ -434,7 +441,7 @@ namespace xSaliceResurrected.Mid
                     bool shouldE = !menu.Item("KS_With_E", true).GetValue<KeyBind>().Active && Utils.TickCount - E.LastCastAttemptT > 0;
                     //QEW
                     if (Player.Distance(target.ServerPosition) <= E.Range && shouldE &&
-                        (Player.GetSpellDamage(target, SpellSlot.E) + Player.GetSpellDamage(target, SpellSlot.Q) + Player.GetSpellDamage(target, SpellSlot.Q, 1) +
+                        (Player.GetSpellDamage(target, SpellSlot.E) + Player.GetSpellDamage(target, SpellSlot.Q) + MarkDmg(target) +
                          Player.GetSpellDamage(target, SpellSlot.W)) > target.Health + 20)
                     {
                         if (E.IsReady() && Q.IsReady() && W.IsReady())

@@ -541,6 +541,14 @@ namespace xSaliceResurrected.Mid
         {
             foreach (Obj_AI_Hero target in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget(Q.Range)).OrderByDescending(GetComboDamage))
             {
+                //R
+                if (Player.Distance(target) <= R.Range && Player.GetSpellDamage(target, SpellSlot.R) > target.Health && R.IsReady() && menu.Item("EnableRKS", true).GetValue<bool>()
+                    && !menu.Item("aoeUltOnly", true).GetValue<KeyBind>().Active)
+                {
+                    R.Cast(target);
+                    return;
+                }
+
                 //Q+E
                 if (Player.Distance(target) <= E.Range && Player.GetSpellDamage(target, SpellSlot.Q) + Player.GetSpellDamage(target, SpellSlot.E) > target.Health && Q.IsReady() && E.IsReady())
                 {
@@ -583,13 +591,6 @@ namespace xSaliceResurrected.Mid
                 if (Player.Distance(target) <= E.Range && Player.GetSpellDamage(target, SpellSlot.E) > target.Health && E.IsReady())
                 {
                     E.Cast(target);
-                    return;
-                }
-
-                //R
-                if (Player.Distance(target) <= R.Range && Player.GetSpellDamage(target, SpellSlot.R) > target.Health && R.IsReady() && menu.Item("EnableRKS", true).GetValue<bool>())
-                {
-                    R.Cast(target);
                     return;
                 }
             }

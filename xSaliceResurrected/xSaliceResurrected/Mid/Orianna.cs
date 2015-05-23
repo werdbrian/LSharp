@@ -363,7 +363,7 @@ namespace xSaliceResurrected.Mid
                                     prediction3.UnitPosition.Distance(pointLine.To3D()) < E.Width)
                                 {
                                     //Game.PrintChat("Dmg 1");
-                                    E.CastOnUnit(ally);
+                                    E.Cast(ally);
                                     return;
                                 }
                             }
@@ -380,7 +380,7 @@ namespace xSaliceResurrected.Mid
                         if (minTravelTime < travelTime && Player.Distance(etarget.ServerPosition) <= E.Range &&
                             E.IsReady())
                         {
-                            E.CastOnUnit(etarget);
+                            E.Cast(etarget);
                         }
                     }
                     break;
@@ -397,7 +397,7 @@ namespace xSaliceResurrected.Mid
                         if (E.IsReady() && isOnseg && prediction.UnitPosition.Distance(pointLine.To3D()) < E.Width)
                         {
                             //Game.PrintChat("Dmg 2");
-                            E.CastOnUnit(Player);
+                            E.Cast(Player);
                             return;
                         }
                     }
@@ -409,7 +409,7 @@ namespace xSaliceResurrected.Mid
                     if (minTravelTime2 < travelTime2 && target.Distance(Player.ServerPosition) <= Q.Range + Q.Width &&
                         E.IsReady())
                     {
-                        E.CastOnUnit(Player);
+                        E.Cast(Player);
                     }
 
                     break;
@@ -435,7 +435,7 @@ namespace xSaliceResurrected.Mid
                                 prediction2.UnitPosition.Distance(pointLine.To3D()) < E.Width)
                             {
                                 //Game.PrintChat("Dmg 3");
-                                E.CastOnUnit(ally);
+                                E.Cast(ally);
                                 return;
                             }
                         }
@@ -453,7 +453,7 @@ namespace xSaliceResurrected.Mid
                     if (minTravelTime3 < travelTime3 && Player.Distance(etarget.ServerPosition) <= E.Range &&
                         E.IsReady())
                     {
-                        E.CastOnUnit(etarget);
+                        E.Cast(etarget);
                     }
 
                     break;
@@ -590,7 +590,7 @@ namespace xSaliceResurrected.Mid
             if (_ballStatus == 0 && W.IsReady())
                 W.Cast();
             else if (E.IsReady() && _ballStatus != 0)
-                E.CastOnUnit(Player);
+                E.Cast(Player);
         }
 
         protected override void Game_OnGameUpdate(EventArgs args)
@@ -694,7 +694,7 @@ namespace xSaliceResurrected.Mid
                             if (ally.Distance(args.End) < 500 && hpPercent <= hp)
                             {
                                 //Game.PrintChat("shielding");
-                                E.CastOnUnit(ally);
+                                E.Cast(ally);
                                 _isBallMoving = true;
                                 return;
                             }
@@ -708,7 +708,7 @@ namespace xSaliceResurrected.Mid
             {
                 if (Initiator.InitatorList.Where(spell => args.SData.Name == spell.SDataName).Where(spell => menu.Item(spell.SpellName, true).GetValue<bool>()).Any(spell => E.IsReady() && Player.Distance(unit.Position) < E.Range))
                 {
-                    E.CastOnUnit(unit);
+                    E.Cast(unit);
                     _isBallMoving = true;
                     return;
                 }

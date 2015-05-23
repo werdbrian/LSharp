@@ -194,7 +194,7 @@ namespace xSaliceResurrected.Top
             if (menu.Item("Q_Before_E", true).GetValue<bool>())
             {
                 if (useQ && Q.IsReady() && target.IsValidTarget(Q.Range))
-                    Q.CastOnUnit(target);
+                    Q.Cast(target);
 
                 if (useE && E.IsReady() && target.IsValidTarget(E.Range))
                     E.Cast();
@@ -205,7 +205,7 @@ namespace xSaliceResurrected.Top
                     E.Cast();
 
                 if (useQ && Q.IsReady() && target.IsValidTarget(Q.Range))
-                    Q.CastOnUnit(target);
+                    Q.Cast(target);
             }
         }
 
@@ -231,7 +231,7 @@ namespace xSaliceResurrected.Top
                 {
                     if (minion.IsValidTarget() && HealthPrediction.GetHealthPrediction(minion, (int)(Player.Distance(minion.Position) * 1000 / 1400)) < Player.GetSpellDamage(minion, SpellSlot.Q) - 10)
                     {
-                        Q.CastOnUnit(minion);
+                        Q.Cast(minion);
                         return;
                     }
                 }
