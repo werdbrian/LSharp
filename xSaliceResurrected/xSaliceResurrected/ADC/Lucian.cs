@@ -229,7 +229,6 @@ namespace xSaliceResurrected.ADC
                 if (Q.Cast(target) == Spell.CastStates.SuccessfullyCasted)
                 {
                     Q.LastCastAttemptT = Utils.TickCount;
-                    Utility.DelayAction.Add(300, () => Player.IssueOrder(GameObjectOrder.AttackUnit, target));
                     return;
                 }
             }
@@ -295,7 +294,6 @@ namespace xSaliceResurrected.ADC
             if (vec.Distance(target.ServerPosition) < Player.AttackRange)
             {
                 E.Cast(vec);
-                Utility.DelayAction.Add(50, () => Player.IssueOrder(GameObjectOrder.AttackTo, target.ServerPosition));
             }
         }
 
