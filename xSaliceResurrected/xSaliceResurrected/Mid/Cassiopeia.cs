@@ -29,7 +29,7 @@ namespace xSaliceResurrected.Mid
             SpellManager.E = new Spell(SpellSlot.E, 700);
             SpellManager.E.SetTargetted(0.2f, float.MaxValue);
 
-            SpellManager.R = new Spell(SpellSlot.R, 825);
+            SpellManager.R = new Spell(SpellSlot.R, 750);
             SpellManager.R.SetSkillshot(0.3f, (float)(80 * Math.PI / 180), float.MaxValue, false, SkillshotType.SkillshotCone);
 
             SpellManager.R2 = new Spell(SpellSlot.R,  1200);
