@@ -479,26 +479,27 @@ namespace xSaliceResurrected.Mid
             var useW = menu.Item("UseWJungle", true).GetValue<bool>();
             var useE = menu.Item("UseEJungle", true).GetValue<bool>();
 
-            if (useQ)
-            {
-                var minionQ = MinionManager.GetMinions(Player.ServerPosition, Q.Range, MinionTypes.All, MinionTeam.NotAlly);
+            var minionQ = MinionManager.GetMinions(Player.ServerPosition, Q.Range, MinionTypes.All, MinionTeam.NotAlly);
 
+            var minionW = MinionManager.GetMinions(Player.ServerPosition, W.Range, MinionTypes.All, MinionTeam.NotAlly);
+
+
+            var minions = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.NotAlly);
+
+            if (useQ && minionQ.Count > 0)
+            {
                 var pred = Q.GetCircularFarmLocation(minionQ, 120);
 
                 Q.Cast(pred.Position);
             }
-            if (useW)
+            if (useW && minionW.Count > 0)
             {
-                var minionW = MinionManager.GetMinions(Player.ServerPosition, W.Range, MinionTypes.All, MinionTeam.NotAlly);
-
                 var pred = W.GetCircularFarmLocation(minionW, 200);
 
                 W.Cast(pred.Position);
             }
-            if (useE)
+            if (useE && minions.Count > 0)
             {
-                var minions = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.NotAlly);
-
                 if (minions.Count == 0)
                     return;
 
