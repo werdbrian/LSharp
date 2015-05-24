@@ -248,7 +248,7 @@ namespace xSaliceResurrected.Top
             if (!ManaManager.HasMana("LaneClear"))
                 return;
 
-            List<Obj_AI_Base> allMinionsW = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, W.Range,
+            List<Obj_AI_Base> allMinionsW = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, 250,
                 MinionTypes.All, MinionTeam.NotAlly);
             List<Obj_AI_Base> allMinionR = MinionManager.GetMinions(Player.ServerPosition, R.Range, MinionTypes.All,
                         MinionTeam.NotAlly);

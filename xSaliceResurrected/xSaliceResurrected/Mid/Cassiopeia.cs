@@ -44,6 +44,7 @@ namespace xSaliceResurrected.Mid
                 key.AddItem(new MenuItem("HarassActive", "Harass!", true).SetValue(new KeyBind("C".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("HarassActiveT", "Harass (toggle)!", true).SetValue(new KeyBind("N".ToCharArray()[0], KeyBindType.Toggle)));
                 key.AddItem(new MenuItem("LaneClearActive", "Farm!", true).SetValue(new KeyBind("V".ToCharArray()[0], KeyBindType.Press)));
+                key.AddItem(new MenuItem("Jungle", "Jungle Farm!", true).SetValue(new KeyBind("V".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("LastHitE", "Last Hit With E", true).SetValue(new KeyBind("A".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("forceUlt", "Ult Helper", true).SetValue(new KeyBind("H".ToCharArray()[0], KeyBindType.Press)));
                 key.AddItem(new MenuItem("flashUlt", "Ult Flash", true).SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Press)));
@@ -123,6 +124,14 @@ namespace xSaliceResurrected.Mid
                 menu.AddSubMenu(farm);
             }
 
+            var jungle = new Menu("Jungle", "Jungle");
+            {
+                jungle.AddItem(new MenuItem("UseQJungle", "Use Q", true).SetValue(true));
+                jungle.AddItem(new MenuItem("UseWJungle", "Use W", true).SetValue(true));
+                jungle.AddItem(new MenuItem("UseEJungle", "Use E", true).SetValue(true));
+                menu.AddSubMenu(jungle);
+            }
+
             var miscMenu = new Menu("Misc", "Misc");
             {
                 //aoe
@@ -176,6 +185,7 @@ namespace xSaliceResurrected.Mid
                 customMenu.AddItem(myCust.AddToMenu("Harass Active: ", "HarassActive"));
                 customMenu.AddItem(myCust.AddToMenu("Harass(T) Active: ", "HarassActiveT"));
                 customMenu.AddItem(myCust.AddToMenu("Laneclear Active: ", "LaneClearActive"));
+                customMenu.AddItem(myCust.AddToMenu("JungleClear Active: ", "Jungle"));
                 customMenu.AddItem(myCust.AddToMenu("LastHitE Active: ", "LastHitE"));
                 customMenu.AddItem(myCust.AddToMenu("Ult help Active: ", "forceUlt"));
                 customMenu.AddItem(myCust.AddToMenu("Ult Flash Active: ", "flashUlt"));
@@ -463,6 +473,42 @@ namespace xSaliceResurrected.Mid
             }
         }
 
+        private void Jungle()
+        {
+            var useQ = menu.Item("UseQJungle", true).GetValue<bool>();
+            var useW = menu.Item("UseWJungle", true).GetValue<bool>();
+            var useE = menu.Item("UseEJungle", true).GetValue<bool>();
+
+            if (useQ)
+            {
+                var minionQ = MinionManager.GetMinions(Player.ServerPosition, Q.Range, MinionTypes.All, MinionTeam.NotAlly);
+
+                var pred = Q.GetCircularFarmLocation(minionQ, 120);
+
+                Q.Cast(pred.Position);
+            }
+            if (useW)
+            {
+                var minionW = MinionManager.GetMinions(Player.ServerPosition, W.Range, MinionTypes.All, MinionTeam.NotAlly);
+
+                var pred = W.GetCircularFarmLocation(minionW, 200);
+
+                W.Cast(pred.Position);
+            }
+            if (useE)
+            {
+                var minions = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.NotAlly);
+
+                if (minions.Count == 0)
+                    return;
+
+                var minion = minions.FirstOrDefault(x => PoisonDuration(x) > E.Delay);
+
+                if (minion != null)
+                    E.Cast(minion);
+            }
+        }
+
         private void LastHit()
         {
             if (!E.IsReady())
@@ -658,6 +704,9 @@ namespace xSaliceResurrected.Mid
 
                 if (menu.Item("LaneClearActive", true).GetValue<KeyBind>().Active)
                     Farm();
+
+                if (menu.Item("Jungle", true).GetValue<KeyBind>().Active)
+                    Jungle();
 
                 if (menu.Item("HarassActive", true).GetValue<KeyBind>().Active)
                     Harass();

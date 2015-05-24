@@ -48,12 +48,16 @@ namespace xSaliceResurrected.Managers
         {
             if (source == "Combo")
             {
+                SpellManager.Q.MinHitChance = MyHitChances[_menuCombo.Item("qHitCombo", true).GetValue<StringList>().SelectedIndex];
                 return MyHitChances[_menuCombo.Item("qHitCombo", true).GetValue<StringList>().SelectedIndex];
             }
             else if(source == "Null")
             {
+                SpellManager.Q.MinHitChance = HitChance.Low;
                 return HitChance.Low;
             }
+
+            SpellManager.Q.MinHitChance = MyHitChances[_menuHarass.Item("qHitHarass", true).GetValue<StringList>().SelectedIndex];
             return MyHitChances[_menuHarass.Item("qHitHarass", true).GetValue<StringList>().SelectedIndex];
         }
 
@@ -61,12 +65,15 @@ namespace xSaliceResurrected.Managers
         {
             if (source == "Combo")
             {
+                SpellManager.W.MinHitChance = MyHitChances[_menuCombo.Item("wHitCombo", true).GetValue<StringList>().SelectedIndex];
                 return MyHitChances[_menuCombo.Item("wHitCombo", true).GetValue<StringList>().SelectedIndex];
             }
             else if (source == "Null")
             {
+                SpellManager.W.MinHitChance = HitChance.Low;
                 return HitChance.Low;
             }
+            SpellManager.W.MinHitChance = MyHitChances[_menuHarass.Item("wHitHarass", true).GetValue<StringList>().SelectedIndex];
             return MyHitChances[_menuHarass.Item("wHitHarass", true).GetValue<StringList>().SelectedIndex];
         }
 
@@ -74,12 +81,15 @@ namespace xSaliceResurrected.Managers
         {
             if (source == "Combo")
             {
+                SpellManager.W.MinHitChance = MyHitChances[_menuCombo.Item("eHitCombo", true).GetValue<StringList>().SelectedIndex];
                 return MyHitChances[_menuCombo.Item("eHitCombo", true).GetValue<StringList>().SelectedIndex];
             }
             else if (source == "Null")
             {
+                SpellManager.E.MinHitChance = HitChance.Low;
                 return HitChance.Low;
             }
+            SpellManager.W.MinHitChance = MyHitChances[_menuCombo.Item("eHitHarass", true).GetValue<StringList>().SelectedIndex];
             return MyHitChances[_menuHarass.Item("eHitHarass", true).GetValue<StringList>().SelectedIndex];
         }
 
@@ -87,12 +97,15 @@ namespace xSaliceResurrected.Managers
         {
             if (source == "Combo")
             {
+                SpellManager.W.MinHitChance = MyHitChances[_menuCombo.Item("rHitCombo", true).GetValue<StringList>().SelectedIndex];
                 return MyHitChances[_menuCombo.Item("rHitCombo", true).GetValue<StringList>().SelectedIndex];
             }
             else if (source == "Null")
             {
+                SpellManager.R.MinHitChance = HitChance.Low;
                 return HitChance.Low;
             }
+            SpellManager.W.MinHitChance = MyHitChances[_menuCombo.Item("rHitHarass", true).GetValue<StringList>().SelectedIndex];
             return MyHitChances[_menuHarass.Item("rHitHarass", true).GetValue<StringList>().SelectedIndex];
         }
 

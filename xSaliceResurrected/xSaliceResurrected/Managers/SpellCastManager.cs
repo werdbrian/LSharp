@@ -25,7 +25,7 @@ namespace xSaliceResurrected.Managers
             spell.UpdateSourcePosition();
 
             var aoe = spell.Type == SkillshotType.SkillshotCircle || spell.Collision == false;
-            var pred = spell.GetPrediction(target, aoe);
+            var pred = Prediction.GetPrediction(target, spell.Delay);
 
             if (pred.Hitchance >= hitChance)
             {

@@ -354,7 +354,7 @@ namespace xSaliceResurrected.ADC
         {
             if (!menu.Item("UseInt", true).GetValue<bool>()) return;
 
-            if (Player.Distance(unit.Position) < R.Range)
+            if (Player.Distance(unit.Position) < R.Range && spell.DangerLevel >= Interrupter2.DangerLevel.Medium)
             {
                 if (R.GetPrediction(unit).Hitchance >= HitChance.Medium && R.IsReady())
                     R.Cast(unit);
