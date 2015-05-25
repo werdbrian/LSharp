@@ -24,7 +24,7 @@ namespace xSaliceResurrected.Mid
         private void LoadSpells()
         {
             //intalize spell
-            SpellManager.Q = new Spell(SpellSlot.Q, 900);
+            SpellManager.Q = new Spell(SpellSlot.Q, 950);
             SpellManager.Q2 = new Spell(SpellSlot.Q, 2000);
             SpellManager.W = new Spell(SpellSlot.W, 450);
             SpellManager.W2 = new Spell(SpellSlot.W, 600);

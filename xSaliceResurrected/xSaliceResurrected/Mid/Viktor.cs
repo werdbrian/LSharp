@@ -114,6 +114,7 @@ namespace xSaliceResurrected.Mid
             {
                 miscMenu.AddSubMenu(AoeSpellManager.AddHitChanceMenuCombo(false, true, false, true));
                 miscMenu.AddItem(new MenuItem("UseInt", "Use R to Interrupt", true).SetValue(true));
+                miscMenu.AddItem(new MenuItem("UseGap", "Use Q for GapCloser", true).SetValue(true));
                 //add to menu
                 menu.AddSubMenu(miscMenu);
             }
@@ -303,6 +304,14 @@ namespace xSaliceResurrected.Mid
             }
             else
                 args.Process = true;
+        }
+
+        protected override void AntiGapcloser_OnEnemyGapcloser(ActiveGapcloser gapcloser)
+        {
+            if (!menu.Item("UseGap", true).GetValue<bool>()) return;
+
+            if (Q.IsReady() && gapcloser.Sender.IsValidTarget(Q.Range))
+                Q.Cast(gapcloser.Sender);
         }
 
         protected override void Game_OnGameUpdate(EventArgs args)
