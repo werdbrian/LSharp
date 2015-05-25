@@ -71,6 +71,7 @@ namespace xSaliceResurrected.Mid
                 var eMenu = new Menu("EMenu", "EMenu");
                 {
                     eMenu.AddItem(new MenuItem("E_Poison", "Auto E Poison Target", true).SetValue(true));
+                    eMenu.AddItem(new MenuItem("E_Delay", "Delay between 0-1500(Milliseconds or tick)", true).SetValue(new Slider(0, 0, 1500)));
                     spellMenu.AddSubMenu(eMenu);
                 }
 
@@ -78,7 +79,6 @@ namespace xSaliceResurrected.Mid
                 {
                     rMenu.AddItem(new MenuItem("overKillCheck", "Over Kill Check", true).SetValue(true));
                     rMenu.AddItem(new MenuItem("blockR", "Block R if no enemy hit", true).SetValue(true));
-                    rMenu.AddItem(new MenuItem("EnableRKS", "R KS", true).SetValue(true));
                     rMenu.AddItem(new MenuItem("AOEStun", "Ult if Stun >= ", true).SetValue(new Slider(3, 1, 5)));
                     rMenu.AddItem(new MenuItem("KillableCombo", "Cast If target is Killable with Combo", true).SetValue(true));
                     rMenu.AddItem(new MenuItem("faceCheck", "Face Check for Killable with combo", true).SetValue(true));
@@ -264,11 +264,15 @@ namespace xSaliceResurrected.Mid
             {
                 if (menu.Item("OnlyWIfnotPoison", true).GetValue<bool>())
                 {
-                    var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Magical);
+                    var target = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
                     if (target.IsValidTarget(W.Range))
                     {
-                        if (!Q.IsReady() && PoisonDuration(target) <= E.Delay)
-                            SpellCastManager.CastBasicSkillShot(W, W.Range, TargetSelector.DamageType.Magical, HitChanceManager.GetWHitChance(source));
+                        if (!Q.IsReady() && QSuccessfullyCasted(target))
+                        {
+                            SpellCastManager.CastBasicSkillShot(W, W.Range, TargetSelector.DamageType.Magical,
+                                HitChanceManager.GetWHitChance(source));
+
+                        }
                     }
                 }
                 else
@@ -334,6 +338,17 @@ namespace xSaliceResurrected.Mid
             _lastFlash = Utils.TickCount;
         }
 
+        private bool QSuccessfullyCasted(Obj_AI_Base target)
+        {
+            if (!menu.Item("OnlyWIfnotPoison", true).GetValue<bool>())
+                return true;
+
+            if (target.HasBuffOfType(BuffType.Poison))
+                return false;
+
+            return Utils.TickCount - Q.LastCastAttemptT > 800 + Game.Ping;
+        }
+
         protected override void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base unit, GameObjectProcessSpellCastEventArgs args)
         {
             if (!unit.IsMe) return;
@@ -342,7 +357,12 @@ namespace xSaliceResurrected.Mid
 
             if (castedSlot == SpellSlot.Q)
             {
-                Q.LastCastAttemptT = Utils.TickCount;
+                Q.LastCastAttemptT = Utils.TickCount; 
+            }
+
+            if (castedSlot == SpellSlot.E)
+            {
+                _lastE = Utils.TickCount;
             }
 
             if (castedSlot == SpellSlot.R)
@@ -594,14 +614,6 @@ namespace xSaliceResurrected.Mid
         {
             foreach (Obj_AI_Hero target in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget(Q.Range)).OrderByDescending(GetComboDamage))
             {
-                //R
-                if (Player.Distance(target) <= R.Range && Player.GetSpellDamage(target, SpellSlot.R) > target.Health && R.IsReady() && menu.Item("EnableRKS", true).GetValue<bool>()
-                    && !menu.Item("aoeUltOnly", true).GetValue<KeyBind>().Active)
-                {
-                    R.Cast(target);
-                    return;
-                }
-
                 //Q+E
                 if (Player.Distance(target) <= E.Range && Player.GetSpellDamage(target, SpellSlot.Q) + Player.GetSpellDamage(target, SpellSlot.E) > target.Health && Q.IsReady() && E.IsReady())
                 {
@@ -619,7 +631,7 @@ namespace xSaliceResurrected.Mid
                 }
 
                 //W+E
-                if (Player.Distance(target) <= E.Range && Player.GetSpellDamage(target, SpellSlot.W) + Player.GetSpellDamage(target, SpellSlot.E) > target.Health && W.IsReady() && E.IsReady())
+                if (Player.Distance(target) <= E.Range && Player.GetSpellDamage(target, SpellSlot.W) + Player.GetSpellDamage(target, SpellSlot.E) > target.Health && W.IsReady() && E.IsReady() && QSuccessfullyCasted(target))
                 {
                     W.Cast(target);
                     E.Cast(target);
@@ -649,8 +661,18 @@ namespace xSaliceResurrected.Mid
             }
         }
 
+        private int _lastE;
+
         protected override void SpellbookOnOnCastSpell(Spellbook sender, SpellbookCastSpellEventArgs args)
         {
+            if (args.Slot == SpellSlot.E && menu.Item("ComboActive", true).GetValue<KeyBind>().Active)
+            {
+                if (Utils.TickCount - _lastE < menu.Item("E_Delay", true).GetValue<Slider>().Value)
+                {
+                    args.Process = false;
+                }
+            }
+
             if (args.Slot != SpellSlot.R || !menu.Item("blockR", true).GetValue<bool>() || menu.Item("flashUlt", true).GetValue<KeyBind>().Active)
                 return;
 
