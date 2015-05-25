@@ -26,6 +26,7 @@ namespace xSaliceResurrected.Mid
             SpellManager.R = new Spell(SpellSlot.R, 550);
 
             SpellManager.Q.SetTargetted(400, 1400);
+            SpellManager.R.SetCharged("KatarinaR", "KatarinaR", 550, 550, 1.0f);
 
             SpellManager.SpellList.Add(Q);
             SpellManager.SpellList.Add(W);
@@ -96,6 +97,7 @@ namespace xSaliceResurrected.Mid
             //Misc Menu:
             var misc = new Menu("Misc", "Misc");
             {
+                misc.AddItem(new MenuItem("waitQ", "Wait For Q Mark to W", true).SetValue(true));
                 misc.AddItem(new MenuItem("autoWz", "Auto W Enemy", true).SetValue(true));
                 misc.AddItem(new MenuItem("E_Delay_Slider", "Delay Between E(ms)", true).SetValue(new Slider(0, 0, 1000)));
                 //add to menu
@@ -223,7 +225,7 @@ namespace xSaliceResurrected.Mid
                     }
 
                     if (useE && E.IsReady() && Player.Distance(target.Position) < E.Range && Utils.TickCount - E.LastCastAttemptT > 0 &&
-                        Player.Distance(target.Position) > eDis)
+                        Player.Distance(target.Position) > eDis && !Q.IsReady())
                     {
                         if (menu.Item("smartE", true).GetValue<bool>() &&
                             Player.CountEnemiesInRange(500) > 2 &&
@@ -231,6 +233,8 @@ namespace xSaliceResurrected.Mid
                             return;
 
                         var delay = menu.Item("E_Delay_Slider", true).GetValue<Slider>().Value;
+                        Orbwalker.SetAttack(false);
+                        Orbwalker.SetMovement(false);
                         E.Cast(target);
                         E.LastCastAttemptT = Utils.TickCount + delay;
                     }
@@ -260,6 +264,8 @@ namespace xSaliceResurrected.Mid
                             return;
 
                         var delay = menu.Item("E_Delay_Slider", true).GetValue<Slider>().Value;
+                        Orbwalker.SetAttack(false);
+                        Orbwalker.SetMovement(false);
                         E.Cast(target);
                         E.LastCastAttemptT = Utils.TickCount + delay;
                     }
@@ -270,7 +276,7 @@ namespace xSaliceResurrected.Mid
                     }
                 }
 
-                if (useW && W.IsReady() && Player.Distance(target.Position) <= W.Range)
+                if (useW && W.IsReady() && Player.Distance(target.Position) <= W.Range && QSuccessfullyCasted())
                 {
                     W.Cast();
                 }
@@ -279,7 +285,11 @@ namespace xSaliceResurrected.Mid
                     Player.CountEnemiesInRange(R.Range) > 0)
                 {
                     if (!Q.IsReady() && !E.IsReady() && !W.IsReady())
+                    {
+                        Orbwalker.SetAttack(false);
+                        Orbwalker.SetMovement(false);
                         R.Cast();
+                    }
                 }
             }
         }
@@ -301,7 +311,7 @@ namespace xSaliceResurrected.Mid
                         Q.Cast(qTarget);
                 }
 
-                if (useE && eTarget != null && E.IsReady())
+                if (useE && eTarget != null && E.IsReady() && !Q.IsReady())
                 {
                     if (Player.Distance(eTarget.Position) < E.Range)
                         E.Cast(eTarget);
@@ -330,7 +340,7 @@ namespace xSaliceResurrected.Mid
                 }
             }
 
-            if (useW && wTarget != null && W.IsReady())
+            if (useW && wTarget != null && W.IsReady() && QSuccessfullyCasted())
             {
                 if (Player.Distance(wTarget.Position) <= W.Range)
                     W.Cast();
@@ -399,8 +409,15 @@ namespace xSaliceResurrected.Mid
 
             if (useW && W.IsReady())
             {
-                if (allMinionsW.Count > 0)
-                    W.Cast();
+                if (allMinionsW.Count > 0 && QSuccessfullyCasted())
+                {
+                    foreach (var minion in allMinionsW)
+                    {
+                        if (!Q.IsReady() || minion.HasBuff("katarinaqmark"))
+                            W.Cast();
+                    }
+                }
+                    
             }
         }
         private void JungleFarm()
@@ -531,6 +548,8 @@ namespace xSaliceResurrected.Mid
                     {
                         if (R.IsReady())
                         {
+                            Orbwalker.SetAttack(false);
+                            Orbwalker.SetMovement(false);
                             R.Cast();
                             //Game.PrintChat("ks 8");
                             return;
@@ -580,6 +599,11 @@ namespace xSaliceResurrected.Mid
             }
         }
 
+        private bool QSuccessfullyCasted()
+        {
+            return Utils.TickCount - Q.LastCastAttemptT > 350 || !menu.Item("waitQ", true).GetValue<bool>();
+        }
+
         protected override void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base unit, GameObjectProcessSpellCastEventArgs args)
         {
             if (!unit.IsMe) return;
@@ -592,6 +616,11 @@ namespace xSaliceResurrected.Mid
 
             SpellSlot castedSlot = ObjectManager.Player.GetSpellSlot(args.SData.Name);
 
+            if (castedSlot == SpellSlot.Q)
+            {
+                Q.LastCastAttemptT = Utils.TickCount;
+            }
+
             if (castedSlot == SpellSlot.R)
             {
                 R.LastCastAttemptT = Utils.TickCount;
@@ -602,7 +631,7 @@ namespace xSaliceResurrected.Mid
         {
             SmartKs();
 
-            if (Player.IsChannelingImportantSpell() || Player.HasBuff("katarinarsound", true) || Player.HasBuff("KatarinaR"))
+            if (Player.IsChannelingImportantSpell() || Player.HasBuff("KatarinaR"))
             {
                 Orbwalker.SetAttack(false);
                 Orbwalker.SetMovement(false);

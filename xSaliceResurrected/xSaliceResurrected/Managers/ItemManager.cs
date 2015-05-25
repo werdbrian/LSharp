@@ -440,7 +440,6 @@ namespace xSaliceResurrected.Managers
                     dmg += ObjectManager.Player.CalcDamage(target, Damage.DamageType.Magical, LichDamage());
             }
 
-
             if (Ignite_Ready())
                 dmg += ObjectManager.Player.GetSummonerSpellDamage(target, Damage.SummonerSpell.Ignite);
 
