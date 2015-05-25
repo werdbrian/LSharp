@@ -131,7 +131,7 @@ namespace xSaliceResurrected.Utilities
 
         private void AttackableUnitOnOnLeaveVisiblityClient(AttackableUnit sender, EventArgs args)
         {
-            if (!sender.IsEnemy)
+            if (!sender.IsEnemy || !(sender is Obj_AI_Hero))
                 return;
 
             foreach (var enemy in _info.Where(x => x.EnemyId == sender.NetworkId))
@@ -143,7 +143,7 @@ namespace xSaliceResurrected.Utilities
 
         private void OnEnterVisiblityClient(AttackableUnit sender, EventArgs args)
         {
-            if (!sender.IsEnemy)
+            if (!sender.IsEnemy || !(sender is Obj_AI_Hero))
                 return;
 
             if (ObjectManager.Player.Distance(sender) < _aleterMenu.Item("DisplayEnemyEnterRange", true).GetValue<Slider>().Value && 

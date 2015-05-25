@@ -24,10 +24,13 @@ namespace xSaliceResurrected.Managers
 
             spell.UpdateSourcePosition();
 
-            var aoe = spell.Type == SkillshotType.SkillshotCircle || spell.Collision == false;
             var pred = Prediction.GetPrediction(target, spell.Delay);
 
-            if (pred.Hitchance >= hitChance)
+            if (spell.Collision)
+            {
+                spell.CastIfHitchanceEquals(target, hitChance);
+            }
+            else if (pred.Hitchance >= hitChance)
             {
                 spell.Cast(pred.CastPosition);
             }
