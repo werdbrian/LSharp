@@ -82,6 +82,7 @@ namespace xSaliceResurrected.Mid
                     rMenu.AddItem(new MenuItem("AOEStun", "Ult if Stun >= ", true).SetValue(new Slider(3, 1, 5)));
                     rMenu.AddItem(new MenuItem("KillableCombo", "Cast If target is Killable with Combo", true).SetValue(true));
                     rMenu.AddItem(new MenuItem("faceCheck", "Face Check for Killable with combo", true).SetValue(true));
+                    rMenu.AddItem(new MenuItem("faceCheckHelper", "Face Check with UltHelper", true).SetValue(true));
                     rMenu.AddSubMenu(new Menu("Don't use R on", "Dont_R"));
                     foreach (var enemy in HeroManager.Enemies)
                         rMenu.SubMenu("Dont_R")
@@ -339,6 +340,11 @@ namespace xSaliceResurrected.Mid
 
             SpellSlot castedSlot = ObjectManager.Player.GetSpellSlot(args.SData.Name);
 
+            if (castedSlot == SpellSlot.Q)
+            {
+                Q.LastCastAttemptT = Utils.TickCount;
+            }
+
             if (castedSlot == SpellSlot.R)
             {
                 if(Utils.TickCount - _lastFlash < 500 && _lastFlash > 0)
@@ -479,12 +485,12 @@ namespace xSaliceResurrected.Mid
             var useW = menu.Item("UseWJungle", true).GetValue<bool>();
             var useE = menu.Item("UseEJungle", true).GetValue<bool>();
 
-            var minionQ = MinionManager.GetMinions(Player.ServerPosition, Q.Range, MinionTypes.All, MinionTeam.NotAlly);
+            var minionQ = MinionManager.GetMinions(Player.ServerPosition, Q.Range, MinionTypes.All, MinionTeam.Neutral);
 
-            var minionW = MinionManager.GetMinions(Player.ServerPosition, W.Range, MinionTypes.All, MinionTeam.NotAlly);
+            var minionW = MinionManager.GetMinions(Player.ServerPosition, W.Range, MinionTypes.All, MinionTeam.Neutral);
 
 
-            var minions = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.NotAlly);
+            var minions = MinionManager.GetMinions(Player.ServerPosition, E.Range, MinionTypes.All, MinionTeam.Neutral);
 
             if (useQ && minionQ.Count > 0)
             {
@@ -667,7 +673,7 @@ namespace xSaliceResurrected.Mid
             if (!target.IsValidTarget(R.Range))
                 return;
 
-            if (target.IsFacing(Player))
+            if (target.IsFacing(Player) || !menu.Item("faceCheckHelper", true).GetValue<bool>())
                 R.Cast(target);
         }
 

@@ -381,7 +381,7 @@ namespace xSaliceResurrected.Mid
 
         private double MarkDmg(Obj_AI_Base target)
         {
-            return Player.HasBuff("katarinaqmark") ? MarkDmg(target) : 0;
+            return Player.HasBuff("katarinaqmark") ? Player.GetSpellDamage(target, SpellSlot.Q, 1) : 0;
         }
 
         private void Farm()
