@@ -292,6 +292,20 @@ namespace xSaliceResurrected.Mid
             }
         }
 
+        protected override void BeforeAttack(xSaliceWalker.BeforeAttackEventArgs args)
+        {
+            if (!menu.Item("ComboActive", true).GetValue<KeyBind>().Active &&
+                !menu.Item("HarassActive", true).GetValue<KeyBind>().Active)
+                return;
+
+            if (args.Target.Type == GameObjectType.obj_AI_Hero)
+            {
+                args.Process = !(Q.IsReady() && Player.Mana >= QSpell.ManaCost);
+            }
+            else
+                args.Process = true;
+        }
+
         protected override void BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
         {
             if (!menu.Item("ComboActive", true).GetValue<KeyBind>().Active &&
@@ -344,7 +358,7 @@ namespace xSaliceResurrected.Mid
 
         private void LastHit()
         {
-            if (!Orbwalking.CanMove(40)) return;
+            if (!OrbwalkManager.CanMove(40)) return;
 
             var allMinions = MinionManager.GetMinions(Player.ServerPosition, Q.Range);
 
@@ -401,7 +415,7 @@ namespace xSaliceResurrected.Mid
 
         private void Farm()
         {
-            if (!Orbwalking.CanMove(40)) return;
+            if (!OrbwalkManager.CanMove(40)) return;
 
 
             var allMinionsQ = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, Q.Range + Q.Width, MinionTypes.All, MinionTeam.NotAlly);

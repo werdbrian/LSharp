@@ -52,9 +52,11 @@ namespace xSaliceResurrected.Managers
 
         private static void Mec(EventArgs arg)
         {
+            /*
             if (LagManager.Enabled)
                 if (!LagManager.ReadyState)
                     return;
+            */
 
             if (!_menu.Item("enabledAOE", true).GetValue<bool>())
                 return;
@@ -91,8 +93,6 @@ namespace xSaliceResurrected.Managers
                         HeroManager.Enemies.Where(x => x.NetworkId != target.NetworkId)
                             .Count(enemy => poly.IsInside(enemy.ServerPosition));
 
-                    if(nearByEnemies > 1)
-                    Console.WriteLine("Yes: " + nearByEnemies);
                 }
                 else
                 {

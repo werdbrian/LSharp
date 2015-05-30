@@ -367,9 +367,18 @@ namespace xSaliceResurrected.Support
         }
 
 
-        protected override void BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
+        protected override void BeforeAttack(xSaliceWalker.BeforeAttackEventArgs args)
         {
             if (!menu.Item("disableAA", true).GetValue<bool>() )
+                return;
+
+            if ((args.Target is Obj_AI_Minion) && menu.Item("HarassActive", true).GetValue<KeyBind>().Active)
+                args.Process = false;
+        }
+
+        protected override void BeforeAttack(Orbwalking.BeforeAttackEventArgs args)
+        {
+            if (!menu.Item("disableAA", true).GetValue<bool>())
                 return;
 
             if ((args.Target is Obj_AI_Minion) && menu.Item("HarassActive", true).GetValue<KeyBind>().Active)
@@ -398,7 +407,7 @@ namespace xSaliceResurrected.Support
 
             if (menu.Item("Escape", true).GetValue<KeyBind>().Active && E.IsReady())
             {
-                Orbwalking.Orbwalk(null, Game.CursorPos);
+                OrbwalkManager.Orbwalk(null, Game.CursorPos);
                 foreach (Obj_AI_Hero target in ObjectManager.Get<Obj_AI_Hero>().Where(x => Player.IsValidTarget(E.Range)).OrderBy(x => x.Distance(Player.Position)))
                 {
                     E.Cast(target);

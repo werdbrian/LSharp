@@ -460,7 +460,7 @@ namespace xSaliceResurrected.Top
                     if (menu.Item("E_Reset", true).GetValue<bool>() && E.IsReady())
                     {
                         E.Cast();
-                        Utility.DelayAction.Add(100, Orbwalking.ResetAutoAttackTimer);
+                        Utility.DelayAction.Add(250, OrbwalkManager.ResetAutoAttackTimer);
                     }
                     int mode = menu.Item("Combo_mode", true).GetValue<StringList>().SelectedIndex;
                     if (mode == 1)
@@ -489,7 +489,7 @@ namespace xSaliceResurrected.Top
             if (unit.IsMe)
                 return;
 
-            if (Orbwalking.IsAutoAttack(args.SData.Name) && args.Target.IsMe && Player.Distance(args.End) < 450)
+            if (OrbwalkManager.IsAutoAttack(args.SData.Name) && args.Target.IsMe && Player.Distance(args.End) < 450)
             {
                 if (menu.Item("W_Incoming", true).GetValue<bool>() ||
                     (menu.Item("ComboActive", true).GetValue<KeyBind>().Active && E.IsReady() && menu.Item("UseWCombo", true).GetValue<bool>()) ||

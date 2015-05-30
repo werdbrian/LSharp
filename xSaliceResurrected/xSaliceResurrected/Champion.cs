@@ -25,9 +25,20 @@ namespace xSaliceResurrected
             Spellbook.OnUpdateChargedSpell += Spellbook_OnUpdateChargedSpellEvent;
             Spellbook.OnCastSpell += SpellbookOnOnCastSpell;
             Spellbook.OnStopCast += SpellbookOnOnStopCast;
-            Orbwalking.AfterAttack += AfterAttackEvent;
-            Orbwalking.BeforeAttack += BeforeAttackEvent;
-            Orbwalking.OnAttack += OnAttack;
+
+            if (menu.Item("OrbwalkingMode").GetValue<StringList>().SelectedIndex == 1)
+            {
+                Orbwalking.AfterAttack += AfterAttackEvent;
+                Orbwalking.BeforeAttack += BeforeAttackEvent;
+                Orbwalking.OnAttack += OnAttack;
+            }
+            else
+            {
+                xSaliceWalker.AfterAttack += AfterAttackEvent;
+                xSaliceWalker.BeforeAttack += BeforeAttackEvent;
+                xSaliceWalker.OnAttack += OnAttack;
+            }
+
             Obj_AI_Base.OnBuffAdd += ObjAiBaseOnOnBuffAdd;
             Obj_AI_Base.OnBuffRemove += ObjAiBaseOnOnBuffRemove;
         }
@@ -39,7 +50,7 @@ namespace xSaliceResurrected
         }
 
         //Orbwalker instance
-        protected static Orbwalking.Orbwalker Orbwalker;
+        public static Orbwalking.Orbwalker Orbwalker;
         protected static AzirManager AzirOrb;
 
         //Menu
@@ -54,9 +65,10 @@ namespace xSaliceResurrected
             menu = new Menu(Player.ChampionName, Player.ChampionName, true);
 
             //Info
-            menu.AddSubMenu(new Menu("Info", "Info"));
-            menu.SubMenu("Info").AddItem(new MenuItem("Author", "By xSalice"));
-            menu.SubMenu("Info").AddItem(new MenuItem("Paypal", "Donate: xSalicez@gmail.com"));
+            menu.AddSubMenu(new Menu("General", "General"));
+            menu.SubMenu("General").AddItem(new MenuItem("Author", "By xSalice"));
+            menu.SubMenu("General").AddItem(new MenuItem("Paypal", "Donate: xSalicez@gmail.com"));
+            menu.SubMenu("General").AddItem(new MenuItem("OrbwalkingMode", "Mode (Require f5 reload): ").SetValue(new StringList(new[] { "xSaliceWalker", "Common" })));
 
             //Target selector
             var targetSelectorMenu = new Menu("Target Selector", "Target Selector");
@@ -72,27 +84,30 @@ namespace xSaliceResurrected
             else
             {
                 menu.AddSubMenu(OrbwalkerMenu);
-                Orbwalker = new Orbwalking.Orbwalker(OrbwalkerMenu);
+
+                if (menu.Item("OrbwalkingMode").GetValue<StringList>().SelectedIndex == 1)
+                    Orbwalker = new Orbwalking.Orbwalker(OrbwalkerMenu);
+                else
+                    xSaliceWalker.AddToMenu(OrbwalkerMenu);
             }
+
             //Item Menu
             var itemMenu = new Menu("Items and Summoners", "Items");
             ItemManager.AddToMenu(itemMenu);
             menu.AddSubMenu(itemMenu);
             
-            //Lag Manager
-            LagManager.AddLagManager(menu);
-
             //Gank Alerter
             GankAlerter gank = new GankAlerter(menu);
 
             menu.AddToMainMenu();
-
             new PluginLoader();
-        }
 
-        protected Orbwalking.Orbwalker GetorbOrbwalker()
-        {
-            return Orbwalker;
+            //debug
+            //Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCastEvent;
+            //Obj_AI_Base.OnBuffAdd += ObjAiBaseOnOnBuffAdd;
+            //Obj_AI_Base.OnBuffRemove += ObjAiBaseOnOnBuffRemove;
+            //GameObject.OnCreate += GameObject_OnCreateEvent;
+            //GameObject.OnDelete += GameObject_OnDeleteEvent;
         }
 
         private void Drawing_OnDrawEvent(EventArgs args)
@@ -130,12 +145,13 @@ namespace xSaliceResurrected
 
         private void Game_OnGameUpdateEvent(EventArgs args)
         {
+            /*
             if (LagManager.Enabled && Player.ChampionName.ToLower() != "azir" && Player.ChampionName.ToLower() != "lucian")
                 if (!LagManager.ReadyState)
-                    return;
+                    return;*/
 
             //check if player is dead
-            if (Player.IsDead) return;
+            if (Player.IsDead && Player.ChampionName.ToLower() != "karthus") return;
 
             Game_OnGameUpdate(args);
         }
@@ -153,6 +169,7 @@ namespace xSaliceResurrected
         protected virtual void GameObject_OnCreate(GameObject sender, EventArgs args)
         {
             //for champs to use
+
         }
 
         private void GameObject_OnDeleteEvent(GameObject sender, EventArgs args)
@@ -173,6 +190,16 @@ namespace xSaliceResurrected
         protected virtual void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base unit, GameObjectProcessSpellCastEventArgs args)
         {
             //for champ use
+
+            /*
+            if (unit.IsMe)
+            {
+                Console.WriteLine(args.SData.Name);
+                Console.WriteLine(args.SData.MissileSpeed);
+                Console.WriteLine(args.SData.LineWidth);
+                Console.WriteLine(args.SData.CastRadius);
+                Console.WriteLine(args.SData.SpellCastTime);
+            }*/
         }
 
         private void AfterAttackEvent(AttackableUnit unit, AttackableUnit target)
@@ -181,6 +208,16 @@ namespace xSaliceResurrected
         }
 
         protected virtual void AfterAttack(AttackableUnit unit, AttackableUnit target)
+        {
+            //for champ use
+        }
+
+        private void BeforeAttackEvent(xSaliceWalker.BeforeAttackEventArgs args)
+        {
+            BeforeAttack(args);
+        }
+
+        protected virtual void BeforeAttack(xSaliceWalker.BeforeAttackEventArgs args)
         {
             //for champ use
         }
@@ -194,7 +231,6 @@ namespace xSaliceResurrected
         {
             //for champ use
         }
-
         protected virtual void OnAttack(AttackableUnit unit, AttackableUnit target)
         {
             
@@ -233,11 +269,23 @@ namespace xSaliceResurrected
        protected virtual void ObjAiBaseOnOnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
         {
             //for Champion used
+
+           /*
+           if (sender.IsMe)
+           {
+               Console.WriteLine(args.Buff.Name);
+           }*/
         }
 
         protected virtual void ObjAiBaseOnOnBuffRemove(Obj_AI_Base sender, Obj_AI_BaseBuffRemoveEventArgs args)
         {
             //for Champion used
+
+            /*
+            if (sender.IsMe)
+            {
+                Console.WriteLine(args.Buff.Name);
+            }*/
         }
 
     }

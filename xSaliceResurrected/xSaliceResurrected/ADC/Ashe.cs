@@ -316,7 +316,7 @@ namespace xSaliceResurrected.ADC
 
             if (menu.Item("Force_R", true).GetValue<KeyBind>().Active)
             {
-                Orbwalking.Orbwalk(null, Game.CursorPos);
+                OrbwalkManager.Orbwalk(null, Game.CursorPos);
                 ForceR();
             }
             if (menu.Item("ComboActive", true).GetValue<KeyBind>().Active)

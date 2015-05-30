@@ -43,13 +43,15 @@
     <Compile Include="ADC\Ezreal.cs" />
     <Compile Include="ADC\Lucian.cs" />
     <Compile Include="Managers\AzirManager.cs" />
-    <Compile Include="Managers\LagManager.cs" />
+    <Compile Include="Managers\OrbwalkManager.cs" />
     <Compile Include="Mid\Ahri.cs" />
     <Compile Include="Mid\Akali.cs" />
     <Compile Include="Mid\Azir.cs" />
     <Compile Include="Mid\Cassiopeia.cs" />
+    <Compile Include="Mid\Ekko.cs" />
     <Compile Include="Mid\Jayce.cs" />
     <Compile Include="ADC\Urgot.cs" />
+    <Compile Include="Mid\Karthus.cs" />
     <Compile Include="Mid\Orianna.cs" />
     <Compile Include="Mid\Syndra.cs" />
     <Compile Include="Mid\Viktor.cs" />
@@ -64,6 +66,7 @@
     <Compile Include="Support\Zyra.cs" />
     <Compile Include="Top\Fiora.cs" />
     <Compile Include="Top\Irelia.cs" />
+    <Compile Include="Top\Lissandra.cs" />
     <Compile Include="Top\Rumble.cs" />
     <Compile Include="Top\Vladimir.cs" />
     <Compile Include="Managers\SummonerManager.cs" />
@@ -81,6 +84,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Utilities\CustomPermaMenu.cs" />
     <Compile Include="Utilities\GankAlerter.cs" />
+    <Compile Include="Utilities\xSaliceWalker.cs" />
     <Compile Include="Utilities\Util.cs" />
     <Compile Include="Utilities\WardJumper.cs" />
   </ItemGroup>

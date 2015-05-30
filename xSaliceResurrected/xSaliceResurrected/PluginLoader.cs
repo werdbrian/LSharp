@@ -44,6 +44,10 @@ namespace xSaliceResurrected
                         new Corki();
                         _loaded = true;
                         break;
+                    case "ekko":
+                        new Ekko();
+                        _loaded = true;
+                        break;
                     case "ezreal":
                         new Ezreal();
                         _loaded = true;
@@ -56,9 +60,19 @@ namespace xSaliceResurrected
                         new Irelia();
                         _loaded = true;
                         break;
+                    case "karthus":
+                        new Karthus();
+                        _loaded = true;
+                        Game.PrintChat("<font color = \"#FFB6C1\">xSalice's " + ObjectManager.Player.ChampionName + " Loaded!</font>");
+                        break;
                     case "katarina":
                         new Katarina();
                         _loaded = true;
+                        break;
+                    case "lissandra":
+                        new Lissandra();
+                        _loaded = true;
+                        Game.PrintChat("<font color = \"#FFB6C1\">xSalice's " + ObjectManager.Player.ChampionName + " Loaded!</font>");
                         break;
                     case "lucian":
                         new Lucian();
@@ -115,16 +129,6 @@ namespace xSaliceResurrected
                         break;
                     case "fizz":
                         new Fizz();
-                        loaded = true;
-                        Game.PrintChat("<font color = \"#FFB6C1\">xSalice's " + ObjectManager.Player.ChampionName + " Loaded!</font>");
-                        break;
-                    case "karthus":
-                        new Karthus();
-                        loaded = true;
-                        Game.PrintChat("<font color = \"#FFB6C1\">xSalice's " + ObjectManager.Player.ChampionName + " Loaded!</font>");
-                        break;
-                    case "lissandra":
-                        new Lissandra();
                         loaded = true;
                         Game.PrintChat("<font color = \"#FFB6C1\">xSalice's " + ObjectManager.Player.ChampionName + " Loaded!</font>");
                         break;

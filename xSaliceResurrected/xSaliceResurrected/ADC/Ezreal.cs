@@ -350,9 +350,9 @@ namespace xSaliceResurrected.ADC
 
             if (target != null)
             {
-                if (Q.GetPrediction(target).Hitchance >= HitChance.High && (target.HasBuffOfType(BuffType.Stun) || target.HasBuffOfType(BuffType.Snare)) && menu.Item("Auto_Q_Slow", true).GetValue<bool>())
+                if (Q.GetPrediction(target).Hitchance >= HitChance.High && (target.HasBuffOfType(BuffType.Stun) || target.HasBuffOfType(BuffType.Snare)) && menu.Item("Auto_Q_Immobile", true).GetValue<bool>())
                     Q.Cast(target);
-                if (target.HasBuffOfType(BuffType.Slow) && menu.Item("Auto_Q_Immobile", true).GetValue<bool>())
+                if (target.HasBuffOfType(BuffType.Slow) && menu.Item("Auto_Q_Slow", true).GetValue<bool>())
                     Q.Cast(target);
             }
         }

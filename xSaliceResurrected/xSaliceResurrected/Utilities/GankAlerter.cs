@@ -75,7 +75,7 @@ namespace xSaliceResurrected.Utilities
             if (_aleterMenu.Item("enableAlert", true).GetValue<bool>())
             {
                 if (_shouldAlert &&
-                    Utils.TickCount - _lastAlert < _aleterMenu.Item("AlterDuration", true).GetValue<Slider>().Value*1000)
+                    Utils.TickCount - _lastAlert < _aleterMenu.Item("AlterDuration", true).GetValue<Slider>().Value * 1000)
                 {
                     var vec = ObjectManager.Player.HPBarPosition;
                     vec.Y += 50;
@@ -105,21 +105,21 @@ namespace xSaliceResurrected.Utilities
                     {
                         playerToEnemyVec = Drawing.WorldToScreen(ObjectManager.Player.Position.Extend(enemy.Position, _aleterMenu.Item("IconDistanceFromCharacter", true).GetValue<Slider>().Value));
 
-                        if (ObjectManager.Player.Distance(enemy1) > _aleterMenu.Item("IconYellow", true).GetValue<Slider>().Value 
+                        if (ObjectManager.Player.Distance(enemy1) > _aleterMenu.Item("IconYellow", true).GetValue<Slider>().Value
                             && ObjectManager.Player.Distance(enemy1) <= _aleterMenu.Item("IconBlue", true).GetValue<Slider>().Value)
                             enemyInfo.Enemysprite.Color = new ColorBGRA(255, 255, 0, 255);
-                        else if (ObjectManager.Player.Distance(enemy1) > _aleterMenu.Item("IconBlue", true).GetValue<Slider>().Value 
+                        else if (ObjectManager.Player.Distance(enemy1) > _aleterMenu.Item("IconBlue", true).GetValue<Slider>().Value
                             && ObjectManager.Player.Distance(enemy1) <= _aleterMenu.Item("IconGreen", true).GetValue<Slider>().Value)
                             enemyInfo.Enemysprite.Color = new ColorBGRA(0, 0, 255, 255);
                         else if (ObjectManager.Player.Distance(enemy1) > _aleterMenu.Item("IconGreen", true).GetValue<Slider>().Value)
                             enemyInfo.Enemysprite.Color = new ColorBGRA(0, 255, 0, 255);
                         else
                             playerToEnemyVec = Vector2.Zero;
-                        
+
                         enemyInfo.Enemysprite.Scale = new Vector2(2, 2);
                     }
 
-                    if(playerToEnemyVec == Vector2.Zero)
+                    if (playerToEnemyVec == Vector2.Zero)
                         continue;
 
                     enemyInfo.Enemysprite.Position = playerToEnemyVec;
@@ -146,8 +146,8 @@ namespace xSaliceResurrected.Utilities
             if (!sender.IsEnemy || !(sender is Obj_AI_Hero))
                 return;
 
-            if (ObjectManager.Player.Distance(sender) < _aleterMenu.Item("DisplayEnemyEnterRange", true).GetValue<Slider>().Value && 
-                ObjectManager.Player.Distance(sender) >_aleterMenu.Item("IconDistanceFromCharacter", true).GetValue<Slider>().Value)
+            if (ObjectManager.Player.Distance(sender) < _aleterMenu.Item("DisplayEnemyEnterRange", true).GetValue<Slider>().Value &&
+                ObjectManager.Player.Distance(sender) > _aleterMenu.Item("IconDistanceFromCharacter", true).GetValue<Slider>().Value)
             {
                 _shouldAlert = true;
                 _lastAlert = Utils.TickCount;
@@ -157,7 +157,7 @@ namespace xSaliceResurrected.Utilities
         class EnemyInfo
         {
             public Render.Sprite Enemysprite;
-            public int EnemyId{ get; set; }
+            public int EnemyId { get; set; }
             public float LastVisibile { get; set; }
             public Vector3 LastPos { get; set; }
         }

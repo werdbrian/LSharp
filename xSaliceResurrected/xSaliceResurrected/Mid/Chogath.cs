@@ -285,7 +285,7 @@ namespace xSaliceResurrected.Mid
 
             ItemManager.UseTargetted = true;
 
-            Orbwalking.Orbwalk(target, target.ServerPosition);
+            OrbwalkManager.Orbwalk(target, target.ServerPosition);
 
             Utility.DelayAction.Add(25, () => R.Cast(target));
             if(R.IsReady())
@@ -299,7 +299,7 @@ namespace xSaliceResurrected.Mid
 
             if (menu.Item("flashR", true).GetValue<KeyBind>().Active || Utils.TickCount - _lastFlash < 2500)
             {
-                Orbwalking.Orbwalk(null, Game.CursorPos);
+                OrbwalkManager.Orbwalk(null, Game.CursorPos);
                 var target = TargetSelector.GetSelectedTarget();
 
                 if(target != null)

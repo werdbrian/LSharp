@@ -572,7 +572,7 @@ namespace xSaliceResurrected.Mid
                     if (_canWcd == 0 && Player.Distance(target.Position) < 600 && !HammerTime && W.Level > 0 && W.IsReady())
                         if (useWCombo)
                         {
-                            Orbwalking.ResetAutoAttackTimer();
+                            OrbwalkManager.ResetAutoAttackTimer();
                             W.Cast();
                         }
                 }
@@ -582,7 +582,7 @@ namespace xSaliceResurrected.Mid
                     if (_canWcd == 0 && Player.Distance(target.Position) < 600 && !HammerTime && W.Level > 0 && W.IsReady() && target is Obj_AI_Hero)
                         if (useWHarass)
                         {
-                            Orbwalking.ResetAutoAttackTimer();
+                            OrbwalkManager.ResetAutoAttackTimer();
                             W.Cast();
                         }
                 }

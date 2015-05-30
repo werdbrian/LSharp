@@ -603,7 +603,7 @@ namespace xSaliceResurrected.Mid
             {
                 if (target != null && target.Distance(tar.Position) <= 350)
                 {
-                    Orbwalking.Orbwalk(target, Game.CursorPos);
+                    OrbwalkManager.Orbwalk(target, Game.CursorPos);
                 }
             }
 
@@ -698,7 +698,7 @@ namespace xSaliceResurrected.Mid
 
             if (menu.Item("escape", true).GetValue<KeyBind>().Active)
             {
-                Orbwalking.Orbwalk(null, Game.CursorPos);
+                OrbwalkManager.Orbwalk(null, Game.CursorPos);
                 Escape();
             }
             else if (menu.Item("ComboActive", true).GetValue<KeyBind>().Active)
@@ -707,7 +707,7 @@ namespace xSaliceResurrected.Mid
             }
             else if (menu.Item("insec", true).GetValue<KeyBind>().Active)
             {
-                Orbwalking.Orbwalk(null, Game.CursorPos);
+                OrbwalkManager.Orbwalk(null, Game.CursorPos);
 
                 _insecTarget = TargetSelector.GetSelectedTarget();
 
@@ -723,7 +723,7 @@ namespace xSaliceResurrected.Mid
             {
                 var soilderTarget = TargetSelector.GetTarget(900, TargetSelector.DamageType.Magical);
 
-                Orbwalking.Orbwalk(null, Game.CursorPos);
+                OrbwalkManager.Orbwalk(null, Game.CursorPos);
                 CastQe(soilderTarget, "Combo");
             }
             else

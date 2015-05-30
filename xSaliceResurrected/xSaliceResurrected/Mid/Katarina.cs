@@ -233,8 +233,8 @@ namespace xSaliceResurrected.Mid
                             return;
 
                         var delay = menu.Item("E_Delay_Slider", true).GetValue<Slider>().Value;
-                        Orbwalker.SetAttack(false);
-                        Orbwalker.SetMovement(false);
+                        OrbwalkManager.SetAttack(false);
+                        OrbwalkManager.SetMovement(false);
                         E.Cast(target);
                         E.LastCastAttemptT = Utils.TickCount + delay;
                     }
@@ -264,8 +264,8 @@ namespace xSaliceResurrected.Mid
                             return;
 
                         var delay = menu.Item("E_Delay_Slider", true).GetValue<Slider>().Value;
-                        Orbwalker.SetAttack(false);
-                        Orbwalker.SetMovement(false);
+                        OrbwalkManager.SetAttack(false);
+                        OrbwalkManager.SetMovement(false);
                         E.Cast(target);
                         E.LastCastAttemptT = Utils.TickCount + delay;
                     }
@@ -286,8 +286,8 @@ namespace xSaliceResurrected.Mid
                 {
                     if (!Q.IsReady() && !E.IsReady() && !W.IsReady())
                     {
-                        Orbwalker.SetAttack(false);
-                        Orbwalker.SetMovement(false);
+                        OrbwalkManager.SetAttack(false);
+                        OrbwalkManager.SetMovement(false);
                         R.Cast();
                     }
                 }
@@ -548,8 +548,8 @@ namespace xSaliceResurrected.Mid
                     {
                         if (R.IsReady())
                         {
-                            Orbwalker.SetAttack(false);
-                            Orbwalker.SetMovement(false);
+                            OrbwalkManager.SetAttack(false);
+                            OrbwalkManager.SetMovement(false);
                             R.Cast();
                             //Game.PrintChat("ks 8");
                             return;
@@ -610,8 +610,8 @@ namespace xSaliceResurrected.Mid
 
             if (args.SData.Name == "KatarinaR")
             {
-                Orbwalker.SetAttack(false);
-                Orbwalker.SetMovement(false);
+                OrbwalkManager.SetAttack(false);
+                OrbwalkManager.SetMovement(false);
             }
 
             SpellSlot castedSlot = ObjectManager.Player.GetSpellSlot(args.SData.Name);
@@ -633,18 +633,18 @@ namespace xSaliceResurrected.Mid
 
             if (Player.IsChannelingImportantSpell() || Player.HasBuff("KatarinaR"))
             {
-                Orbwalker.SetAttack(false);
-                Orbwalker.SetMovement(false);
+                OrbwalkManager.SetAttack(false);
+                OrbwalkManager.SetMovement(false);
                 ShouldCancel();
                 return;
             }
 
-            Orbwalker.SetAttack(true);
-            Orbwalker.SetMovement(true);
+            OrbwalkManager.SetAttack(true);
+            OrbwalkManager.SetMovement(true);
             
             if (menu.Item("Wardjump", true).GetValue<KeyBind>().Active)
             {
-                Orbwalking.Orbwalk(null, Game.CursorPos);
+                OrbwalkManager.Orbwalk(null, Game.CursorPos);
                 WardJumper.WardJump();
             }
             else if (menu.Item("ComboActive", true).GetValue<KeyBind>().Active)

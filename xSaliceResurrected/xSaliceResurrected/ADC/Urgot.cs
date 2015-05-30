@@ -80,7 +80,7 @@ namespace xSaliceResurrected.ADC
             var combo = new Menu("Combo", "Combo");
             {
                 combo.AddItem(new MenuItem("UseQCombo", "Use Q", true).SetValue(true));
-                combo.AddItem(new MenuItem("UseWCombo", "Use E", true).SetValue(true));
+                combo.AddItem(new MenuItem("UseWCombo", "Use W", true).SetValue(true));
                 combo.AddItem(new MenuItem("UseECombo", "Use E", true).SetValue(true));
                 combo.AddItem(new MenuItem("UseRCombo", "Use R", true).SetValue(true));
                 combo.AddSubMenu(HitChanceManager.AddHitChanceMenuCombo(true, false, true, false));

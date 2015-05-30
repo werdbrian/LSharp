@@ -236,7 +236,7 @@ namespace xSaliceResurrected.Top
 
         private void Farm()
         {
-            if (!Orbwalking.CanMove(40))
+            if (!OrbwalkManager.CanMove(40))
                 return;
 
             List<Obj_AI_Base> allMinionsQ = MinionManager.GetMinions(Player.ServerPosition, Q.Range,
@@ -256,7 +256,7 @@ namespace xSaliceResurrected.Top
 
         private void LastHit()
         {
-            if (!Orbwalking.CanMove(40))
+            if (!OrbwalkManager.CanMove(40))
                 return;
 
             List<Obj_AI_Base> allMinionsE = MinionManager.GetMinions(Player.ServerPosition, E.Range,

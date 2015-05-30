@@ -285,7 +285,7 @@ namespace xSaliceResurrected.Mid
             }
             else
             {
-                if (MinionManager.GetMinions(Player.Position, Q.Range).Any(minion => minion.HasBuff("AkaliMota") && Orbwalker.InAutoAttackRange(minion)))
+                if (MinionManager.GetMinions(Player.Position, Q.Range).Any(minion => minion.HasBuff("AkaliMota") && xSaliceWalker.InAutoAttackRange(minion)))
                 {
                     return;
                 }
@@ -295,7 +295,7 @@ namespace xSaliceResurrected.Mid
                                                              Player.GetSpellDamage(minion, SpellSlot.Q) &&
                                                              HealthPrediction.GetHealthPrediction(minion,
                                                                  (int)(E.Delay + (minion.Distance(Player.Position) / E.Speed)) * 1000) > 0 &&
-                                                             Orbwalker.InAutoAttackRange(minion)))
+                                                             xSaliceWalker.InAutoAttackRange(minion)))
                     Q.Cast(minion);
 
                 foreach (var minion in MinionManager.GetMinions(Player.Position, Q.Range).Where(minion => HealthPrediction.GetHealthPrediction(minion,

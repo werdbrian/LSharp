@@ -4,6 +4,7 @@ using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
 using LeagueSharp.Common.Data;
+using xSaliceResurrected.Utilities;
 
 namespace xSaliceResurrected.Managers
 {
@@ -42,7 +43,7 @@ namespace xSaliceResurrected.Managers
                 ActiveId = 3144,
                 ActiveName = "Bilgewater Cutlass",
                 BuffName = "Offensive",
-                Range = 450,
+                Range = 550,
                 Mode = 0,
             });
 
@@ -51,7 +52,7 @@ namespace xSaliceResurrected.Managers
                 ActiveId = 3153,
                 ActiveName = "Blade of the Ruined King",
                 BuffName = "Offensive",
-                Range = 450,
+                Range = 550,
                 Mode = 0,
             });
 
@@ -178,8 +179,17 @@ namespace xSaliceResurrected.Managers
                 _myMenu.AddSubMenu(summoners);
             }
 
-            Orbwalking.AfterAttack += AfterAttack;
-            Orbwalking.OnAttack += OnAttack;
+            if (OrbwalkManager.CurrentOrbwalker == 1)
+            {
+                Orbwalking.AfterAttack += AfterAttack;
+                Orbwalking.OnAttack += OnAttack;
+            }
+            else
+            {
+                xSaliceWalker.AfterAttack += AfterAttack;
+                xSaliceWalker.OnAttack += OnAttack;
+            }
+
             Obj_AI_Base.OnProcessSpellCast += SpellbookOnOnCastSpell;
             Game.OnUpdate += Game_OnGameUpdate;
         }

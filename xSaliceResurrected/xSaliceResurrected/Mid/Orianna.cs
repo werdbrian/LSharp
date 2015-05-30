@@ -526,7 +526,7 @@ namespace xSaliceResurrected.Mid
 
         private void LastHit()
         {
-            if (!Orbwalking.CanMove(40)) return;
+            if (!OrbwalkManager.CanMove(40)) return;
 
             List<Obj_AI_Base> allMinions = MinionManager.GetMinions(Player.ServerPosition, Q.Range);
 
@@ -549,7 +549,7 @@ namespace xSaliceResurrected.Mid
 
         private void Farm()
         {
-            if (!Orbwalking.CanMove(40)) return;
+            if (!OrbwalkManager.CanMove(40)) return;
 
             if (!ManaManager.HasMana("Farm"))
                 return;
@@ -585,7 +585,7 @@ namespace xSaliceResurrected.Mid
 
         private void Escape()
         {
-            Orbwalking.Orbwalk(null, Game.CursorPos);
+            OrbwalkManager.Orbwalk(null, Game.CursorPos);
 
             if (_ballStatus == 0 && W.IsReady())
                 W.Cast();
