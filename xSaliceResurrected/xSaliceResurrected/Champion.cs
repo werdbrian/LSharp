@@ -25,6 +25,7 @@ namespace xSaliceResurrected
             Spellbook.OnUpdateChargedSpell += Spellbook_OnUpdateChargedSpellEvent;
             Spellbook.OnCastSpell += SpellbookOnOnCastSpell;
             Spellbook.OnStopCast += SpellbookOnOnStopCast;
+            Obj_AI_Hero.OnDamage += ObjAiHeroOnOnDamage;
 
             if (menu.Item("OrbwalkingMode").GetValue<StringList>().SelectedIndex == 1)
             {
@@ -42,6 +43,7 @@ namespace xSaliceResurrected
             Obj_AI_Base.OnBuffAdd += ObjAiBaseOnOnBuffAdd;
             Obj_AI_Base.OnBuffRemove += ObjAiBaseOnOnBuffRemove;
         }
+
 
         public Champion(bool load)
         {
@@ -286,6 +288,11 @@ namespace xSaliceResurrected
             {
                 Console.WriteLine(args.Buff.Name);
             }*/
+        }
+
+        protected virtual void ObjAiHeroOnOnDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
+        {
+            //for champ use
         }
 
     }
