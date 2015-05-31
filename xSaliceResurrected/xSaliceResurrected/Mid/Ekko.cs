@@ -542,15 +542,9 @@ namespace xSaliceResurrected.Mid
             }
         }
 
-        protected override void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base unit, GameObjectProcessSpellCastEventArgs args)
+        protected override void ObjAiHeroOnOnDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
         {
-            if (unit.IsAlly|| R.IsReady() || !(unit is Obj_AI_Hero))
-                return;
-
-            if (unit.Target == null)
-                return;
-
-            if (!unit.Target.IsMe)
+            if (!sender.IsMe || !R.IsReady() || args.Damage > 45)
                 return;
 
             var safeNet = menu.Item("R_Safe_Net2", true).GetValue<Slider>().Value;
