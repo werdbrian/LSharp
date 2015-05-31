@@ -24,10 +24,10 @@ namespace xSaliceResurrected.Mid
         private void SetSpells()
         {
             SpellManager.Q = new Spell(SpellSlot.Q, 800);
-            SpellManager.Q.SetSkillshot(.25f, 60f, 1600, false, SkillshotType.SkillshotLine);
+            SpellManager.Q.SetSkillshot(.25f, 60f, 1700, false, SkillshotType.SkillshotLine);
 
             SpellManager.Q2 = new Spell(SpellSlot.Q, 1050);
-            SpellManager.Q2.SetSkillshot(.5f, 120f, 1000, false, SkillshotType.SkillshotLine);
+            SpellManager.Q2.SetSkillshot(.5f, 120f, 1200, false, SkillshotType.SkillshotLine);
 
             SpellManager.W = new Spell(SpellSlot.W, 1600);
             SpellManager.W.SetSkillshot(.5f, 350f, float.MaxValue, false, SkillshotType.SkillshotCircle);
