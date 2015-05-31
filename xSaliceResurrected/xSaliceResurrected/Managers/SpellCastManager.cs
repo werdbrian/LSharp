@@ -24,16 +24,7 @@ namespace xSaliceResurrected.Managers
 
             spell.UpdateSourcePosition();
 
-            var pred = Prediction.GetPrediction(target, spell.Delay);
-
-            if (spell.Collision)
-            {
-                spell.CastIfHitchanceEquals(target, hitChance);
-            }
-            else if (pred.Hitchance >= hitChance)
-            {
-                spell.Cast(pred.CastPosition);
-            }
+            spell.CastIfHitchanceEquals(target, hitChance);
         }
 
         public static void CastBasicFarm(Spell spell)
