@@ -445,7 +445,7 @@ namespace xSaliceResurrected.Mid
             if (!R.IsReady() || _ekkoPast == null)
                 return 0;
 
-            return HeroManager.Enemies.Where(x => x.IsValidTarget()).Count(x => _ekkoPast.Distance(Prediction.GetPrediction(x, .25f).UnitPosition) < 400);
+            return HeroManager.Enemies.Where(x => x.IsValidTarget()).Count(x => _ekkoPast.Distance(Prediction.GetPrediction(x, .2f).UnitPosition) < 400);
         }
         private void AutoQ()
         {
@@ -519,7 +519,7 @@ namespace xSaliceResurrected.Mid
 
                 //R
                 if(R.IsReady() && _ekkoPast != null)
-                if (_ekkoPast.Distance(Prediction.GetPrediction(target, 25f).UnitPosition) <= R.Width && Rdmg(target) > target.Health)
+                if (_ekkoPast.Distance(Prediction.GetPrediction(target, .2f).UnitPosition) <= R.Width && Rdmg(target) > target.Health)
                 {
                     R.Cast();
                     return;
