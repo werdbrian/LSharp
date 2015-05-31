@@ -511,7 +511,8 @@ namespace xSaliceResurrected.Mid
                 //E
                 if (Player.Distance(target) <= E.Range + 475 && Edmg(target) > target.Health && E.IsReady())
                 {
-                    E.Cast(target);
+                    var vec = Player.ServerPosition.Extend(target.ServerPosition, E.Range - 10);
+                    E.Cast(vec);
                     var target1 = target;
                     Utility.DelayAction.Add((int)E.Delay * 1000 + Game.Ping, () => Player.IssueOrder(GameObjectOrder.AttackUnit, target1));
                     return;
