@@ -23,7 +23,7 @@ namespace xSaliceResurrected.Mid
 
         private void SetSpells()
         {
-            SpellManager.Q = new Spell(SpellSlot.Q, 700);
+            SpellManager.Q = new Spell(SpellSlot.Q, 800);
             SpellManager.Q.SetSkillshot(.25f, 60f, 1600, false, SkillshotType.SkillshotLine);
 
             SpellManager.Q2 = new Spell(SpellSlot.Q, 1050);
@@ -504,7 +504,7 @@ namespace xSaliceResurrected.Mid
                 //Q2
                 if (Player.Distance(target) <= Q2.Range && TotalQDmg(target) > target.Health && Q.IsReady() && Q2.GetPrediction(target).Hitchance >= HitChance.VeryHigh)
                 {
-                    Q.Cast(target);
+                    Q2.Cast(target);
                     return;
                 }
 
@@ -554,11 +554,12 @@ namespace xSaliceResurrected.Mid
                 return;
 
             var safeNet = menu.Item("R_Safe_Net2", true).GetValue<Slider>().Value;
-            var dmg = unit.GetSpellDamage(Player, args.SData.Name);
-            var hpPercent = (Player.Health - dmg)/Player.MaxHealth * 100;
 
-            if (hpPercent <= safeNet)
+            if (Player.HealthPercent <= safeNet)
+            {
                 R.Cast();
+                Console.WriteLine("Safety Back");
+            }
         }
 
         protected override void Game_OnGameUpdate(EventArgs args)
