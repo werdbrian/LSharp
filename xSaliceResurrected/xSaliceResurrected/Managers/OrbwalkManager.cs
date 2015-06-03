@@ -9,7 +9,13 @@ namespace xSaliceResurrected.Managers
     {
         public static int CurrentOrbwalker
         {
-            get { return Champion.menu.Item("OrbwalkingMode").GetValue<StringList>().SelectedIndex; }
+            get
+            {
+                if (ObjectManager.Player.ChampionName.ToLower() == "azir")
+                    return 1;
+
+                return Champion.menu.Item("OrbwalkingMode").GetValue<StringList>().SelectedIndex;
+            }
         }
 
         public static void Orbwalk(Obj_AI_Base target, Vector3 pos)

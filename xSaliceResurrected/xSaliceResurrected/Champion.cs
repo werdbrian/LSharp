@@ -27,7 +27,7 @@ namespace xSaliceResurrected
             Spellbook.OnStopCast += SpellbookOnOnStopCast;
             Obj_AI_Hero.OnDamage += ObjAiHeroOnOnDamage;
 
-            if (menu.Item("OrbwalkingMode").GetValue<StringList>().SelectedIndex == 1)
+            if (menu.Item("OrbwalkingMode").GetValue<StringList>().SelectedIndex == 1 || Player.ChampionName.ToLower() == "azir")
             {
                 Orbwalking.AfterAttack += AfterAttackEvent;
                 Orbwalking.BeforeAttack += BeforeAttackEvent;
