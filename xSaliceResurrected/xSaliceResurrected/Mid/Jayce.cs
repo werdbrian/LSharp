@@ -247,7 +247,7 @@ namespace xSaliceResurrected.Mid
                 if (useR)
                     SwitchFormCheck(q2Target, useQ, useW, useQ2, useW2, useE2);
             }
-            else if (source == "Harass" && !ManaManager.HasMana(source))
+            else if (source == "Harass" && ManaManager.HasMana(source))
             {
                 if (qTarget != null)
                 {

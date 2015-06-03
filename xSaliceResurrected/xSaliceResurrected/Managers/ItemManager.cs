@@ -151,7 +151,7 @@ namespace xSaliceResurrected.Managers
 
             var offensiveItem = new Menu("Offensive Items", "Offensive Items");
             {
-                foreach (var item in ItemList.Where(x => x.Mode != 3))
+                foreach (var item in ItemList.Where(x => x.Mode < 3))
                 {
                     AddOffensiveItem(offensiveItem, item);
                 }
