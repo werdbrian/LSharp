@@ -129,6 +129,8 @@ namespace xSaliceResurrected.Utilities
             }
             menu.AddSubMenu(menuModes);
 
+            menu.AddItem(new MenuItem("AnimationCheck", "Animation Check").SetValue(true));
+            menu.AddItem(new MenuItem("MissileCheck", "Missile Check").SetValue(true));
             menu.AddItem(new MenuItem("orb_Misc_AutoWindUp", "Autoset Windup").SetValue(new KeyBind("O".ToCharArray()[0], KeyBindType.Press)));
 
             Drawing.OnDraw += OnDraw;
@@ -153,6 +155,9 @@ namespace xSaliceResurrected.Utilities
 
         private static void ObjAiBaseOnOnPlayAnimation(Obj_AI_Base sender, GameObjectPlayAnimationEventArgs args)
         {
+            if (!_menu.Item("MissileCheck").GetValue<bool>())
+                return;
+
             if (!sender.IsMe || sender.IsMelee() || args.Animation == "Run" || args.Animation != "Idle")
                 return;
 
@@ -164,6 +169,9 @@ namespace xSaliceResurrected.Utilities
 
         private static void MissileClientOnOnCreate(GameObject sender, EventArgs args)
         {
+            if (!_menu.Item("MissileCheck").GetValue<bool>())
+                return;
+
             var missile = sender as MissileClient;
             if (missile != null && missile.SpellCaster.IsMe && IsAutoAttack(missile.SData.Name) && !missile.SpellCaster.IsMeele)
             {
