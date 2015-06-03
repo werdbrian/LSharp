@@ -284,6 +284,7 @@ namespace xSaliceResurrected.Mid
                 foreach (
                     Obj_AI_Hero target in
                         HeroManager.Enemies
+                            .Where(x => x.IsValidTarget(3500) && !x.IsDead && x.Health > 0).OrderByDescending(x => x.Distance(_rObj.Position)))
                 {
                     Player.Spellbook.CastSpell(SpellSlot.R, target.ServerPosition);
                     _lastR = Utils.TickCount;
