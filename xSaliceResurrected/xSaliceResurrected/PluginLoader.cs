@@ -1,4 +1,9 @@
-﻿using LeagueSharp;
+﻿using System;
+using System.IO;
+using System.Net;
+using System.Reflection;
+using LeagueSharp;
+using LeagueSharp.Common;
 using xSaliceResurrected.ADC;
 using xSaliceResurrected.Mid;
 using xSaliceResurrected.Support;
@@ -14,6 +19,25 @@ namespace xSaliceResurrected
         {
             if (!_loaded)
             {
+                var webRequest = WebRequest.Create(@"https://raw.githubusercontent.com/xSalice/LSharp/master/xSaliceResurrected/version.txt");
+
+                using (var response = webRequest.GetResponse())
+                using (var content = response.GetResponseStream())
+                    if (content != null)
+                        using (var reader = new StreamReader(content))
+                        {
+                            var strContent = reader.ReadToEnd();
+
+                            Notifications.AddNotification("Latest Version: " + strContent, 10000);
+                            Notifications.AddNotification("Version Loaded: " + Assembly.GetExecutingAssembly().GetName().Version, 10000);
+                            if (strContent != Assembly.GetExecutingAssembly().GetName().Version.ToString())
+                                Notifications.AddNotification("Please Update Assembly!!!");
+
+                        }
+
+                
+
+                
                 switch (ObjectManager.Player.ChampionName.ToLower())
                 {
                     case "ahri":
@@ -63,7 +87,6 @@ namespace xSaliceResurrected
                     case "karthus":
                         new Karthus();
                         _loaded = true;
-                        Game.PrintChat("<font color = \"#FFB6C1\">xSalice's " + ObjectManager.Player.ChampionName + " Loaded!</font>");
                         break;
                     case "katarina":
                         new Katarina();
@@ -72,7 +95,6 @@ namespace xSaliceResurrected
                     case "lissandra":
                         new Lissandra();
                         _loaded = true;
-                        Game.PrintChat("<font color = \"#FFB6C1\">xSalice's " + ObjectManager.Player.ChampionName + " Loaded!</font>");
                         break;
                     case "lucian":
                         new Lucian();
@@ -93,7 +115,6 @@ namespace xSaliceResurrected
                     case "syndra":
                         new Syndra();
                         _loaded = true;
-                        Game.PrintChat("<font color = \"#FFB6C1\">xSalice's " + ObjectManager.Player.ChampionName + " Loaded!</font>");
                         break;
                     case "viktor":
                         new Viktor();
@@ -154,7 +175,7 @@ namespace xSaliceResurrected
                         break;
                      */
                     default:
-                        Game.PrintChat("xSalice's Religion => {0} Not Supported!", ObjectManager.Player.ChampionName);
+                        Notifications.AddNotification(ObjectManager.Player.ChampionName + " Champion not supported!!", 10000);
                         break;
                 }
             }
