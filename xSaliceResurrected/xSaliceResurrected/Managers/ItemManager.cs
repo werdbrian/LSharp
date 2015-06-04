@@ -422,35 +422,38 @@ namespace xSaliceResurrected.Managers
 
             double dmg = currentDmg;
 
-            foreach (var item in ItemList.Where(x => Items.HasItem(x.ActiveId) && ShouldUse(x.ActiveName) && Items.CanUseItem(x.ActiveId) && AddToDmgCalc(x.ActiveName) && x.Mode <= 1))
+            foreach (var item in ItemList.Where(x => Items.HasItem(x.ActiveId)  && Items.CanUseItem(x.ActiveId) && AddToDmgCalc(x.ActiveName) && x.Mode <= 1))
             {
-                //bilge
-                if (item.ActiveId == 3144)
-                    dmg += ObjectManager.Player.GetItemDamage(target, Damage.DamageItems.Bilgewater);
+                if (ShouldUse(item.ActiveName))
+                {
+                    //bilge
+                    if (item.ActiveId == 3144)
+                        dmg += ObjectManager.Player.GetItemDamage(target, Damage.DamageItems.Bilgewater);
 
-                //Botrk
-                if (item.ActiveId == 3153)
-                    dmg += ObjectManager.Player.GetItemDamage(target, Damage.DamageItems.Botrk);
+                    //Botrk
+                    if (item.ActiveId == 3153)
+                        dmg += ObjectManager.Player.GetItemDamage(target, Damage.DamageItems.Botrk);
 
-                //hextech
-                if (item.ActiveId == 3146)
-                    dmg += ObjectManager.Player.GetItemDamage(target, Damage.DamageItems.Hexgun);
+                    //hextech
+                    if (item.ActiveId == 3146)
+                        dmg += ObjectManager.Player.GetItemDamage(target, Damage.DamageItems.Hexgun);
 
-                //hydra
-                if (item.ActiveId == 3074)
-                    dmg += ObjectManager.Player.GetItemDamage(target, Damage.DamageItems.Hydra);
+                    //hydra
+                    if (item.ActiveId == 3074)
+                        dmg += ObjectManager.Player.GetItemDamage(target, Damage.DamageItems.Hydra);
 
-                //tiamat
-                if (item.ActiveId == 3077)
-                    dmg += ObjectManager.Player.GetItemDamage(target, Damage.DamageItems.Tiamat);
+                    //tiamat
+                    if (item.ActiveId == 3077)
+                        dmg += ObjectManager.Player.GetItemDamage(target, Damage.DamageItems.Tiamat);
 
-                //sheen
-                if (Items.HasItem(3057))
-                    dmg += ObjectManager.Player.CalcDamage(target, Damage.DamageType.Physical, SheenDamage());
+                    //sheen
+                    if (Items.HasItem(3057))
+                        dmg += ObjectManager.Player.CalcDamage(target, Damage.DamageType.Physical, SheenDamage());
 
-                //lich bane
-                if (Items.HasItem(3100))
-                    dmg += ObjectManager.Player.CalcDamage(target, Damage.DamageType.Magical, LichDamage());
+                    //lich bane
+                    if (Items.HasItem(3100))
+                        dmg += ObjectManager.Player.CalcDamage(target, Damage.DamageType.Magical, LichDamage());
+                }
             }
 
             if (Ignite_Ready())
