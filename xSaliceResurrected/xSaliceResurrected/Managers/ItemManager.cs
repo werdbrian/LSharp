@@ -417,6 +417,9 @@ namespace xSaliceResurrected.Managers
 
         public static float CalcDamage(Obj_AI_Base target, double currentDmg)
         {
+            if (target == null)
+                return 0;
+
             double dmg = currentDmg;
 
             foreach (var item in ItemList.Where(x => Items.HasItem(x.ActiveId) && ShouldUse(x.ActiveName) && Items.CanUseItem(x.ActiveId) && AddToDmgCalc(x.ActiveName) && x.Mode <= 1))
