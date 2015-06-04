@@ -419,7 +419,7 @@ namespace xSaliceResurrected.Managers
         {
             double dmg = currentDmg;
 
-            foreach (var item in ItemList.Where(x => Items.HasItem(x.ActiveId) && ShouldUse(x.ActiveName) && Items.CanUseItem(x.ActiveId) && AddToDmgCalc(x.ActiveName) && x.Mode <= 2))
+            foreach (var item in ItemList.Where(x => Items.HasItem(x.ActiveId) && ShouldUse(x.ActiveName) && Items.CanUseItem(x.ActiveId) && AddToDmgCalc(x.ActiveName) && Items.HasItem(x.ActiveId) && x.Mode <= 2))
             {
                 //bilge
                 if (item.ActiveId == 3144)
