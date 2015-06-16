@@ -89,7 +89,7 @@ namespace xSaliceResurrected.Managers
                 SpellManager.E.MinHitChance = HitChance.Low;
                 return HitChance.Low;
             }
-            SpellManager.W.MinHitChance = MyHitChances[_menuCombo.Item("eHitHarass", true).GetValue<StringList>().SelectedIndex];
+            SpellManager.W.MinHitChance = MyHitChances[_menuHarass.Item("eHitHarass", true).GetValue<StringList>().SelectedIndex];
             return MyHitChances[_menuHarass.Item("eHitHarass", true).GetValue<StringList>().SelectedIndex];
         }
 
@@ -105,7 +105,7 @@ namespace xSaliceResurrected.Managers
                 SpellManager.R.MinHitChance = HitChance.Low;
                 return HitChance.Low;
             }
-            SpellManager.W.MinHitChance = MyHitChances[_menuCombo.Item("rHitHarass", true).GetValue<StringList>().SelectedIndex];
+            SpellManager.W.MinHitChance = MyHitChances[_menuHarass.Item("rHitHarass", true).GetValue<StringList>().SelectedIndex];
             return MyHitChances[_menuHarass.Item("rHitHarass", true).GetValue<StringList>().SelectedIndex];
         }
 

@@ -315,37 +315,61 @@ namespace xSaliceResurrected.Utilities
 
         public static void Orbwalk(AttackableUnit mytarget, Vector3 goalPosition)
         {
-            var target = (Obj_AI_Base)mytarget;
-
+            
             if (Player.IsChannelingImportantSpell())
                 return;
 
-            if (target != null && (CanAttack || HaveCancled) && IsAllowedToAttack())
+            if (mytarget is Obj_AI_Base)
             {
-                _disableNextAttack = false;
-                FireBeforeAttack(target);
-                if (!_disableNextAttack)
+                var target = (Obj_AI_Base) mytarget;
+
+                if (target != null && (CanAttack || HaveCancled) && IsAllowedToAttack())
                 {
-                    if (CurrentMode != Mode.Harass || !target.IsMinion || _menu.Item("Harass_Lasthit").GetValue<bool>())
+                    _disableNextAttack = false;
+                    FireBeforeAttack(target);
+                    if (!_disableNextAttack)
                     {
-                        Player.IssueOrder(GameObjectOrder.AttackUnit, target);
-                        _lastAaTick = Utils.GameTimeTickCount+ Game.Ping / 2;
-                        _canmove = false;
+                        if (CurrentMode != Mode.Harass || !target.IsMinion ||
+                            _menu.Item("Harass_Lasthit").GetValue<bool>())
+                        {
+                            Player.IssueOrder(GameObjectOrder.AttackUnit, target);
+                            _lastAaTick = Utils.GameTimeTickCount + Game.Ping/2;
+                            _canmove = false;
+                        }
                     }
                 }
-            }
-            if (!CanMoves || !IsAllowedToMove())
-                return;
-            if (Player.IsMelee() && target != null && target.Distance(Player.Position) < GetAutoAttackRange(Player, target) &&
-                _menu.Item("orb_Melee_Prediction").GetValue<bool>() && target is Obj_AI_Hero && Game.CursorPos.Distance(target.Position) < 300)
-            {
-                _movementPrediction.Delay = Player.BasicAttack.SpellCastTime;
-                _movementPrediction.Speed = Player.BasicAttack.MissileSpeed;
-                MoveTo(_movementPrediction.GetPrediction(target).UnitPosition);
+                if (!CanMoves || !IsAllowedToMove())
+                    return;
+                if (Player.IsMelee() && target != null &&
+                    target.Distance(Player.Position) < GetAutoAttackRange(Player, target) &&
+                    _menu.Item("orb_Melee_Prediction").GetValue<bool>() && target is Obj_AI_Hero &&
+                    Game.CursorPos.Distance(target.Position) < 300)
+                {
+                    _movementPrediction.Delay = Player.BasicAttack.SpellCastTime;
+                    _movementPrediction.Speed = Player.BasicAttack.MissileSpeed;
+                    MoveTo(_movementPrediction.GetPrediction(target).UnitPosition);
+                }
+                else
+                    MoveTo(goalPosition);
             }
             else
-                MoveTo(goalPosition);
-
+            {
+                if (mytarget != null && (CanAttack || HaveCancled) && IsAllowedToAttack())
+                {
+                    _disableNextAttack = false;
+                    FireBeforeAttack(mytarget);
+                    if (!_disableNextAttack)
+                    {
+                        Player.IssueOrder(GameObjectOrder.AttackUnit, mytarget);
+                        _lastAaTick = Utils.GameTimeTickCount + Game.Ping / 2;
+                        _canmove = false;
+                        
+                    }
+                }
+                if (!CanMoves || !IsAllowedToMove())
+                    return;
+                    MoveTo(goalPosition);
+            }
         }
 
 
@@ -461,14 +485,14 @@ namespace xSaliceResurrected.Utilities
                 return turret;
 
             //inhib
-            foreach (var turret in
-                ObjectManager.Get<Obj_BarracksDampener>().Where(t => t.IsValidTarget() && InAutoAttackRange(t)))
+            foreach (var barrack in
+                ObjectManager.Get<Obj_BarracksDampener>().Where(t => t.IsValidTarget(GetAutoAttackRange(Player, t))))
             {
-                return turret;
+                return barrack;
             }
 
             //nexus
-            return ObjectManager.Get<Obj_HQ>().FirstOrDefault(t => t.IsValidTarget() && InAutoAttackRange(t));
+            return ObjectManager.Get<Obj_HQ>().FirstOrDefault(t => t.IsValidTarget(GetAutoAttackRange(Player, t)));
         }
 
         private static AttackableUnit GetBestMinion(bool lastHitOnly)

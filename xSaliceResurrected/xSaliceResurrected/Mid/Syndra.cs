@@ -34,7 +34,7 @@ namespace xSaliceResurrected.Mid
             SpellManager.R = new Spell(SpellSlot.R, 750);
 
             _qe = new Spell(SpellSlot.Q, 1250);
-            _qe.SetSkillshot(.900f, 70f, 2100f, false, SkillshotType.SkillshotLine);
+            _qe.SetSkillshot(.900f, 70f, 2100f, false, SkillshotType.SkillshotCircle);
 
         }
 
@@ -468,13 +468,12 @@ namespace xSaliceResurrected.Mid
             }
             else
             {
-                var from = Prediction.GetPrediction(qeTarget, Q.Delay + E.Delay).UnitPosition;
-                var startPos = Player.ServerPosition + Vector3.Normalize(from - Player.ServerPosition)*(E.Range - 100);
+                var startPos = Player.ServerPosition.To2D().Extend(qeTarget.ServerPosition.To2D(), Q.Range).To3D();
                 double rangeLeft = 100 + (-0.6*Player.Distance(startPos) + 950);
                 var endPos = startPos + Vector3.Normalize(startPos - Player.ServerPosition)*(float) rangeLeft;
 
                 _qe.From = startPos;
-                _qe.Delay = Q.Delay + E.Delay + Player.Distance(from)/E.Speed;
+                _qe.Delay = E.Delay + Q.Range / E.Speed;
 
                 var qePred = _qe.GetPrediction(qeTarget);
 
@@ -606,14 +605,12 @@ namespace xSaliceResurrected.Mid
                 }
                 else
                 {
-                    var from = Prediction.GetPrediction(qeTarget, Q.Delay + E.Delay).UnitPosition;
-                    var startPos = Player.ServerPosition +
-                                   Vector3.Normalize(from - Player.ServerPosition)*(E.Range - 100);
-                    double rangeLeft = 100 + (-0.6*Player.Distance(startPos) + 950);
-                    var endPos = startPos + Vector3.Normalize(startPos - Player.ServerPosition)*(float) rangeLeft;
+                    var startPos = Player.ServerPosition.To2D().Extend(qeTarget.ServerPosition.To2D(), Q.Range).To3D();
+                    double rangeLeft = 100 + (-0.6 * Player.Distance(startPos) + 950);
+                    var endPos = startPos + Vector3.Normalize(startPos - Player.ServerPosition) * (float)rangeLeft;
 
                     _qe.From = startPos;
-                    _qe.Delay = Q.Delay + E.Delay + Player.Distance(from)/E.Speed;
+                    _qe.Delay = E.Delay + Q.Range / E.Speed;
 
                     var qePred = _qe.GetPrediction(qeTarget);
 

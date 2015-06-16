@@ -24,7 +24,18 @@ namespace xSaliceResurrected.Managers
 
             spell.UpdateSourcePosition();
 
-            spell.CastIfHitchanceEquals(target, hitChance);
+            if (spell.Type == SkillshotType.SkillshotCircle)
+            {
+                var pred = Prediction.GetPrediction(target, spell.Delay);
+
+                if (pred.Hitchance >= hitChance)
+                    spell.Cast(pred.CastPosition);
+            }
+            else
+            {
+                spell.CastIfHitchanceEquals(target, hitChance); 
+            }
+           
         }
 
         public static void CastBasicFarm(Spell spell)

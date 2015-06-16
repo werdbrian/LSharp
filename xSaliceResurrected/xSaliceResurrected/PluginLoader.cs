@@ -35,9 +35,6 @@ namespace xSaliceResurrected
 
                         }
 
-                
-
-                
                 switch (ObjectManager.Player.ChampionName.ToLower())
                 {
                     case "ahri":
@@ -90,6 +87,10 @@ namespace xSaliceResurrected
                         break;
                     case "katarina":
                         new Katarina();
+                        _loaded = true;
+                        break;
+                    case "kogmaw":
+                        new KogMaw();
                         _loaded = true;
                         break;
                     case "lissandra":
