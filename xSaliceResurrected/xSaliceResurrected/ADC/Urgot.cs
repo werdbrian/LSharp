@@ -70,7 +70,7 @@ namespace xSaliceResurrected.ADC
                     foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.Team != Player.Team)
                         )
                         rMenu.SubMenu("Dont_R")
-                            .AddItem(new MenuItem("Dont_R" + enemy.BaseSkinName, enemy.BaseSkinName, true).SetValue(false));
+                            .AddItem(new MenuItem("Dont_R" + enemy.CharData.BaseSkinName, enemy.CharData.BaseSkinName, true).SetValue(false));
 
                     spellMenu.AddSubMenu(rMenu);
                 }
@@ -295,9 +295,9 @@ namespace xSaliceResurrected.ADC
 
             foreach (var target in HeroManager.Enemies.Where(x => x.IsValidTarget(R.Range)).OrderByDescending(GetComboDamage))
             {
-                if (menu.Item("Dont_R" + target.BaseSkinName, true) != null)
+                if (menu.Item("Dont_R" + target.CharData.BaseSkinName, true) != null)
                 {
-                    if (!menu.Item("Dont_R" + target.BaseSkinName, true).GetValue<bool>())
+                    if (!menu.Item("Dont_R" + target.CharData.BaseSkinName, true).GetValue<bool>())
                     {
                         if (!(target.CountEnemiesInRange(1000) >= safeNet))
                         {

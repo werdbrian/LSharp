@@ -86,7 +86,7 @@ namespace xSaliceResurrected.Mid
                     rMenu.AddSubMenu(new Menu("Don't use R on", "Dont_R"));
                     foreach (var enemy in HeroManager.Enemies)
                         rMenu.SubMenu("Dont_R")
-                            .AddItem(new MenuItem("Dont_R" + enemy.BaseSkinName, enemy.BaseSkinName, true).SetValue(false));
+                            .AddItem(new MenuItem("Dont_R" + enemy.CharData.BaseSkinName, enemy.CharData.BaseSkinName, true).SetValue(false));
 
                     spellMenu.AddSubMenu(rMenu);
                 }
@@ -570,9 +570,9 @@ namespace xSaliceResurrected.Mid
 
             foreach (var target in HeroManager.Enemies.Where(x => x.IsValidTarget(R.Range)).OrderByDescending(GetComboDamage))
             {
-                if (menu.Item("Dont_R" + target.BaseSkinName, true) != null)
+                if (menu.Item("Dont_R" + target.CharData.BaseSkinName, true) != null)
                 {
-                    if (!menu.Item("Dont_R" + target.BaseSkinName, true).GetValue<bool>())
+                    if (!menu.Item("Dont_R" + target.CharData.BaseSkinName, true).GetValue<bool>())
                     {
                         if (menu.Item("overKillCheck", true).GetValue<bool>())
                         {
@@ -818,7 +818,7 @@ namespace xSaliceResurrected.Mid
                 {
                     if (Utils.TickCount - _lastNotification > 0)
                     {
-                        Notifications.AddNotification(x.BaseSkinName + " Flash Ult Killable", 5000);
+                        Notifications.AddNotification(x.CharData.BaseSkinName + " Flash Ult Killable", 5000);
                         _lastNotification = Utils.TickCount + 5000;
                     }
                 }

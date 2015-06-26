@@ -77,7 +77,7 @@ namespace xSaliceResurrected.Mid
                     eMenu.AddSubMenu(new Menu("E Ally Inc Spell", "shield"));
                     eMenu.SubMenu("shield").AddItem(new MenuItem("eAllyIfHP", "If HP < %", true).SetValue(new Slider(40)));
                     foreach (Obj_AI_Hero ally in ObjectManager.Get<Obj_AI_Hero>().Where(ally => ally.IsAlly))
-                        eMenu.SubMenu("shield").AddItem(new MenuItem("shield" + ally.BaseSkinName, ally.BaseSkinName, true).SetValue(true));
+                        eMenu.SubMenu("shield").AddItem(new MenuItem("shield" + ally.CharData.BaseSkinName, ally.CharData.BaseSkinName, true).SetValue(true));
 
                     spellMenu.AddSubMenu(eMenu);
                 }
@@ -91,7 +91,7 @@ namespace xSaliceResurrected.Mid
 
                     rMenu.AddSubMenu(new Menu("Auto use R on", "intR"));
                     foreach (Obj_AI_Hero enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.Team != Player.Team))
-                        rMenu.SubMenu("intR").AddItem(new MenuItem("intR" + enemy.BaseSkinName, enemy.BaseSkinName, true).SetValue(false));
+                        rMenu.SubMenu("intR").AddItem(new MenuItem("intR" + enemy.CharData.BaseSkinName, enemy.CharData.BaseSkinName, true).SetValue(false));
 
                     spellMenu.AddSubMenu(rMenu);
                 }
@@ -136,7 +136,7 @@ namespace xSaliceResurrected.Mid
                 {
                     foreach (Initiator intiator in Initiator.InitatorList)
                     {
-                        if (intiator.HeroName == hero.BaseSkinName)
+                        if (intiator.HeroName == hero.CharData.BaseSkinName)
                         {
                             initator.AddItem(new MenuItem(intiator.SpellName, intiator.SpellName, true)).SetValue(false);
                         }
@@ -278,14 +278,14 @@ namespace xSaliceResurrected.Mid
 
             if (useR && target != null && R.IsReady())
             {
-                if (menu.Item("intR" + target.BaseSkinName, true) != null)
+                if (menu.Item("intR" + target.CharData.BaseSkinName, true) != null)
                 {
                     foreach (
                         Obj_AI_Hero enemy in
                             ObjectManager.Get<Obj_AI_Hero>()
                                 .Where(x => Player.Distance(x.Position) < 1500 && x.IsValidTarget() && x.IsEnemy && !x.IsDead))
                     {
-                        if (!enemy.IsDead && menu.Item("intR" + enemy.BaseSkinName, true).GetValue<bool>())
+                        if (!enemy.IsDead && menu.Item("intR" + enemy.CharData.BaseSkinName, true).GetValue<bool>())
                         {
                             CastR(enemy);
                             return;
@@ -684,9 +684,9 @@ namespace xSaliceResurrected.Mid
                         ObjectManager.Get<Obj_AI_Hero>()
                             .Where(x => Player.Distance(x.Position) < E.Range && Player.Distance(unit.Position) < 1500 && x.IsAlly && !x.IsDead).OrderBy(x => x.Distance(args.End)))
                 {
-                    if (menu.Item("shield" + ally.BaseSkinName, true) != null)
+                    if (menu.Item("shield" + ally.CharData.BaseSkinName, true) != null)
                     {
-                        if (menu.Item("shield" + ally.BaseSkinName, true).GetValue<bool>())
+                        if (menu.Item("shield" + ally.CharData.BaseSkinName, true).GetValue<bool>())
                         {
                             int hp = menu.Item("eAllyIfHP", true).GetValue<Slider>().Value;
 

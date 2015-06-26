@@ -81,7 +81,7 @@ namespace xSaliceResurrected.ADC
                     foreach (var enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.Team != Player.Team)
                         )
                         rMenu.SubMenu("Dont_R")
-                            .AddItem(new MenuItem("Dont_R" + enemy.BaseSkinName, enemy.BaseSkinName, true).SetValue(false));
+                            .AddItem(new MenuItem("Dont_R" + enemy.CharData.BaseSkinName, enemy.CharData.BaseSkinName, true).SetValue(false));
 
                     spellMenu.AddSubMenu(rMenu);
                 }
@@ -281,9 +281,9 @@ namespace xSaliceResurrected.ADC
 
             foreach (var target in HeroManager.Enemies.Where(x => x.IsValidTarget(R.Range)))
             {
-                if (menu.Item("Dont_R" + target.BaseSkinName, true) != null)
+                if (menu.Item("Dont_R" + target.CharData.BaseSkinName, true) != null)
                 {
-                    if (!menu.Item("Dont_R" + target.BaseSkinName, true).GetValue<bool>())
+                    if (!menu.Item("Dont_R" + target.CharData.BaseSkinName, true).GetValue<bool>())
                     {
                         if (Get_R_Dmg(target) > target.Health && Player.Distance(target.Position) > minRange)
                         {
@@ -299,9 +299,9 @@ namespace xSaliceResurrected.ADC
         {
             foreach (var unit in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsValidTarget(20000) && !x.IsDead && x.IsEnemy).OrderBy(x => x.Health))
             {
-                if (menu.Item("Dont_R" + unit.BaseSkinName, true) != null)
+                if (menu.Item("Dont_R" + unit.CharData.BaseSkinName, true) != null)
                 {
-                    if (!menu.Item("Dont_R" + unit.BaseSkinName, true).GetValue<bool>())
+                    if (!menu.Item("Dont_R" + unit.CharData.BaseSkinName, true).GetValue<bool>())
                     {
                         var health = unit.Health + unit.HPRegenRate * 3 + 25;
                         if (Get_R_Dmg(unit) > health)

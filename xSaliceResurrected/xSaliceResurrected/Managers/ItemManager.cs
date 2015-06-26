@@ -5,6 +5,7 @@ using LeagueSharp;
 using LeagueSharp.Common;
 using LeagueSharp.Common.Data;
 using xSaliceResurrected.Utilities;
+using ItemData = LeagueSharp.Common.Data.ItemData;
 
 namespace xSaliceResurrected.Managers
 {
