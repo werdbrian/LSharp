@@ -268,7 +268,7 @@ namespace xSaliceResurrected.Mid
 
         private bool ShouldR(Obj_AI_Hero target, float dmg)
         {
-            if (dmg > target.Health)
+            if (dmg + 200 > target.Health)
                 return true;
 
             if (menu.Item("rAlways", true).GetValue<KeyBind>().Active)

@@ -19,7 +19,6 @@ namespace xSaliceResurrected.Mid
 
         private static Obj_AI_Hero _insecTarget;
         private Vector3 _rVec;
-        private int qRange = 900;
 
         private void LoadSpells()
         {
@@ -387,50 +386,20 @@ namespace xSaliceResurrected.Mid
             if (target == null)
                 return;
 
-            if (soilderCount() > 0)
-            {
-                if ((Q.IsReady() || QSpell.State == SpellState.Surpressed) && E.IsReady())
-                {
-                    var slaves = AzirManager.Soilders.ToList();
-
-                    if (slaves.Count == 0)
-                        return;
-
-                    foreach (var slave in slaves)
-                    {
-                        if (Player.Distance(target.Position) < qRange)
-                        {
-                            Q.UpdateSourcePosition(slave.Position, Player.ServerPosition);
-                            var qPred = Q.GetPrediction(target);
-
-                            if (Q.IsReady() && Player.Distance(target.Position) < qRange && qPred.Hitchance >= HitChanceManager.GetQHitChance(source))
-                            {
-                                var vec = target.ServerPosition - Player.ServerPosition;
-                                var castBehind = qPred.CastPosition + Vector3.Normalize(vec) * 75;
-
-                                Q.Cast(castBehind);
-                                E.Cast(slave.Position);
-                                return;
-
-                            }
-                        }
-                    }
-                }
-            }
-            else if (W.IsReady())
+            if (W.IsReady())
             {
                 Vector3 wVec = Player.ServerPosition + Vector3.Normalize(target.ServerPosition - Player.ServerPosition) * W.Range;
 
-                var qPred = Util.GetP(wVec, Q, target, true);
+                var qPred = Util.GetP(wVec, Q, target, W.Delay + Q.Delay, true);
 
-                if ((Q.IsReady() || QSpell.State == SpellState.Surpressed) && (E.IsReady() || ESpell.State == SpellState.Surpressed) && Player.Distance(target.Position) < qRange && qPred.Hitchance >= HitChanceManager.GetQHitChance(source))
+                if ((Q.IsReady() || QSpell.State == SpellState.Surpressed) && (E.IsReady() || ESpell.State == SpellState.Surpressed) && Player.Distance(target.Position) < Q.Range - 75 && qPred.Hitchance >= HitChanceManager.GetQHitChance(source))
                 {
                     var vec = target.ServerPosition - Player.ServerPosition;
                     var castBehind = qPred.CastPosition + Vector3.Normalize(vec) * 75;
 
                     W.Cast(wVec);
-                    Q.Cast(castBehind);
-                    Utility.DelayAction.Add(1, () => E.Cast(getNearestSoilderToEnemy(target).Position));
+                    Utility.DelayAction.Add((int) W.Delay + 100, () => Q2.Cast(castBehind));
+                    Utility.DelayAction.Add((int)(W.Delay + Q.Delay) + 100, () => E.Cast(castBehind));
                 }
             }
         }
@@ -442,7 +411,7 @@ namespace xSaliceResurrected.Mid
             if (target == null)
                 return;
 
-            CastQe(target, "Combo");
+            CastQe(target, "Null");
         }
 
         private void CastW(Obj_AI_Hero target)
@@ -461,7 +430,10 @@ namespace xSaliceResurrected.Mid
             if (!menu.Item("ComboActive", true).GetValue<KeyBind>().Active || !W.IsReady())
                 return;
 
-            if (unit is Obj_AI_Hero)
+            if (target == null || unit == null)
+                return;
+
+            if (unit is Obj_AI_Hero && target is Obj_AI_Base)
             {
                 if (Player.Distance(Prediction.GetPrediction((Obj_AI_Hero) target, W.Delay).UnitPosition, true) <
                     W2.RangeSqr)
@@ -484,7 +456,7 @@ namespace xSaliceResurrected.Mid
                     Q.UpdateSourcePosition(slave.Position, Player.ServerPosition);
                     var qPred = Q.GetPrediction(target);
 
-                    if (Q.IsReady() && Player.Distance(target.Position) < qRange && qPred.Hitchance >= HitChanceManager.GetQHitChance(source))
+                    if (Q.IsReady() && Player.Distance(target.Position) < Q.Range && qPred.Hitchance >= HitChanceManager.GetQHitChance(source))
                     {
                         Q.Cast(qPred.CastPosition);
                         return;
@@ -714,6 +686,7 @@ namespace xSaliceResurrected.Mid
                 if (_insecTarget != null)
                 {
                     if (_insecTarget.HasBuffOfType(BuffType.Knockup) || _insecTarget.HasBuffOfType(BuffType.Knockback))
+                        if (Player.Distance(_insecTarget) < 200)
                         R2.Cast(_rVec);
 
                     Insec();
@@ -724,7 +697,7 @@ namespace xSaliceResurrected.Mid
                 var soilderTarget = TargetSelector.GetTarget(900, TargetSelector.DamageType.Magical);
 
                 OrbwalkManager.Orbwalk(null, Game.CursorPos);
-                CastQe(soilderTarget, "Combo");
+                CastQe(soilderTarget, "Null");
             }
             else
             {

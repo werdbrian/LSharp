@@ -131,6 +131,7 @@ namespace xSaliceResurrected.Utilities
 
             menu.AddItem(new MenuItem("AnimationCheck", "Animation Check").SetValue(true));
             menu.AddItem(new MenuItem("MissileCheck", "Missile Check").SetValue(true));
+            menu.AddItem(new MenuItem("OrbwalkingTargetMode", "Mode").SetValue(new StringList(new[] { "To Mouse", "To Target" })));
             menu.AddItem(new MenuItem("orb_Misc_AutoWindUp", "Autoset Windup").SetValue(new KeyBind("O".ToCharArray()[0], KeyBindType.Press)));
 
             Drawing.OnDraw += OnDraw;
@@ -224,6 +225,7 @@ namespace xSaliceResurrected.Utilities
 
         private static Obj_AI_Base _turretTarget;
         private static Obj_AI_Turret _turretAttacking;
+
         private static void OnUpdate(EventArgs args)
         {
             if (Player.IsDead)
@@ -239,7 +241,10 @@ namespace xSaliceResurrected.Utilities
                 return;
 
             var target = GetTarget();
-            Orbwalk(target, Game.CursorPos);
+
+            var mode = _menu.Item("OrbwalkingTargetMode").GetValue<StringList>().SelectedIndex;
+            
+            Orbwalk(target, mode == 0 || !(target is Obj_AI_Hero) ? Game.CursorPos : target.Position);
         }
 
         private static void OnDraw(EventArgs args)

@@ -72,8 +72,8 @@ namespace xSaliceResurrected.Mid
                 //E
                 var eMenu = new Menu("ESpell", "ESpell");
                 {
+                    eMenu.AddItem(new MenuItem("saveEMana", "Do not E To save Mana for Q+W", true).SetValue(true));
                     eMenu.AddItem(new MenuItem("UseEDmg", "Use E to Dmg", true).SetValue(true));
-
                     eMenu.AddSubMenu(new Menu("E Ally Inc Spell", "shield"));
                     eMenu.SubMenu("shield").AddItem(new MenuItem("eAllyIfHP", "If HP < %", true).SetValue(new Slider(40)));
                     foreach (Obj_AI_Hero ally in ObjectManager.Get<Obj_AI_Hero>().Where(ally => ally.IsAlly))
@@ -90,6 +90,7 @@ namespace xSaliceResurrected.Mid
                     rMenu.AddItem(new MenuItem("killR", "Use R only if it hits multiple target", true).SetValue(new KeyBind("T".ToCharArray()[0], KeyBindType.Toggle)));
 
                     rMenu.AddSubMenu(new Menu("Auto use R on", "intR"));
+                    rMenu.SubMenu("intR").AddItem(new MenuItem("AdditonalTargets", "Require Addition targets", true).SetValue(new Slider(1, 0, 4)));
                     foreach (Obj_AI_Hero enemy in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.Team != Player.Team))
                         rMenu.SubMenu("intR").AddItem(new MenuItem("intR" + enemy.CharData.BaseSkinName, enemy.CharData.BaseSkinName, true).SetValue(false));
 
@@ -287,7 +288,7 @@ namespace xSaliceResurrected.Mid
                     {
                         if (!enemy.IsDead && menu.Item("intR" + enemy.CharData.BaseSkinName, true).GetValue<bool>())
                         {
-                            CastR(enemy);
+                            CastR(enemy, true);
                             return;
                         }
                     }
@@ -319,7 +320,7 @@ namespace xSaliceResurrected.Mid
 
         }
 
-        private void CastR(Obj_AI_Base target)
+        private void CastR(Obj_AI_Base target, bool checkAdditional = false)
         {
             if (_isBallMoving) return;
 
@@ -327,13 +328,26 @@ namespace xSaliceResurrected.Mid
 
             if (R.IsReady() && prediction.UnitPosition.Distance(_currentBallPosition) <= R.Width)
             {
-                R.Cast();
+                if (checkAdditional)
+                {
+                    var add = menu.Item("AdditonalTargets", true).GetValue<Slider>().Value + 1;
+
+                    if (CountR() >= add)
+                        R.Cast();
+                }
+                else
+                {
+                    R.Cast();
+                }
             }
         }
 
         private void CastE(Obj_AI_Base target)
         {
             if (_isBallMoving) return;
+
+            if (menu.Item("saveEMana", true).GetValue<bool>() && Player.Mana - ESpell.ManaCost < QSpell.ManaCost + WSpell.ManaCost)
+                return;
 
             Obj_AI_Hero etarget = Player;
 
@@ -362,7 +376,7 @@ namespace xSaliceResurrected.Mid
                                 if (E.IsReady() && isOnseg &&
                                     prediction3.UnitPosition.Distance(pointLine.To3D()) < E.Width)
                                 {
-                                    Console.WriteLine("Dmg 1");
+                                    //Console.WriteLine("Dmg 1");
                                     E.CastOnUnit(ally);
                                     return;
                                 }
@@ -677,25 +691,31 @@ namespace xSaliceResurrected.Mid
         protected override void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base unit, GameObjectProcessSpellCastEventArgs args)
         {
             //Shield Ally
-            if (unit.IsEnemy && unit.Type == GameObjectType.obj_AI_Hero && E.IsReady())
+            if (!menu.Item("saveEMana", true).GetValue<bool>() || Player.Mana - ESpell.ManaCost >= QSpell.ManaCost + WSpell.ManaCost)
             {
-                foreach (
-                    Obj_AI_Hero ally in
-                        ObjectManager.Get<Obj_AI_Hero>()
-                            .Where(x => Player.Distance(x.Position) < E.Range && Player.Distance(unit.Position) < 1500 && x.IsAlly && !x.IsDead).OrderBy(x => x.Distance(args.End)))
+                if (unit.IsEnemy && unit.Type == GameObjectType.obj_AI_Hero && E.IsReady())
                 {
-                    if (menu.Item("shield" + ally.CharData.BaseSkinName, true) != null)
+                    foreach (
+                        Obj_AI_Hero ally in
+                            ObjectManager.Get<Obj_AI_Hero>()
+                                .Where(
+                                    x =>
+                                        Player.Distance(x.Position) < E.Range && Player.Distance(unit.Position) < 1500 &&
+                                        x.IsAlly && !x.IsDead).OrderBy(x => x.Distance(args.End)))
                     {
-                        if (menu.Item("shield" + ally.CharData.BaseSkinName, true).GetValue<bool>())
+                        if (menu.Item("shield" + ally.CharData.BaseSkinName, true) != null)
                         {
-                            int hp = menu.Item("eAllyIfHP", true).GetValue<Slider>().Value;
-
-                            if (ally.Distance(args.End) < 500 && ally.HealthPercent <= hp)
+                            if (menu.Item("shield" + ally.CharData.BaseSkinName, true).GetValue<bool>())
                             {
-                                //Game.PrintChat("shielding");
-                                E.CastOnUnit(ally);
-                                _isBallMoving = true;
-                                return;
+                                int hp = menu.Item("eAllyIfHP", true).GetValue<Slider>().Value;
+
+                                if (ally.Distance(args.End) < 500 && ally.HealthPercent <= hp)
+                                {
+                                    //Game.PrintChat("shielding");
+                                    E.CastOnUnit(ally);
+                                    _isBallMoving = true;
+                                    return;
+                                }
                             }
                         }
                     }

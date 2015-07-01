@@ -176,7 +176,7 @@ namespace xSaliceResurrected
                         break;
                      */
                     default:
-                        Notifications.AddNotification(ObjectManager.Player.ChampionName + " Champion not supported!!", 10000);
+                        Notifications.AddNotification(ObjectManager.Player.ChampionName + " not supported!!", 10000);
                         break;
                 }
             }

@@ -98,9 +98,6 @@ namespace xSaliceResurrected
             ItemManager.AddToMenu(itemMenu);
             menu.AddSubMenu(itemMenu);
             
-            //Gank Alerter
-            GankAlerter gank = new GankAlerter(menu);
-
             menu.AddToMainMenu();
             new PluginLoader();
 
