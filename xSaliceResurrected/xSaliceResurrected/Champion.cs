@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using LeagueSharp;
 using LeagueSharp.Common;
 using xSaliceResurrected.Base;
@@ -158,6 +159,7 @@ namespace xSaliceResurrected
         protected virtual void Game_OnGameUpdate(EventArgs args)
         {
             //for champs to use
+
         }
 
         private void GameObject_OnCreateEvent(GameObject sender, EventArgs args)
@@ -268,7 +270,6 @@ namespace xSaliceResurrected
        protected virtual void ObjAiBaseOnOnBuffAdd(Obj_AI_Base sender, Obj_AI_BaseBuffAddEventArgs args)
         {
             //for Champion used
-
            /*
            if (sender.IsMe)
            {
