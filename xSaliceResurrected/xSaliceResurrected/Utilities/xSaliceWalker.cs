@@ -174,7 +174,7 @@ namespace xSaliceResurrected.Utilities
                 return;
 
             var missile = sender as MissileClient;
-            if (missile != null && missile.SpellCaster.IsMe && IsAutoAttack(missile.SData.Name) && !missile.SpellCaster.IsMeele)
+            if (missile != null && missile.SpellCaster.IsMe && IsAutoAttack(missile.SData.Name) && !missile.SpellCaster.IsMelee)
             {
                 _canmove = true;
                 _lastRealAttack = Utils.GameTimeTickCount;
@@ -205,7 +205,7 @@ namespace xSaliceResurrected.Utilities
                         FireOnTargetSwitch((Obj_AI_Base) spell.Target);
 
                         //for melle
-                        if (unit.IsMeele)
+                        if (unit.IsMelee)
                             Utility.DelayAction.Add((int) (unit.AttackCastDelay*1000 + Game.Ping*0.5) + 50,
                                 () => FireAfterAttack(unit, _lastTarget));
                     }
