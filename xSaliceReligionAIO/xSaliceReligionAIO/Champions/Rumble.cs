@@ -20,9 +20,9 @@ namespace xSaliceReligionAIO.Champions
         private void LoadSpells()
         {
             //intalize spell
-            Q = new Spell(SpellSlot.Q, 500);
+            Q = new Spell(SpellSlot.Q, 600);
             W = new Spell(SpellSlot.W);
-            E = new Spell(SpellSlot.E, 950);
+            E = new Spell(SpellSlot.E, 800);
             R = new Spell(SpellSlot.R, 1700);
             R2 = new Spell(SpellSlot.R, 800);
 
