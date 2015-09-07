@@ -190,7 +190,7 @@ namespace xSaliceReligionAIO.Champions
             if (useQ && ShouldQ(target))
                 Q.Cast(target);
 
-            if (useW && menu.Item("W_Always", true).GetValue<bool>() && W.IsReady())
+            if (useW && menu.Item("W_Always", true).GetValue<bool>() && W.IsReady() && GetCurrentHeat() < 70)
                 W.Cast(packets());
 
             //items
@@ -279,7 +279,6 @@ namespace xSaliceReligionAIO.Champions
                 return false;
 
             if(E.GetPrediction(target).Hitchance < GetHitchance(source))
-
                if (!menu.Item("E_Over_Heat", true).GetValue<bool>() && GetCurrentHeat() > 79)
                     return false;
 
