@@ -293,7 +293,7 @@ namespace xSaliceReligionAIO.Champions
             if (IsRecalling() || Player.Spellbook.IsChanneling || Player.Spellbook.IsCharging ) 
                 return;
 
-            if (GetCurrentHeat() < 31 && W.IsReady() && menu.Item("W_Auto_Heat", true).GetValue<bool>())
+            if (GetCurrentHeat() > 19 && GetCurrentHeat() < 31 && W.IsReady() && menu.Item("W_Auto_Heat", true).GetValue<bool>())
             {
                 W.Cast(packets());
                 return;
@@ -305,6 +305,7 @@ namespace xSaliceReligionAIO.Champions
 
                 if(enemy != null)
                     Q.Cast(enemy.ServerPosition, packets());
+                Q.Cast(Player.ServerPosition);
                 return;
             }
 
