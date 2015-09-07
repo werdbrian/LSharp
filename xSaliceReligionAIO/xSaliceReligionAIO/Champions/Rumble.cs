@@ -516,7 +516,7 @@ namespace xSaliceReligionAIO.Champions
             if (menu.Item("Draw_Q", true).GetValue<bool>())
                 if (Q.Level > 0)
                     {
-                        Render.Circle.DrawCircle(Player.Position, Q.Range, Q.IsReady() ? Color.Green : Color.Red);
+                        Render.Circle.DrawCircle(Player.Position, 600, Q.IsReady() ? Color.Green : Color.Red);
                           var pos = ObjectManager.Player.Position.To2D() + 600 * ObjectManager.Player.Direction.To2D().Perpendicular();
                     Drawing.DrawCircle(pos.To3D(), 50, Q.IsReady() ? Color.Green : Color.Red);
                     var playerPosition = ObjectManager.Player.Position.To2D();
