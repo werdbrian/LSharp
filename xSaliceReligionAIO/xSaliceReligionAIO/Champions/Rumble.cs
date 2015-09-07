@@ -290,7 +290,7 @@ namespace xSaliceReligionAIO.Champions
 
         private void StayInDangerZone()
         {
-            if (Player.InFountain() || IsRecalling()) 
+            if (IsRecalling()) 
                 return;
 
             if (GetCurrentHeat() < 31 && W.IsReady() && menu.Item("W_Auto_Heat", true).GetValue<bool>())
