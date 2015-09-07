@@ -569,7 +569,7 @@ namespace xSaliceReligionAIO.Champions
                         vector1 = midpoint + Vector3.Normalize(pred.UnitPosition - Player.ServerPosition)*800;
                         if (!IsPassWall(pred.UnitPosition, vector1) && !IsPassWall(pred.UnitPosition, vector2))
                         {
-                            var heropos1 heropos2 = Drawing.WorldToScreen(Player.Position);
+                            var heropos2 = Drawing.WorldToScreen(Player.Position);
                             Drawing.DrawText(heropos2.x, heropos2.y, Color.Wheat, "Hit: " + 1);
 
                             Vector2 wtsPlayer = Drawing.WorldToScreen(vector1);
