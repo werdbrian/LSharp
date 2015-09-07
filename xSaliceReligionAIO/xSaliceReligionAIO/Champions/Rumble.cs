@@ -230,10 +230,10 @@ namespace xSaliceReligionAIO.Champions
             var useQ = menu.Item("UseQFarm", true).GetValue<bool>();
             var useE = menu.Item("UseEFarm", true).GetValue<bool>();
 
-            if (useQ && allMinionsQ.Count > 0)
+            if (useQ && allMinionsQ.Count > 0 && GetCurrentHeat() < 70)
                 Q.Cast(allMinionsQ[0]);
 
-            if (useE && allMinionsE.Count > 0)
+            if (useE && allMinionsE.Count > 0 && GetCurrentHeat() < 70)
                 E.Cast(allMinionsE[0]);
         }
 
@@ -245,7 +245,7 @@ namespace xSaliceReligionAIO.Champions
             List<Obj_AI_Base> allMinionsE = MinionManager.GetMinions(Player.ServerPosition, E.Range,
                 MinionTypes.All, MinionTeam.NotAlly);
 
-            if (allMinionsE.Count > 0 && E.IsReady())
+            if (allMinionsE.Count > 0 && E.IsReady() && GetCurrentHeat() < 70)
             {
                 foreach (var minion in allMinionsE)
                 {
@@ -264,10 +264,7 @@ namespace xSaliceReligionAIO.Champions
             if (Player.Distance(target.Position) > Q.Range)
                 return false;
 
-            if (!menu.Item("Q_Over_Heat", true).GetValue<bool>() && GetCurrentHeat() > 80)
-                return false;
-
-            if (GetCurrentHeat() > 80 && !(Player.GetSpellDamage(target, SpellSlot.Q, 1) + Player.GetAutoAttackDamage(target) * 2 > target.Health))
+            if (GetCurrentHeat() > 79 && !(Player.GetSpellDamage(target, SpellSlot.Q, 1)  > target.Health))
                 return false;
 
             return true;
@@ -283,10 +280,10 @@ namespace xSaliceReligionAIO.Champions
 
             if(E.GetPrediction(target).Hitchance < GetHitchance(source))
 
-            if (!menu.Item("E_Over_Heat", true).GetValue<bool>() && GetCurrentHeat() > 80)
-                return false;
+               if (!menu.Item("E_Over_Heat", true).GetValue<bool>() && GetCurrentHeat() > 79)
+                    return false;
 
-            if (GetCurrentHeat() > 80 && !(Player.GetSpellDamage(target, SpellSlot.E, 1) + Player.GetAutoAttackDamage(target) * 2 > target.Health))
+            if (GetCurrentHeat() > 79 && !(Player.GetSpellDamage(target, SpellSlot.E, 1) > target.Health))
                 return false;
 
             return true;
@@ -303,7 +300,7 @@ namespace xSaliceReligionAIO.Champions
                 return;
             }
 
-            if (GetCurrentHeat() < 31 && Q.IsReady() && menu.Item("Q_Auto_Heat", true).GetValue<bool>())
+            if (GetCurrentHeat() < 20 && Q.IsReady() && menu.Item("Q_Auto_Heat", true).GetValue<bool>())
             {
                 var enemy = ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsEnemy).OrderBy(x => Player.Distance(x.Position)).FirstOrDefault();
 
