@@ -503,7 +503,7 @@ namespace xSaliceReligionAIO.Champions
         {
             if (!menu.Item("E_Gap_Closer", true).GetValue<bool>()) return;
 
-            if (E.IsReady() && gapcloser.Sender.IsValidTarget(E.Range))
+            if (E.IsReady() && gapcloser.Sender.IsValidTarget(E.Range)&& GetCurrentHeat() < 70)
                 E.Cast(gapcloser.Sender);
         }
 
