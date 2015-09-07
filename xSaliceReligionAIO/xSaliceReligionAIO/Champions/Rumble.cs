@@ -569,8 +569,8 @@ namespace xSaliceReligionAIO.Champions
                         vector1 = midpoint + Vector3.Normalize(pred.UnitPosition - Player.ServerPosition)*800;
                         if (!IsPassWall(pred.UnitPosition, vector1) && !IsPassWall(pred.UnitPosition, vector2))
                         {
-                            Vector2 wts = Drawing.WorldToScreen(Player.Position);
-                            Drawing.DrawText(wts[0], wts[1], Color.Wheat, "Hit: " + 1);
+                            var heropos1 heropos2 = Drawing.WorldToScreen(Player.Position);
+                            Drawing.DrawText(heropos2.x, heropos2.y, Color.Wheat, "Hit: " + 1);
 
                             Vector2 wtsPlayer = Drawing.WorldToScreen(vector1);
                             Vector2 wtsPred = Drawing.WorldToScreen(vector2);
@@ -657,7 +657,11 @@ namespace xSaliceReligionAIO.Champions
                 if (maxHit >= 2)
                 {
                     Vector2 wts = Drawing.WorldToScreen(Player.Position);
-                    Drawing.DrawText(wts[0], wts[1], Color.Wheat, "Hit: " + maxHit);
+                    var heropos1 = Drawing.WorldToScreen(ObjectManager.Player.Position);
+                    if (Config.Menu.Item("Enabled").GetValue<KeyBind>().Active)
+                     {
+                        Drawing.DrawText(heropos1.X, heropos1.Y, Color.Red,  "Hit: " + maxHit);
+                      }
 
                     Vector2 wtsPlayer = Drawing.WorldToScreen(start);
                     Vector2 wtsPred = Drawing.WorldToScreen(end);
