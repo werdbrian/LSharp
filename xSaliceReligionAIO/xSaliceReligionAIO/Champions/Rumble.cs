@@ -658,10 +658,7 @@ namespace xSaliceReligionAIO.Champions
                 {
                     Vector2 wts = Drawing.WorldToScreen(Player.Position);
                     var heropos1 = Drawing.WorldToScreen(ObjectManager.Player.Position);
-                    if (Config.Menu.Item("Enabled").GetValue<KeyBind>().Active)
-                     {
                         Drawing.DrawText(heropos1.X, heropos1.Y, Color.Red,  "Hit: " + maxHit);
-                      }
 
                     Vector2 wtsPlayer = Drawing.WorldToScreen(start);
                     Vector2 wtsPred = Drawing.WorldToScreen(end);
