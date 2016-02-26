@@ -283,11 +283,11 @@ namespace xSaliceReligionAIO.Champions
 
             if(E.GetPrediction(target).Hitchance < GetHitchance(source))
 
-            if (!menu.Item("E_Over_Heat", true).GetValue<bool>() && GetCurrentHeat() > 80)
-                return false;
+     //       if (!menu.Item("E_Over_Heat", true).GetValue<bool>() && GetCurrentHeat() > 80)
+       //         return false;
 
-            if (GetCurrentHeat() > 80 && !(Player.GetSpellDamage(target, SpellSlot.E, 1) + Player.GetAutoAttackDamage(target) * 2 > target.Health))
-                return false;
+         //   if (GetCurrentHeat() > 80 && !(Player.GetSpellDamage(target, SpellSlot.E, 1) + Player.GetAutoAttackDamage(target) * 2 > target.Health))
+           //     return false;
 
             return true;
         }
@@ -312,7 +312,7 @@ namespace xSaliceReligionAIO.Champions
                 return;
             }
 
-            if (GetCurrentHeat() < 31 && E.IsReady() && menu.Item("E_Auto_Heat", true).GetValue<bool>())
+            if (GetCurrentHeat() < 20 && GetCurrentHeat() > -1 && E.IsReady() && menu.Item("E_Auto_Heat", true).GetValue<bool>())
             { 
                 var enemy = ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsEnemy && !x.IsDead).OrderBy(x => Player.Distance(x.Position)).FirstOrDefault();
 
