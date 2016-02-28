@@ -279,10 +279,10 @@ namespace xSaliceReligionAIO.Champions
                 return false;
 
             if(E.GetPrediction(target).Hitchance < GetHitchance(source))
-               if (!menu.Item("E_Over_Heat", true).GetValue<bool>() && GetCurrentHeat() > 79)
+               if (!menu.Item("E_Over_Heat", true).GetValue<bool>() && GetCurrentHeat() > 89)
                     return false;
 
-            if (GetCurrentHeat() > 79 && !(Player.GetSpellDamage(target, SpellSlot.E, 1) > target.Health))
+            if (GetCurrentHeat() > 89 && !(Player.GetSpellDamage(target, SpellSlot.E, 1) > target.Health))
                 return false;
 
             return true;
