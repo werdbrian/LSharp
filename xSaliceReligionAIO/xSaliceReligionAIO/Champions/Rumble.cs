@@ -278,7 +278,7 @@ namespace xSaliceReligionAIO.Champions
             if (Player.Distance(target.Position) > E.Range)
                 return false;
 
-            if(E.GetPrediction(target).Hitchance < GetHitchance(source))
+            if (E.GetPrediction(target).Hitchance < HitChance.VeryHigh)
                if (!menu.Item("E_Over_Heat", true).GetValue<bool>() && GetCurrentHeat() > 89)
                     return false;
 
